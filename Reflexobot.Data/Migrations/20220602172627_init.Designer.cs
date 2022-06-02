@@ -12,7 +12,7 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    [Migration("20220602153906_init")]
+    [Migration("20220602172627_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.ChatEntity", b =>
                 {
-                    b.Property<Guid>("guid")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -45,7 +45,7 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("guid");
+                    b.HasKey("Guid");
 
                     b.ToTable("Chats");
                 });

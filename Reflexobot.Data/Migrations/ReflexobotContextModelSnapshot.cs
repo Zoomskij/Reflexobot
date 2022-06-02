@@ -24,7 +24,7 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.ChatEntity", b =>
                 {
-                    b.Property<Guid>("guid")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -43,7 +43,7 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("guid");
+                    b.HasKey("Guid");
 
                     b.ToTable("Chats");
                 });

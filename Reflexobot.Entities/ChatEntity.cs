@@ -11,7 +11,7 @@ namespace Reflexobot.Entities
     public class ChatEntity
     {
         [Key]
-        public Guid guid { get; set; } = Guid.NewGuid();
+        public Guid Guid { get; set; } = Guid.NewGuid();
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

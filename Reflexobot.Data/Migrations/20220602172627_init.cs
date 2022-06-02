@@ -14,7 +14,7 @@ namespace Reflexobot.Data.Migrations
                 name: "Chats",
                 columns: table => new
                 {
-                    guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
@@ -22,7 +22,7 @@ namespace Reflexobot.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chats", x => x.guid);
+                    table.PrimaryKey("PK_Chats", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,7 +44,7 @@ namespace Reflexobot.Data.Migrations
                         name: "FK_Messages_Chats_Id",
                         column: x => x.Id,
                         principalTable: "Chats",
-                        principalColumn: "guid",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 

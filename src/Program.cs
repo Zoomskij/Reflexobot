@@ -14,6 +14,7 @@ using Reflexobot.Repositories;
 using Reflexobot.Data;
 using Microsoft.Extensions.Configuration;
 using Reflexobot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 static void Main(string[] args, IConfiguration configuration)
 {
@@ -39,7 +40,7 @@ var serviceProvider = new ServiceCollection()
      .BuildServiceProvider();
 
 var config = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.local.json", optional: false)
+        .AddJsonFile("appsettings.json", optional: false)
         .Build();
 
 
@@ -74,54 +75,98 @@ cts.Cancel();
 
 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
 {
-    var chatId = update.Message?.Chat.Id;
-    var messageText = update.Message?.Text;
-    var channelPost = update.ChannelPost;
-    if (!string.IsNullOrWhiteSpace(channelPost?.Text) && channelPost.Text.Equals("/help"))
+    try
     {
-        Message msg = await botClient.SendTextMessageAsync(
-        chatId: update.ChannelPost.Chat.Id,
-        text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
+        var chatId = update.Message?.Chat.Id;
+        var messageText = update.Message?.Text;
+        var channelPost = update.ChannelPost;
+
+        if (!string.IsNullOrWhiteSpace(channelPost?.Text) && channelPost.Text.Equals("/help"))
+        {
+            Message msg = await botClient.SendTextMessageAsync(
+            chatId: update.ChannelPost.Chat.Id,
+            text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
                  ✓ ты хочешь услышать мой голос и помедитировать -/meditation
                  ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
-        cancellationToken: cancellationToken);
-    }
-    // Only process Message updates: https://core.telegram.org/bots/api#message
-    if (update.Type != UpdateType.Message)
-        return;
-    // Only process text messages
-    if (update.Message!.Type != MessageType.Text)
-        return;
-
-    Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-
-    UpdateEntity updateEntity = new UpdateEntity
-    {
-        Id = update.Id,
-        Type = update.Type.ToString(),
-        MessageId = (int)update.Message?.MessageId,
-        Message = new Reflexobot.Entities.MessageEntity()
-        {
-            MessageId = update.Message.MessageId,
-            Text = update.Message.Text,
-             Date = update.Message.Date,
-             From = String.Empty,
-             Chat = new ChatEntity()
-             {
-                 Id = update.Message.Chat.Id,
-                 FirstName = update.Message.Chat.FirstName,
-                 LastName = update.Message.Chat.LastName,
-                 Username = update.Message.Chat.Username,
-             }
+            cancellationToken: cancellationToken);
         }
-    };
-    await reseiverService.AddUpdate(updateEntity);
+        // Only process Message updates: https://core.telegram.org/bots/api#message
+        if (update.Type != UpdateType.Message)
+            return;
+        // Only process text messages
+        if (update.Message!.Type != MessageType.Text)
+            return;
 
-    Message sentMessage = await botClient.SendTextMessageAsync(
-    chatId: chatId,
-    text: phrases[0],
-    cancellationToken: cancellationToken);
+        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+
+
+        if (!string.IsNullOrWhiteSpace(messageText))
+        {
+            switch (messageText)
+            {
+                case "/guruhelp":
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
+                             ✓ ты хочешь услышать мой голос и помедитировать- /meditation
+                             ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
+                        cancellationToken: cancellationToken);
+                    break;
+                case "/meditation":
+                    var phrase = GetRandomPhrase();
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: phrase,
+                        cancellationToken: cancellationToken);
+                    break;
+                case "/mygoal":
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: @"Здесь будет твоя цель",
+                        cancellationToken: cancellationToken);
+                    break;
+            }
+
+        }
+
+        UpdateEntity updateEntity = new UpdateEntity
+        {
+            Id = update.Id,
+            Type = update.Type.ToString(),
+            MessageId = (int)update.Message?.MessageId,
+            Message = new Reflexobot.Entities.MessageEntity()
+            {
+                ChatId = update.Message.From.Id,
+                MessageId = update.Message.MessageId,
+                Text = update.Message.Text,
+                Date = update.Message.Date,
+                From = String.Empty,
+                Chat = new ChatEntity()
+                {
+                    Id = update.Message.Chat.Id,
+                    FirstName = update.Message.Chat.FirstName,
+                    LastName = update.Message.Chat.LastName,
+                    Username = update.Message.Chat.Username,
+                }
+            }
+        };
+
+        await reseiverService.AddUpdate(updateEntity);
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+        {
+        new KeyboardButton[] { "/guruhelp", "/meditation", "/mygoal" },
+    })
+        {
+            ResizeKeyboard = true
+        };
+
+    }
+    catch (Exception ex)
+    {
+
+    }
+
 }
 
 Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -146,4 +191,30 @@ async Task<string[]> GetPhrases()
                 "Я знаю, что ты поставил себе большую и амбициозную цель- и я уверен, что у тебя все получится. Я буду рядом и не дам тебе остановиться на полпути!"
             };
     return phrases;
+}
+
+string GetRandomPhrase()
+{
+    string[] phrases =
+    {
+        "Владеть ситуацией – это значит уметь использовать любые сложившиеся обстоятельства себе на пользу.",
+        "Поэтому говорят: кто знает себя и знает противника, тот в ста победах не потерпит ни одного поражения; кто знает противника, но не знает себя, тот будет чередовать победу и поражение; кто не знает ни себя, ни противника, тот в любом сражении может получить сокрушительный удар.",
+        "Говорят: армия-победитель сначала рассчитывает победу, а потом бросается в бой, армия-проигравший сначала бросается в бой, а потом надеется на победу.",
+        "Не быть побежденным – это зависит от тебя, одержишь ли ты победу – это зависит от врага.",
+        "Кто не хочет быть побежденным – обороняется, кто хочет победить – нападает.",
+        "Первое – это путь, второе – это климат, третье – рельеф, четвертое – главнокомандующий, пятое – закон.",
+        "Долгая война не приносит пользы стране, поэтому говорят: тот, кто не постиг до конца всего вреда войны, не может до конца понять и всей ее пользы.",
+        "врага, полного сил, утоми; сытого сделай голодным; спокойного приведи в движение.",
+        "победу можно предвидеть, но нельзя гарантировать.",
+        "Не быть побежденным – это зависит от тебя, одержишь ли ты победу – это зависит от врага.",
+        "Выстави солдат там, где враг ожидает, а там, где не ожидает, – атакуй.",
+        "Когда военный поход длится долго, а победы все нет, солдаты падают духом и клинки притупляются.",
+        "Когда в неблагоприятных обстоятельствах будешь помнить о выгоде, а в благоприятных – об убытках, вот тогда сможешь предупредить всяческие беды и неудачи.",
+        "Тот, кто не постиг до конца всего вреда войны, не может до конца понять и всей ее пользы.",
+        "Искусный в ведении войны управляет людьми, но не позволяет им управлять собой.",
+        "Есть дороги, по которым нельзя пройти; есть армии, которые нельзя атаковать; есть города, которые нельзя захватить; есть земли, за которые нельзя сражаться; есть приказы государя, которые нельзя исполнять.",
+    };
+    Random rnd = new Random();
+    int num = rnd.Next(0, phrases.Length);
+    return phrases[num];
 }
