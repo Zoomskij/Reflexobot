@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot", "Reflexobot.csproj", "{B06F78B1-53EA-4143-B44D-C4AE2DBDC208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot", "Reflexobot.csproj", "{B06F78B1-53EA-4143-B44D-C4AE2DBDC208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Models", "..\Reflexobot.Models\Reflexobot.Models.csproj", "{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Data", "..\Reflexobot.Data\Reflexobot.Data.csproj", "{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{B06F78B1-53EA-4143-B44D-C4AE2DBDC208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B06F78B1-53EA-4143-B44D-C4AE2DBDC208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B06F78B1-53EA-4143-B44D-C4AE2DBDC208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
