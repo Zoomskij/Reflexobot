@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Reflexobot
 {
-    internal class Settings
+    public class Settings
     {
         public string Token { get; set; }
     }

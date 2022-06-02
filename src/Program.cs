@@ -12,27 +12,35 @@ using Microsoft.Extensions.Hosting;
 using Reflexobot.Repositories.Interfaces;
 using Reflexobot.Repositories;
 using Reflexobot.Data;
+using Microsoft.Extensions.Configuration;
+using Reflexobot;
 
-static void Main(string[] args)
+static void Main(string[] args, IConfiguration configuration)
 {
     //setup our DI
     var serviceProvider = new ServiceCollection()
          .AddLogging()
          .AddTransient<IReceiverService, ReceiverService>()
          .AddTransient<IUpdateRepository, UpdateRepository>()
+         .Configure<Settings>(configuration.GetSection("Token"))
          .BuildServiceProvider();
 
+
+    Settings settings = configuration.GetSection("Token").Get<Settings>();
     //do the actual work here
     var reseiverService = serviceProvider.GetService<IReceiverService>();
-
-
 }
+
 
 var serviceProvider = new ServiceCollection()
      .AddTransient<IReceiverService, ReceiverService>()
      .AddTransient<IUpdateRepository, UpdateRepository>()
      .AddDbContext<ReflexobotContext>()
      .BuildServiceProvider();
+
+var config = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.local.json", optional: false)
+        .Build();
 
 
 // Add services to the container.
@@ -66,15 +74,24 @@ cts.Cancel();
 
 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
 {
+    var chatId = update.Message?.Chat.Id;
+    var messageText = update.Message?.Text;
+    var channelPost = update.ChannelPost;
+    if (!string.IsNullOrWhiteSpace(channelPost?.Text) && channelPost.Text.Equals("/help"))
+    {
+        Message msg = await botClient.SendTextMessageAsync(
+        chatId: update.ChannelPost.Chat.Id,
+        text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
+                 ✓ ты хочешь услышать мой голос и помедитировать -/meditation
+                 ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
+        cancellationToken: cancellationToken);
+    }
     // Only process Message updates: https://core.telegram.org/bots/api#message
     if (update.Type != UpdateType.Message)
         return;
     // Only process text messages
     if (update.Message!.Type != MessageType.Text)
         return;
-
-    var chatId = update.Message.Chat.Id;
-    var messageText = update.Message.Text;
 
     Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
