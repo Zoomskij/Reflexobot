@@ -1,4 +1,7 @@
-﻿using Reflexobot.Services.Inerfaces;
+﻿using Reflexobot.Entities;
+using Reflexobot.Repositories;
+using Reflexobot.Repositories.Interfaces;
+using Reflexobot.Services.Inerfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +12,16 @@ namespace Reflexobot.Services
 {
     public class ReceiverService : IReceiverService
     {
-        public async Task<string[]> GetPhrases()
+        private readonly IUpdateRepository _updateRepository;
+        public ReceiverService(IUpdateRepository updateRepository) 
         {
-            string[] phrases =
-            {
-                "Привет! Я - твой Гуру и буду помогать тебе постигать твой путь обучения и дойти до поставленной тобой цели!",
-                "Спасибо, что выбрал меня",
-                "Я знаю, что ты поставил себе большую и амбициозную цель- и я уверен, что у тебя все получится. Я буду рядом и не дам тебе остановиться на полпути!"
-            };
-            return phrases;
+            _updateRepository = updateRepository;
+        }
+
+
+        public async Task AddUpdate(UpdateEntity updateEntity)
+        {
+            await _updateRepository.AddUpdate(updateEntity);
         }
     }
 }

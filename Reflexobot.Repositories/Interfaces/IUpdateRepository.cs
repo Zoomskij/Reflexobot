@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reflexobot.Services.Inerfaces
+namespace Reflexobot.Repositories.Interfaces
 {
-    public interface IReceiverService
+    public interface IUpdateRepository
     {
-        Task AddUpdate(UpdateEntity updateEntity);
+        Task AddUpdate(UpdateEntity update);
     }
 }
