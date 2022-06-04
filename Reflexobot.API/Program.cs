@@ -13,25 +13,17 @@ using Reflexobot.Repositories.Interfaces;
 using Reflexobot.Repositories;
 using Reflexobot.Data;
 using Microsoft.Extensions.Configuration;
-using Reflexobot;
 using Telegram.Bot.Types.ReplyMarkups;
+using Reflexobot.API;
 
-static void Main(string[] args, IConfiguration configuration)
-{
-    //setup our DI
-    var serviceProvider = new ServiceCollection()
-         .AddLogging()
-         .AddTransient<IReceiverService, ReceiverService>()
-         .AddTransient<IUpdateRepository, UpdateRepository>()
-         .Configure<Settings>(configuration.GetSection("Token"))
-         .BuildServiceProvider();
+var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 
-    Settings settings = configuration.GetSection("Token").Get<Settings>();
-    //do the actual work here
-    var reseiverService = serviceProvider.GetService<IReceiverService>();
-}
-
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var serviceProvider = new ServiceCollection()
      .AddTransient<IReceiverService, ReceiverService>()
@@ -43,6 +35,22 @@ var config = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: false)
         .Build();
 
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
 
 // Add services to the container.
 var reseiverService = serviceProvider.GetService<IReceiverService>();
@@ -94,7 +102,7 @@ async Task HandleCallBackAsync(ITelegramBotClient botClient, Update update, Canc
 
     if (teachers != null)
     {
-        
+
         var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
         if (teacher != null)
         {
@@ -103,7 +111,7 @@ async Task HandleCallBackAsync(ITelegramBotClient botClient, Update update, Canc
                 PersonId = teacherId,
                 UserId = update.CallbackQuery.From.Id
             };
-            await reseiverService.AddOrUpdateUserPersonId(userPersonIds);     
+            await reseiverService.AddOrUpdateUserPersonId(userPersonIds);
             await botClient.SendStickerAsync(
                 chatId: chatId,
                 sticker: teacher.Img,
@@ -227,9 +235,6 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         //////
 
 
-
-
-
         UpdateEntity updateEntity = new UpdateEntity
         {
             Id = update.Id,
@@ -298,3 +303,9 @@ string GetRandomPhrase(long userId)
     int num = rnd.Next(0, phrases.Length);
     return phrases[num];
 }
+
+
+app.Run();
+
+
+

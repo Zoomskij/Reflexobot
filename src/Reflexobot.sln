@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Data", "..\Refle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Entities", "..\Reflexobot.Entities\Reflexobot.Entities.csproj", "{F871272F-2130-443C-8604-7266357A8FDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Repositories", "..\Reflexobot.Repositories\Reflexobot.Repositories.csproj", "{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Repositories", "..\Reflexobot.Repositories\Reflexobot.Repositories.csproj", "{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.API", "..\Reflexobot.API\Reflexobot.API.csproj", "{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
