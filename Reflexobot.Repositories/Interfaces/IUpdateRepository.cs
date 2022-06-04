@@ -10,5 +10,6 @@ namespace Reflexobot.Repositories.Interfaces
     public interface IUpdateRepository
     {
         Task AddUpdate(UpdateEntity update);
+        IQueryable<Person> GetTeachers();
     }
 }

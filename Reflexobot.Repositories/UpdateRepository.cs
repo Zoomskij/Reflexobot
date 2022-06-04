@@ -21,5 +21,12 @@ namespace Reflexobot.Repositories
             await _dbSet.AddAsync(update);
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<Person> GetTeachers()
+        {
+            DbSet<Person> dbSet = _context.Set<Person>();
+            var data = dbSet.AsNoTracking();
+            return data;
+        }
     }
 }

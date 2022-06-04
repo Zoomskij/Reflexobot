@@ -10,5 +10,7 @@ namespace Reflexobot.Services.Inerfaces
     public interface IReceiverService
     {
         Task AddUpdate(UpdateEntity updateEntity);
+
+        IEnumerable<Person> GetTeachers();
     }
 }

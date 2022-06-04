@@ -97,19 +97,81 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         if (update.Message!.Type != MessageType.Text)
             return;
 
+        ////////////
+        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+        {
+            new KeyboardButton[] { "Выбрать персонажа", "/guruhelp", "/meditation" },
+            new KeyboardButton[] { "/mygoal", "/rasp", "/achievments" },
+        })
+        {
+            ResizeKeyboard = true
+        };
+        Message markupMessage = await botClient.SendTextMessageAsync(
+            chatId: chatId,
+            text: "Выберите действие",
+            replyMarkup: replyKeyboardMarkup,
+            cancellationToken: cancellationToken);
+        ////////////////////
+
+
         Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+
+        var teachers = reseiverService.GetTeachers();
+        var teachersArray = teachers.Select(x => x.Name).ToArray();
+        var buttons = new List<KeyboardButton>();
+
+
+        List<InlineKeyboardButton> inlineKeyboardList = new List<InlineKeyboardButton>();
+        foreach (var teacher in teachers)
+        {
+            inlineKeyboardList.Add(InlineKeyboardButton.WithCallbackData(text: teacher.Name, callbackData: teacher.Id.ToString()));
+        }
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(inlineKeyboardList);
 
 
         if (!string.IsNullOrWhiteSpace(messageText))
         {
             switch (messageText)
             {
+                case "Выбрать персонажа":
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "Выберите своего персонажа:",
+                        replyMarkup: inlineKeyboard,
+                        cancellationToken: cancellationToken);
+
+
+                    //foreach (var teacher in teachers)
+                    //{
+                    //    await botClient.SendTextMessageAsync(
+                    //    chatId: chatId,
+                    //    text: teacher.Name,
+                    //    cancellationToken: cancellationToken);
+                    //}
+
+                    //await botClient.SendStickerAsync(
+                    //    chatId: chatId,
+                    //    sticker: "https://github.com/TelegramBots/book/raw/master/src/docs/sticker-fred.webp",
+                    //    cancellationToken: cancellationToken);
+
+                    //await botClient.SendStickerAsync(
+                    //    chatId: chatId,
+                    //    sticker: "https://github.com/TelegramBots/book/raw/master/src/docs/sticker-fred.webp",
+                    //    cancellationToken: cancellationToken);
+
+                    break;
                 case "/guruhelp":
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
                         text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
                              ✓ ты хочешь услышать мой голос и помедитировать- /meditation
                              ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
+                        cancellationToken: cancellationToken);
+                    break;
+                case "/rasp":
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: @"Пн-пт: 19:45",
                         cancellationToken: cancellationToken);
                     break;
                 case "/meditation":
@@ -125,9 +187,21 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
                         text: @"Здесь будет твоя цель",
                         cancellationToken: cancellationToken);
                     break;
+                case "/achievments":
+                    Message message1 = await botClient.SendStickerAsync(
+                        chatId: chatId,
+                        sticker: "https://github.com/TelegramBots/book/raw/master/src/docs/sticker-fred.webp",
+                        cancellationToken: cancellationToken);
+                    break;
             }
 
         }
+
+        //////
+
+
+
+
 
         UpdateEntity updateEntity = new UpdateEntity
         {
@@ -153,13 +227,6 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
 
         await reseiverService.AddUpdate(updateEntity);
 
-        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-        {
-        new KeyboardButton[] { "/guruhelp", "/meditation", "/mygoal" },
-    })
-        {
-            ResizeKeyboard = true
-        };
 
     }
     catch (Exception ex)

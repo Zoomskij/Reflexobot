@@ -13,6 +13,8 @@ namespace Reflexobot.Data
         public DbSet<ChatEntity> Chats { get; set; }
         public DbSet<MessageEntity> Messages { get; set; }
         public DbSet<UpdateEntity> Updates { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<UserPersonIds> UserPersonIds { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

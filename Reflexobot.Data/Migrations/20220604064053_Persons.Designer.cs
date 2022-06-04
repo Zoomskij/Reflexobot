@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Reflexobot.Data;
@@ -11,9 +12,10 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    partial class ReflexobotContextModelSnapshot : ModelSnapshot
+    [Migration("20220604064053_Persons")]
+    partial class Persons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,23 +123,6 @@ namespace Reflexobot.Data.Migrations
                     b.HasIndex("MessageId");
 
                     b.ToTable("Updates");
-                });
-
-            modelBuilder.Entity("Reflexobot.Entities.UserPersonIds", b =>
-                {
-                    b.Property<Guid>("guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("guid");
-
-                    b.ToTable("UserPersonIds");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.MessageEntity", b =>

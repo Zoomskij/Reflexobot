@@ -23,5 +23,11 @@ namespace Reflexobot.Services
         {
             await _updateRepository.AddUpdate(updateEntity);
         }
+
+        public IEnumerable<Person> GetTeachers()
+        {
+            var persons = _updateRepository.GetTeachers();
+            return persons.ToList();
+        }
     }
 }
