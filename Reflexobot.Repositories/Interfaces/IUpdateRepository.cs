@@ -15,5 +15,7 @@ namespace Reflexobot.Repositories.Interfaces
         Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds);
 
         Task<Person> GetPersonByUserId(long userId);
+
+        IQueryable<string> GetPhrasesbyUserId(long userId);
     }
 }

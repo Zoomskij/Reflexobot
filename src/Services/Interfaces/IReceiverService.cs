@@ -16,5 +16,7 @@ namespace Reflexobot.Services.Inerfaces
         Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds);
 
         Task<Person> GetPersonByUserId(long userId);
+
+        IEnumerable<string> GetPhrasesbyUserId(long userId);
     }
 }

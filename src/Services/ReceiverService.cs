@@ -39,5 +39,10 @@ namespace Reflexobot.Services
         {
             return await _updateRepository.GetPersonByUserId(userId);
         }
+
+        public IEnumerable<string> GetPhrasesbyUserId(long userId)
+        {
+            return _updateRepository.GetPhrasesbyUserId(userId).ToList();
+        }
     }
 }

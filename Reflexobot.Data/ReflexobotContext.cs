@@ -15,6 +15,7 @@ namespace Reflexobot.Data
         public DbSet<UpdateEntity> Updates { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<UserPersonIds> UserPersonIds { get; set; }
+        public DbSet<PersonPhraseEntity> PersonPhrases { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

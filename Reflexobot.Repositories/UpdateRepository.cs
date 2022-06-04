@@ -55,5 +55,17 @@ namespace Reflexobot.Repositories
             return await dbSetPerson.FirstOrDefaultAsync(x => x.Id == userPerson.PersonId);
         }
 
+        public IQueryable<string> GetPhrasesbyUserId(long userId)
+        {
+            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            var userPerson = dbSet.FirstOrDefault(x => x.UserId == userId);
+            if (userPerson == null)
+                return null;
+
+
+            DbSet<PersonPhraseEntity> dbSetPhrases = _context.Set<PersonPhraseEntity>();
+            var userPhrases = dbSetPhrases.Where(x => x.PersonId == userPerson.PersonId).Select(x => x.Phrase);
+            return userPhrases;
+        }
     }
 }
