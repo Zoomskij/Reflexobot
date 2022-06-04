@@ -11,5 +11,9 @@ namespace Reflexobot.Repositories.Interfaces
     {
         Task AddUpdate(UpdateEntity update);
         IQueryable<Person> GetTeachers();
+
+        Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds);
+
+        Task<Person> GetPersonByUserId(long userId);
     }
 }

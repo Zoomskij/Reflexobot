@@ -29,5 +29,15 @@ namespace Reflexobot.Services
             var persons = _updateRepository.GetTeachers();
             return persons.ToList();
         }
+
+        public async Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds)
+        {
+            await _updateRepository.AddOrUpdateUserPersonId(userPersonIds);
+        }
+
+        public async Task<Person> GetPersonByUserId(long userId)
+        {
+            return await _updateRepository.GetPersonByUserId(userId);
+        }
     }
 }

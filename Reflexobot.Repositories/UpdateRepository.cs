@@ -28,5 +28,32 @@ namespace Reflexobot.Repositories
             var data = dbSet.AsNoTracking();
             return data;
         }
+        public async Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds)
+        {
+            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            var currentTeacher = await dbSet.FirstOrDefaultAsync(x => x.UserId == userPersonIds.UserId);
+            if (currentTeacher != null)
+            {
+                currentTeacher.PersonId = userPersonIds.PersonId;
+                _context.Entry(currentTeacher).CurrentValues.SetValues(currentTeacher);
+            }
+            else
+            {
+                await dbSet.AddAsync(userPersonIds);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Person> GetPersonByUserId(long userId)
+        {
+            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            var userPerson = await dbSet.FirstOrDefaultAsync(x => x.UserId == userId);
+            if (userPerson == null)
+                return null;
+            var dbSetPerson = _context.Set<Person>();
+            return await dbSetPerson.FirstOrDefaultAsync(x => x.Id == userPerson.PersonId);
+        }
+
     }
 }

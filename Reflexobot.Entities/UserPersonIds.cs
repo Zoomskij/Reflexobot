@@ -12,7 +12,7 @@ namespace Reflexobot.Entities
         //todo: fast hack for not create key by two columns
         [Key]
         public Guid guid { get; set; }  = Guid.NewGuid();
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         public int PersonId { get; set; }
     }
 }

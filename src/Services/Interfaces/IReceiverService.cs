@@ -12,5 +12,9 @@ namespace Reflexobot.Services.Inerfaces
         Task AddUpdate(UpdateEntity updateEntity);
 
         IEnumerable<Person> GetTeachers();
+
+        Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds);
+
+        Task<Person> GetPersonByUserId(long userId);
     }
 }
