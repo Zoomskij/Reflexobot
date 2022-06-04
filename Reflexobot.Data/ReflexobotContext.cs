@@ -19,8 +19,10 @@ namespace Reflexobot.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("User ID=postgres;Password=1;Host=localhost;Port=5432;Database=reflexobot");
+            
+            optionsBuilder.UseSqlServer("Data Source=SQL8002.site4now.net;Initial Catalog=db_a87f4e_reflexobot;User Id=db_a87f4e_reflexobot_admin;Password=");
         }
+
         //public ReflexobotContext(IConfiguration configuration) 
         //{
         //    Database.EnsureCreated();
