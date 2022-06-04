@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Entities
 {
-    public class UpdateEntity
+    public class UpdateEntity : BaseEntity
     {
-        [Key]
         public int Id { get; set; }
         public string Type { get; set; }
         public int MessageId { get; set; }
-        [ForeignKey("MessageId")]
         public MessageEntity Message { get; set; }
     }
 }

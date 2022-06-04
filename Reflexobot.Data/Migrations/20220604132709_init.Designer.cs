@@ -12,7 +12,7 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    [Migration("20220604130134_init")]
+    [Migration("20220604132709_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,11 +52,12 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.MessageEntity", b =>
                 {
-                    b.Property<int>("MessageId")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"), 1L, 1);
+                    b.Property<Guid>("ChatGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("ChatId")
                         .HasColumnType("bigint");
@@ -68,27 +69,28 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("MessageId");
+                    b.HasKey("Guid");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("ChatGuid");
 
                     b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.Person", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Img")
                         .IsRequired()
@@ -98,7 +100,7 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("Persons");
                 });
@@ -107,6 +109,9 @@ namespace Reflexobot.Data.Migrations
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PersonGuid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PersonId")
@@ -118,18 +123,22 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("PersonGuid");
 
                     b.ToTable("PersonPhrases");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.UpdateEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid>("MessageGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
@@ -138,16 +147,16 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
-                    b.HasIndex("MessageId");
+                    b.HasIndex("MessageGuid");
 
                     b.ToTable("Updates");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.UserPersonIds", b =>
                 {
-                    b.Property<Guid>("guid")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -157,7 +166,7 @@ namespace Reflexobot.Data.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("guid");
+                    b.HasKey("Guid");
 
                     b.ToTable("UserPersonIds");
                 });
@@ -166,7 +175,7 @@ namespace Reflexobot.Data.Migrations
                 {
                     b.HasOne("Reflexobot.Entities.ChatEntity", "Chat")
                         .WithMany()
-                        .HasForeignKey("Id")
+                        .HasForeignKey("ChatGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -177,7 +186,7 @@ namespace Reflexobot.Data.Migrations
                 {
                     b.HasOne("Reflexobot.Entities.Person", "Person")
                         .WithMany()
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("PersonGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -188,7 +197,7 @@ namespace Reflexobot.Data.Migrations
                 {
                     b.HasOne("Reflexobot.Entities.MessageEntity", "Message")
                         .WithMany()
-                        .HasForeignKey("MessageId")
+                        .HasForeignKey("MessageGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

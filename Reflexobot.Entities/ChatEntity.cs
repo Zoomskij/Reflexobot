@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Entities
 {
-    public class ChatEntity
+    public class ChatEntity : BaseEntity
     {
-        [Key]
-        public Guid Guid { get; set; } = Guid.NewGuid();
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

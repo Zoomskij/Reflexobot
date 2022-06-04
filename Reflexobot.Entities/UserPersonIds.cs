@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Entities
 {
-    public class UserPersonIds
+    public class UserPersonIds : BaseEntity
     {
-        //todo: fast hack for not create key by two columns
-        [Key]
-        public Guid guid { get; set; }  = Guid.NewGuid();
         public long UserId { get; set; }
         public int PersonId { get; set; }
     }

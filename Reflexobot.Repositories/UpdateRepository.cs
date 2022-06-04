@@ -18,8 +18,15 @@ namespace Reflexobot.Repositories
 
         public async Task AddUpdate(UpdateEntity update)
         {
-            await _dbSet.AddAsync(update);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _dbSet.AddAsync(update);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public IQueryable<Person> GetTeachers()
