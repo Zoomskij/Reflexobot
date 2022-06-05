@@ -26,10 +26,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var serviceProvider = new ServiceCollection()
+     .AddHostedService<TelegramBackgroundService>()
      .AddTransient<IReceiverService, ReceiverService>()
      .AddTransient<IUpdateRepository, UpdateRepository>()
      .AddDbContext<ReflexobotContext>()
      .BuildServiceProvider();
+
+builder.Services.AddTransient<IUpdateRepository, UpdateRepository>();
+builder.Services.AddTransient<IReceiverService, ReceiverService>();
+builder.Services.AddDbContext<ReflexobotContext>();
+builder.Services.AddHostedService<TelegramBackgroundService>();
+builder.Services.BuildServiceProvider();
 
 var config = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: false)
@@ -52,10 +59,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.Run();
+
+
 // Add services to the container.
 var reseiverService = serviceProvider.GetService<IReceiverService>();
 
-const string Token = "5593861941:AAEzphLQ8HTyJtQlRbASDXMNUNWp7si9Y44";
+
+
 
 var botClient = new TelegramBotClient(Token);
 using var cts = new CancellationTokenSource();
@@ -305,7 +316,7 @@ string GetRandomPhrase(long userId)
 }
 
 
-app.Run();
+//app.Run();
 
 
 

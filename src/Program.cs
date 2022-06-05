@@ -5,8 +5,6 @@ using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.DependencyInjection;
-using Reflexobot.Services.Inerfaces;
-using Reflexobot.Services;
 using Reflexobot.Entities;
 using Microsoft.Extensions.Hosting;
 using Reflexobot.Repositories.Interfaces;
@@ -15,6 +13,8 @@ using Reflexobot.Data;
 using Microsoft.Extensions.Configuration;
 using Reflexobot;
 using Telegram.Bot.Types.ReplyMarkups;
+using Reflexobot.Services.Inerfaces;
+using Reflexobot.Services;
 
 static void Main(string[] args, IConfiguration configuration)
 {

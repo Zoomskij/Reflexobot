@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reflexobot.Entities\Reflexobot.Entities.csproj" />
+    <ProjectReference Include="..\Reflexobot.Repositories\Reflexobot.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>
