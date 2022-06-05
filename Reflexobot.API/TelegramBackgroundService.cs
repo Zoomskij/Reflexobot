@@ -29,7 +29,8 @@ namespace Reflexobot.API
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
 
                 //////////////////////
-               
+                const string Token = "5575017651:AAHbegf79LC3sg1Gqy9vG0C-NmzbNWM65T8";    //DEV
+                //const string Token = "5593861941:AAEzphLQ8HTyJtQlRbASDXMNUNWp7si9Y44";  //PROD
 
                 var botClient = new TelegramBotClient(Token);
                 using var cts = new CancellationTokenSource();

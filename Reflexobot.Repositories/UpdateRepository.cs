@@ -62,6 +62,13 @@ namespace Reflexobot.Repositories
             return await dbSetPerson.FirstOrDefaultAsync(x => x.Id == userPerson.PersonId);
         }
 
+        public IEnumerable<string> GetPhrases()
+        {
+            DbSet<PersonPhraseEntity> dbSetPhrases = _context.Set<PersonPhraseEntity>();
+            var userPhrases = dbSetPhrases.Select(x => x.Phrase);
+            return userPhrases;
+        }
+
         public IQueryable<string> GetPhrasesbyUserId(long userId)
         {
             DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
@@ -73,6 +80,18 @@ namespace Reflexobot.Repositories
             DbSet<PersonPhraseEntity> dbSetPhrases = _context.Set<PersonPhraseEntity>();
             var userPhrases = dbSetPhrases.Where(x => x.PersonId == userPerson.PersonId).Select(x => x.Phrase);
             return userPhrases;
+        }
+
+        public async Task AddPhrase(int teacherId, string phrase)
+        {
+            DbSet<PersonPhraseEntity> dbSetPhrases = _context.Set<PersonPhraseEntity>();
+            PersonPhraseEntity phraseEntity = new PersonPhraseEntity
+            {
+                PersonId = teacherId,
+                Phrase = phrase
+            };
+            await dbSetPhrases.AddAsync(phraseEntity);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Reflexobot.Services
     public class ReceiverService : IReceiverService
     {
         private readonly IUpdateRepository _updateRepository;
-        public ReceiverService(IUpdateRepository updateRepository) 
+        public ReceiverService(IUpdateRepository updateRepository)
         {
             _updateRepository = updateRepository;
         }
@@ -40,9 +40,19 @@ namespace Reflexobot.Services
             return await _updateRepository.GetPersonByUserId(userId);
         }
 
+        public IEnumerable<string> GetPhrases()
+        {
+            return _updateRepository.GetPhrases().ToList();
+        }
+
         public IEnumerable<string> GetPhrasesbyUserId(long userId)
         {
             return _updateRepository.GetPhrasesbyUserId(userId).ToList();
+        }
+
+        public async Task AddPhrase(int teacherId, string phrase)
+        {
+            await _updateRepository.AddPhrase(teacherId, phrase);
         }
     }
 }

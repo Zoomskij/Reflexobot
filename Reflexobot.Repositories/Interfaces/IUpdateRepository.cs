@@ -16,6 +16,10 @@ namespace Reflexobot.Repositories.Interfaces
 
         Task<Person> GetPersonByUserId(long userId);
 
+        IEnumerable<string> GetPhrases();
+
         IQueryable<string> GetPhrasesbyUserId(long userId);
+
+        Task AddPhrase(int teacherId, string phrase);
     }
 }

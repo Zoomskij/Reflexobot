@@ -17,6 +17,10 @@ namespace Reflexobot.Services.Inerfaces
 
         Task<Person> GetPersonByUserId(long userId);
 
+        IEnumerable<string> GetPhrases();
+
         IEnumerable<string> GetPhrasesbyUserId(long userId);
+
+        Task AddPhrase(int teacherId, string phrase);
     }
 }
