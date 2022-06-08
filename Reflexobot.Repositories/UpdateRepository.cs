@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Reflexobot.Data;
 using Reflexobot.Entities;
+using Reflexobot.Entities.Telegram;
 using Reflexobot.Repositories.Interfaces;
 
 namespace Reflexobot.Repositories

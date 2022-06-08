@@ -1,4 +1,5 @@
 ﻿using Reflexobot.Entities;
+using Reflexobot.Entities.Telegram;
 using Reflexobot.Services.Inerfaces;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -215,7 +216,7 @@ namespace Reflexobot.API
                             Id = update.Id,
                             Type = update.Type.ToString(),
                             MessageId = (int)update.Message?.MessageId,
-                            Message = new Reflexobot.Entities.MessageEntity()
+                            Message = new Entities.Telegram.MessageEntity()
                             {
                                 ChatId = update.Message.From.Id,
                                 MessageId = update.Message.MessageId,

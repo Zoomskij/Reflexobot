@@ -1,4 +1,5 @@
 ﻿using Reflexobot.Entities;
+using Reflexobot.Entities.Telegram;
 using Reflexobot.Repositories;
 using Reflexobot.Repositories.Interfaces;
 using Reflexobot.Services.Inerfaces;

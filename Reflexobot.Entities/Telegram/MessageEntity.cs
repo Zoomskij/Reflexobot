@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Reflexobot.Entities
-{
+namespace Reflexobot.Entities.Telegram
+{ 
     public class MessageEntity : BaseEntity
     {
         public int MessageId { get; set; }

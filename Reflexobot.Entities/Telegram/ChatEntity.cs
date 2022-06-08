@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reflexobot.Entities
+namespace Reflexobot.Entities.Telegram
 {
     public class ChatEntity : BaseEntity
     {

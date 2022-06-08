@@ -1,4 +1,5 @@
 ﻿using Reflexobot.Entities;
+using Reflexobot.Entities.Telegram;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Reflexobot.Entities;
+using Reflexobot.Entities.Telegram;
 
 namespace Reflexobot.Data
 {
@@ -16,6 +17,9 @@ namespace Reflexobot.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<UserPersonIds> UserPersonIds { get; set; }
         public DbSet<PersonPhraseEntity> PersonPhrases { get; set; }
+        public DbSet<CourseEntity> Courses { get; set; }
+        public DbSet<LessonEntity> Lessons { get; set; }
+        public DbSet<TaskEntity> Tasks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
