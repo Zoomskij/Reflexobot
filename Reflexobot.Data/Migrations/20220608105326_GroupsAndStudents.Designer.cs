@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reflexobot.Data;
 
@@ -11,9 +12,10 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    partial class ReflexobotContextModelSnapshot : ModelSnapshot
+    [Migration("20220608105326_GroupsAndStudents")]
+    partial class GroupsAndStudents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +64,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasIndex("CourseGuid");
 
-                    b.ToTable("Groups");
+                    b.ToTable("GroupEntity");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.LessonEntity", b =>
@@ -165,7 +167,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasIndex("GroupGuid");
 
-                    b.ToTable("Students");
+                    b.ToTable("StudentEntity");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.TaskEntity", b =>

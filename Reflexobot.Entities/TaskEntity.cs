@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Reflexobot.Entities
@@ -11,6 +12,7 @@ namespace Reflexobot.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public Guid LessonGuid { get; set; }
+        [JsonIgnore]
         public LessonEntity Lesson { get; set; }
     }
 }

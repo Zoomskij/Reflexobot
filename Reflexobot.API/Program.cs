@@ -4,6 +4,7 @@ using Reflexobot.Repositories.Interfaces;
 using Reflexobot.Repositories;
 using Reflexobot.Data;
 using Reflexobot.API;
+using Reflexobot.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUpdateRepository, UpdateRepository>();
 builder.Services.AddTransient<IReceiverService, ReceiverService>();
+
+builder.Services.AddTransient<ICourseRepository, CourseRepository>();
+builder.Services.AddTransient<ICourseService, CourseService>();
+
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
 builder.Services.BuildServiceProvider();
