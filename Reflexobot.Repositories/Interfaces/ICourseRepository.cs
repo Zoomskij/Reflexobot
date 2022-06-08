@@ -10,5 +10,7 @@ namespace Reflexobot.Repositories.Interfaces
     public interface ICourseRepository
     {
         IEnumerable<CourseEntity> GetCourses();
+        IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid);
+        IEnumerable<TaskEntity> GetTasksByLessonGuid(Guid guid);
     }
 }

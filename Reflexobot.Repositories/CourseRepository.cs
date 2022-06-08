@@ -21,7 +21,22 @@ namespace Reflexobot.Repositories
         }
         public IEnumerable<CourseEntity> GetCourses()
         {
-            var data = _dbSet.Include(l => l.Lessons).ThenInclude(t => t.Tasks).AsNoTracking();
+            //var data = _dbSet.Include(l => l.Lessons).ThenInclude(t => t.Tasks).AsNoTracking();
+            var data = _dbSet.AsNoTracking();
+            return data;
+        }
+
+        public IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid)
+        {
+            DbSet<LessonEntity> dbSet = _context.Set<LessonEntity>();
+            var data = dbSet.Where(x => x.CourseGuid == guid).AsNoTracking();
+            return data;
+
+        }
+        public IEnumerable<TaskEntity> GetTasksByLessonGuid(Guid guid)
+        {
+            DbSet<TaskEntity> dbSet = _context.Set<TaskEntity>();
+            var data = dbSet.Where(x => x.LessonGuid == guid).AsNoTracking();
             return data;
         }
     }

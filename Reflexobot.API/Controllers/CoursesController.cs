@@ -14,10 +14,26 @@ namespace Reflexobot.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult GetCourses()
         {
             var courses = _courseService.GetCourses();
             return Ok(courses);
+        }
+
+        [HttpGet]
+        [Route("/lessons/{courseGuid}")]
+        public IActionResult GetLessonsByCourseGuid(Guid courseGuid)
+        {
+            var lessons = _courseService.GetLessonEntitiesByCourseGuid(courseGuid);
+            return Ok(lessons);
+        }
+
+        [HttpGet]
+        [Route("/tasks/{lessonGuid}")]
+        public IActionResult GetTasksByLessonGuid(Guid lessonGuid)
+        {
+            var lessons = _courseService.GetTasksByLessonGuid(lessonGuid);
+            return Ok(lessons);
         }
     }
 }

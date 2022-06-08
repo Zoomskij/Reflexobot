@@ -13,6 +13,7 @@ namespace Reflexobot.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public IEnumerable<TaskEntity> Tasks {get;set;}
+        [JsonIgnore]
         public Guid CourseGuid { get; set; }
         [JsonIgnore]
         public CourseEntity Course { get; set; }

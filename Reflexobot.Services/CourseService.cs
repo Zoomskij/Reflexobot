@@ -20,5 +20,15 @@ namespace Reflexobot.Services
         {
             return _courseRepository.GetCourses();
         }
+
+        public IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid)
+        {
+            return _courseRepository.GetLessonEntitiesByCourseGuid(guid);
+        }
+
+        public IEnumerable<TaskEntity> GetTasksByLessonGuid(Guid guid)
+        {
+            return _courseRepository.GetTasksByLessonGuid(guid);
+        }
     }
 }
