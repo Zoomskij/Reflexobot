@@ -1,6 +1,9 @@
-﻿using Reflexobot.Entities;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Reflexobot.Entities;
 using Reflexobot.Entities.Telegram;
 using Reflexobot.Services.Inerfaces;
+using Reflexobot.Services.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
@@ -10,12 +13,24 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Reflexobot.API
 {
+    public class EventHandlerCallBack
+    {
+        public string Event { get; set; }
+        public Guid Guid { get; set; }
+    }
     public class TelegramBackgroundService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
+       // private readonly ICourseService _courseService;
+
         public TelegramBackgroundService(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
+
+            //using (var scope = _scopeFactory.CreateScope())
+            //{
+            //    _courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
+            //}
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -28,6 +43,7 @@ namespace Reflexobot.API
             using (var scope = _scopeFactory.CreateScope())
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
+                var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
 
                 //////////////////////
                 const string Token = "5575017651:AAHbegf79LC3sg1Gqy9vG0C-NmzbNWM65T8";    //DEV
@@ -59,9 +75,54 @@ namespace Reflexobot.API
 
                 async Task HandleCallBackAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
                 {
+                    var chatId = update.CallbackQuery.Message.Chat.Id;
+                    if (update.CallbackQuery.Message.Text.Equals("Выберите курс:"))
+                    {
+
+                        var lessons = courseService.GetLessonEntitiesByCourseGuid(Guid.Parse(update.CallbackQuery.Data));
+
+                        List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
+                        foreach (var lesson in lessons)
+                        {
+                            inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lesson.Name, callbackData: lesson.Guid.ToString()) });
+                        }
+  
+                        InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
+
+                        await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "Выберите урок:", 
+                        replyMarkup: inlineLessonKeyboard,
+                        cancellationToken: cancellationToken);
+                        return;
+                    }
+
+                    if (update.CallbackQuery.Message.Text.Equals("Выберите урок:"))
+                    {
+
+                        var tasks = courseService.GetTasksByLessonGuid(Guid.Parse(update.CallbackQuery.Data));
+
+                        List<List<InlineKeyboardButton>> inLineTasksList = new List<List<InlineKeyboardButton>>();
+                        foreach (var task in tasks)
+                        {
+                            inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: task.Name, callbackData: task.Guid.ToString()) });
+                        }
+
+                        InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
+
+                        await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "Выберите задачу:",
+                        replyMarkup: inlineTaskKeyboard,
+                        cancellationToken: cancellationToken);
+                        return;
+                    }
+
+                    EventHandlerCallBack data;
+
+                   // Account account = JsonConvert.DeserializeObject<Account>(json); 
                     var teacherId = int.Parse(update.CallbackQuery.Data);
                     var teachers = receiverService.GetTeachers();
-                    var chatId = update.CallbackQuery.Message.Chat.Id;
 
                     if (teacherId == 99)
                     {
@@ -106,10 +167,14 @@ namespace Reflexobot.API
 
                     try
                     {
+                        long userId = 0;
                         var chatId = update.Message?.Chat.Id;
                         var messageText = update.Message?.Text;
                         var channelPost = update.ChannelPost;
-                        var userId = update.Message.From.Id;
+                        if (update.Message != null && update.Message.From != null)
+                        {
+                            userId = update.Message.From.Id;
+                        }
 
                         if (!string.IsNullOrWhiteSpace(channelPost?.Text) && channelPost.Text.Equals("/help"))
                         {
@@ -130,6 +195,7 @@ namespace Reflexobot.API
                         ////////////
                         ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
                         {
+                            new KeyboardButton[] { "Получить информацию о курсе" },
                             new KeyboardButton[] { "Выбрать персонажа", "/guruhelp", "/meditation" },
                             new KeyboardButton[] { "/mygoal", "/rasp", "/achievments" },
                         })
@@ -159,11 +225,35 @@ namespace Reflexobot.API
                         inlineKeyboardList.Add(InlineKeyboardButton.WithCallbackData(text: "Узнать моего персонажа", callbackData: "99"));
                         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(inlineKeyboardList);
 
-
                         if (!string.IsNullOrWhiteSpace(messageText))
                         {
                             switch (messageText)
                             {
+                                case "Получить информацию о курсе":
+                                    {
+                                        var courses = courseService.GetCourses();
+                                        List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
+                                        foreach (var course in courses)
+                                        {
+                                            EventHandlerCallBack eventHandler = new EventHandlerCallBack()
+                                            {
+                                                Event = "Courses",
+                                                Guid = course.Guid
+                                            };
+                                            string callBackData = JsonConvert.SerializeObject(eventHandler);
+
+                                            var serializeData = course.ToString();
+                                            inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
+                                        }
+                                        InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
+
+                                            await botClient.SendTextMessageAsync(
+                                            chatId: chatId,
+                                            text: "Выберите курс:",
+                                            replyMarkup: inlineCoursesKeyboard,
+                                            cancellationToken: cancellationToken);
+                                        break;
+                                    }
                                 case "Выбрать персонажа":
                                     await botClient.SendTextMessageAsync(
                                         chatId: chatId,
