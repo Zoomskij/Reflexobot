@@ -73,96 +73,23 @@ namespace Reflexobot.API
                 // Send cancellation request to stop bot
                 cts.Cancel();
 
-                async Task HandleCallBackAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-                {
-                    var chatId = update.CallbackQuery.Message.Chat.Id;
-                    if (update.CallbackQuery.Message.Text.Equals("Выберите курс:"))
-                    {
-
-                        var lessons = courseService.GetLessonEntitiesByCourseGuid(Guid.Parse(update.CallbackQuery.Data));
-
-                        List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
-                        foreach (var lesson in lessons)
-                        {
-                            inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lesson.Name, callbackData: lesson.Guid.ToString()) });
-                        }
-  
-                        InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
-
-                        await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: "Выберите урок:", 
-                        replyMarkup: inlineLessonKeyboard,
-                        cancellationToken: cancellationToken);
-                        return;
-                    }
-
-                    if (update.CallbackQuery.Message.Text.Equals("Выберите урок:"))
-                    {
-
-                        var tasks = courseService.GetTasksByLessonGuid(Guid.Parse(update.CallbackQuery.Data));
-
-                        List<List<InlineKeyboardButton>> inLineTasksList = new List<List<InlineKeyboardButton>>();
-                        foreach (var task in tasks)
-                        {
-                            inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: task.Name, callbackData: task.Guid.ToString()) });
-                        }
-
-                        InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
-
-                        await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: "Выберите задачу:",
-                        replyMarkup: inlineTaskKeyboard,
-                        cancellationToken: cancellationToken);
-                        return;
-                    }
-
-                    EventHandlerCallBack data;
-
-                   // Account account = JsonConvert.DeserializeObject<Account>(json); 
-                    var teacherId = int.Parse(update.CallbackQuery.Data);
-                    var teachers = receiverService.GetTeachers();
-
-                    if (teacherId == 99)
-                    {
-                        var currentTeacher = await receiverService.GetPersonByUserId(update.CallbackQuery.From.Id);
-                        if (currentTeacher != null)
-                        {
-                            await botClient.SendStickerAsync(
-                                chatId: chatId,
-                                sticker: currentTeacher.Img,
-                                cancellationToken: cancellationToken);
-                        }
-                        return;
-                    }
-
-                    if (teachers != null)
-                    {
-
-                        var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
-                        if (teacher != null)
-                        {
-                            UserPersonIds userPersonIds = new UserPersonIds
-                            {
-                                PersonId = teacherId,
-                                UserId = update.CallbackQuery.From.Id
-                            };
-                            await receiverService.AddOrUpdateUserPersonId(userPersonIds);
-                            await botClient.SendStickerAsync(
-                                chatId: chatId,
-                                sticker: teacher.Img,
-                                cancellationToken: cancellationToken);
-                        }
-                    }
-                }
-
                 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
                 {
-                    if (update.Type == UpdateType.CallbackQuery)
+                    switch (update.Type) 
                     {
-                        await HandleCallBackAsync(botClient, update, cancellationToken);
-                        return;
+                        case UpdateType.Message:
+                            Message? message = update?.Message;
+                            if (message != null)
+                                await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message ,cancellationToken);
+                            break;
+
+                        case UpdateType.CallbackQuery:
+                            CallbackQuery? callbackQuery = update?.CallbackQuery;
+                            if (callbackQuery != null)
+                                await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                            break;
+
+        
                     }
 
                     try
@@ -176,21 +103,7 @@ namespace Reflexobot.API
                             userId = update.Message.From.Id;
                         }
 
-                        if (!string.IsNullOrWhiteSpace(channelPost?.Text) && channelPost.Text.Equals("/help"))
-                        {
-                            Message msg = await botClient.SendTextMessageAsync(
-                            chatId: update.ChannelPost.Chat.Id,
-                            text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
-                 ✓ ты хочешь услышать мой голос и помедитировать -/meditation
-                 ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
-                            cancellationToken: cancellationToken);
-                        }
-                        // Only process Message updates: https://core.telegram.org/bots/api#message
-                        if (update.Type != UpdateType.Message)
-                            return;
-                        // Only process text messages
-                        if (update.Message!.Type != MessageType.Text)
-                            return;
+
 
                         ////////////
                         ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
@@ -202,11 +115,11 @@ namespace Reflexobot.API
                         {
                             ResizeKeyboard = true
                         };
-                        Message markupMessage = await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: "Выберите действие",
-                            replyMarkup: replyKeyboardMarkup,
-                            cancellationToken: cancellationToken);
+                        //Message markupMessage = await botClient.SendTextMessageAsync(
+                        //    chatId: chatId,
+                        //    text: "Выберите действие",
+                        //    replyMarkup: replyKeyboardMarkup,
+                        //    cancellationToken: cancellationToken);
                         ////////////////////
 
 
@@ -349,6 +262,7 @@ namespace Reflexobot.API
 
             }
         }
+
         async Task<string[]> GetPhrases()
         {
             string[] phrases =
