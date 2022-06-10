@@ -1,4 +1,5 @@
-﻿using Reflexobot.Entities;
+﻿using Newtonsoft.Json;
+using Reflexobot.Entities;
 using Reflexobot.Services.Inerfaces;
 using Reflexobot.Services.Interfaces;
 using Telegram.Bot;
@@ -24,7 +25,7 @@ namespace Reflexobot.API
             //return;
             if (callbackQuery == null)
                 return;
-            
+            var chatId = callbackQuery.Message.Chat.Id;
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Delay"))
             {
                 var splitData = callbackQuery.Data.Split(";");
@@ -38,9 +39,32 @@ namespace Reflexobot.API
                 await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
                 //STEP 3
                 await botClient.SendTextMessageAsync(
-                    chatId: callbackQuery.Message.Chat.Id,
+                    chatId: chatId,
                     text: $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?",
                     cancellationToken: cancellationToken);
+
+                //Получаем список курсов
+                var courses = _courseService.GetCourses();
+                List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
+                foreach (var course in courses)
+                {
+                    EventHandlerCallBack eventHandler = new EventHandlerCallBack()
+                    {
+                        Event = "Courses",
+                        Guid = course.Guid
+                    };
+                    string callBackData = JsonConvert.SerializeObject(eventHandler);
+
+                    var serializeData = course.ToString();
+                    inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
+                }
+                InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
+
+                await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: "Выберите курс:",
+                replyMarkup: inlineCoursesKeyboard,
+                cancellationToken: cancellationToken);
 
                 return;
             }
@@ -53,7 +77,6 @@ namespace Reflexobot.API
                 return;
             }
 
-            var chatId = callbackQuery.Message.Chat.Id;
             if (callbackQuery.Message.Text.Equals("Выберите курс:"))
             {
 

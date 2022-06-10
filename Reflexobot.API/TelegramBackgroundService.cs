@@ -77,7 +77,33 @@ namespace Reflexobot.API
                             case UpdateType.Message:
                                 Message? message = update?.Message;
                                 if (message != null)
+                                {
                                     await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, cancellationToken);
+
+                                    UpdateEntity updateEntity = new UpdateEntity
+                                    {
+                                        Id = update.Id,
+                                        Type = update.Type.ToString(),
+                                        MessageId = message.MessageId,
+                                        Message = new Entities.Telegram.MessageEntity()
+                                        {
+                                            ChatId = message.From.Id,
+                                            MessageId = message.MessageId,
+                                            Text = message.Text,
+                                            Date = message.Date,
+                                            From = String.Empty,
+                                            Chat = new ChatEntity()
+                                            {
+                                                Id = message.Chat.Id,
+                                                FirstName = message.Chat.FirstName,
+                                                LastName = message.Chat.LastName,
+                                                Username = message.Chat.Username,
+                                            }
+                                        }
+                                    };
+
+                                    await receiverService.AddUpdate(updateEntity);
+                                }
                                 return;
 
                             case UpdateType.CallbackQuery:
@@ -85,8 +111,6 @@ namespace Reflexobot.API
                                 if (callbackQuery != null)
                                     await new HandleUpdateCallBack(courseService, receiverService, userService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
                                 return;
-
-
                         }
                     }
                     catch (Exception ex)
@@ -126,125 +150,14 @@ namespace Reflexobot.API
 
 
                         Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-                        var teachers = receiverService.GetTeachers();
-                        var teachersArray = teachers.Select(x => x.Name).ToArray();
-                        var buttons = new List<KeyboardButton>();
-
-
-                        List<InlineKeyboardButton> inlineKeyboardList = new List<InlineKeyboardButton>();
-                        foreach (var teacher in teachers)
-                        {
-                            inlineKeyboardList.Add(InlineKeyboardButton.WithCallbackData(text: teacher.Name, callbackData: teacher.Id.ToString()));
-                        }
-                        inlineKeyboardList.Add(InlineKeyboardButton.WithCallbackData(text: "Узнать моего персонажа", callbackData: "99"));
-                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(inlineKeyboardList);
-
-                        if (!string.IsNullOrWhiteSpace(messageText))
-                        {
-                            switch (messageText)
-                            {
-                                case "Получить информацию о курсе":
-                                    {
-                                        var courses = courseService.GetCourses();
-                                        List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
-                                        foreach (var course in courses)
-                                        {
-                                            EventHandlerCallBack eventHandler = new EventHandlerCallBack()
-                                            {
-                                                Event = "Courses",
-                                                Guid = course.Guid
-                                            };
-                                            string callBackData = JsonConvert.SerializeObject(eventHandler);
-
-                                            var serializeData = course.ToString();
-                                            inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
-                                        }
-                                        InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
-
-                                            await botClient.SendTextMessageAsync(
-                                            chatId: chatId,
-                                            text: "Выберите курс:",
-                                            replyMarkup: inlineCoursesKeyboard,
-                                            cancellationToken: cancellationToken);
-                                        break;
-                                    }
-                                case "Выбрать персонажа":
-                                    await botClient.SendTextMessageAsync(
-                                        chatId: chatId,
-                                        text: "Выберите своего персонажа:",
-                                        replyMarkup: inlineKeyboard,
-                                        cancellationToken: cancellationToken);
-                                    break;
-                                case "/guruhelp":
-                                    await botClient.SendTextMessageAsync(
-                                        chatId: chatId,
-                                        text: @" ✓ ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp
-                             ✓ ты хочешь услышать мой голос и помедитировать- /meditation
-                             ✓ ты хочешь вспомнить как звучит твоя цель - /mygoal",
-                                        cancellationToken: cancellationToken);
-                                    break;
-                                case "/rasp":
-                                    await botClient.SendTextMessageAsync(
-                                        chatId: chatId,
-                                        text: @"Пн-пт: 19:45",
-                                        cancellationToken: cancellationToken);
-                                    break;
-                                case "/meditation":
-                                    var phrase = GetRandomPhrase(receiverService, userId);
-                                    await botClient.SendTextMessageAsync(
-                                        chatId: chatId,
-                                        text: phrase,
-                                        cancellationToken: cancellationToken);
-                                    break;
-                                case "/mygoal":
-                                    await botClient.SendTextMessageAsync(
-                                        chatId: chatId,
-                                        text: @"Здесь будет твоя цель",
-                                        cancellationToken: cancellationToken);
-                                    break;
-                                case "/achievments":
-                                    Message message1 = await botClient.SendStickerAsync(
-                                        chatId: chatId,
-                                        sticker: "https://github.com/TelegramBots/book/raw/master/src/docs/sticker-fred.webp",
-                                        cancellationToken: cancellationToken);
-                                    break;
-                            }
-
-                        }
-
                         //////
 
-
-                        UpdateEntity updateEntity = new UpdateEntity
-                        {
-                            Id = update.Id,
-                            Type = update.Type.ToString(),
-                            MessageId = (int)update.Message?.MessageId,
-                            Message = new Entities.Telegram.MessageEntity()
-                            {
-                                ChatId = update.Message.From.Id,
-                                MessageId = update.Message.MessageId,
-                                Text = update.Message.Text,
-                                Date = update.Message.Date,
-                                From = String.Empty,
-                                Chat = new ChatEntity()
-                                {
-                                    Id = update.Message.Chat.Id,
-                                    FirstName = update.Message.Chat.FirstName,
-                                    LastName = update.Message.Chat.LastName,
-                                    Username = update.Message.Chat.Username,
-                                }
-                            }
-                        };
-
-                        await receiverService.AddUpdate(updateEntity);
 
 
                     }
                     catch (Exception ex)
                     {
-
+                        return;
                     }
 
                 }
