@@ -38,31 +38,9 @@ namespace Reflexobot.API
                      UserId = callbackQuery.From.Id
                 };
 
-                var currentMarkup = callbackQuery.Message.ReplyMarkup;
-                if (currentMarkup != null)
-                {
-                    foreach (var keyboardRow in currentMarkup.InlineKeyboard)
-                    {
-                        if (keyboardRow != null)
-                        {
-                            var keyboardCell = keyboardRow.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.CallbackData) && x.CallbackData.Equals(callbackQuery.Data));
-                            keyboardRow.FirstOrDefault()?.Text.Replace("✅", string.Empty);
-                            if (keyboardCell != null)
-                            {
-                                keyboardCell.Text += "✅";
-                            }
-                        }
-                    }
-                }
-               
-                await botClient.EditMessageTextAsync(chatId, messageId, $"{callbackQuery.Message.Text}", replyMarkup: currentMarkup);
+                await botClient.EditMessageTextAsync(chatId, messageId, $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?", replyMarkup: null);
 
                 await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
-                //STEP 3
-                await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?",
-                    cancellationToken: cancellationToken);
 
                 //Получаем список курсов
                 var courses = _courseService.GetCourses();
@@ -114,11 +92,7 @@ namespace Reflexobot.API
 
                 InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
 
-                await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "Выберите урок:",
-                replyMarkup: inlineLessonKeyboard,
-                cancellationToken: cancellationToken);
+                await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите урок:", replyMarkup: inlineLessonKeyboard);
                 return;
             }
 
@@ -136,11 +110,7 @@ namespace Reflexobot.API
 
                 InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
 
-                await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "Выберите задачу:",
-                replyMarkup: inlineTaskKeyboard,
-                cancellationToken: cancellationToken);
+                await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите задачу:", replyMarkup: inlineTaskKeyboard);
                 return;
             }
 
@@ -150,22 +120,8 @@ namespace Reflexobot.API
             var teacherId = int.Parse(callbackQuery.Data);
             var teachers = _receiverService.GetTeachers();
 
-            if (teacherId == 99)
-            {
-                var currentTeacher = await _receiverService.GetPersonByUserId(callbackQuery.From.Id);
-                if (currentTeacher != null)
-                {
-                    await botClient.SendStickerAsync(
-                        chatId: chatId,
-                        sticker: currentTeacher.Img,
-                        cancellationToken: cancellationToken);
-                }
-                return;
-            }
-
             if (teachers != null)
             {
-
                 var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
                 if (teacher != null)
                 {
@@ -175,6 +131,9 @@ namespace Reflexobot.API
                         UserId = callbackQuery.From.Id
                     };
                     await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
+
+                    await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
+
                     await botClient.SendStickerAsync(
                         chatId: chatId,
                         sticker: teacher.Img,
