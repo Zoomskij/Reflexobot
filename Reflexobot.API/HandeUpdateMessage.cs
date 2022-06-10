@@ -19,7 +19,7 @@ namespace Reflexobot.API
                     if (string.IsNullOrWhiteSpace(message.Text))
                         return;
 
-                    if (message.Text.Equals("/start"))
+                    if (message.Text.Equals("/start") || message.Text.Equals("Старт 🏁"))
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
@@ -50,10 +50,10 @@ namespace Reflexobot.API
                     // Создание нижней клавиатуры
                     ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
                     {
-                            new KeyboardButton[] { "/start" },
+                            new KeyboardButton[] { "Старт 🏁" },
                     })
                     {
-                        ResizeKeyboard = true
+                        //ResizeKeyboard = true
                     };
                     await botClient.SendTextMessageAsync(
                         chatId: message.Chat.Id,
