@@ -12,8 +12,8 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    [Migration("20220608105326_GroupsAndStudents")]
-    partial class GroupsAndStudents
+    [Migration("20220610093702_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,7 +64,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasIndex("CourseGuid");
 
-                    b.ToTable("GroupEntity");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.LessonEntity", b =>
@@ -89,6 +89,25 @@ namespace Reflexobot.Data.Migrations
                     b.HasIndex("CourseGuid");
 
                     b.ToTable("Lessons");
+                });
+
+            modelBuilder.Entity("Reflexobot.Entities.NotifyEntity", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Guid");
+
+                    b.ToTable("Notifies");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.Person", b =>
@@ -167,7 +186,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasIndex("GroupGuid");
 
-                    b.ToTable("StudentEntity");
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.TaskEntity", b =>
@@ -277,6 +296,23 @@ namespace Reflexobot.Data.Migrations
                     b.HasIndex("MessageGuid");
 
                     b.ToTable("Updates");
+                });
+
+            modelBuilder.Entity("Reflexobot.Entities.UserNotifyIds", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NotifyId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Guid");
+
+                    b.ToTable("UserNotifyIds");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.UserPersonIds", b =>

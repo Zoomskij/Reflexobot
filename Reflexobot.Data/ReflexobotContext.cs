@@ -22,7 +22,9 @@ namespace Reflexobot.Data
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<GroupEntity> Groups { get; set; }
         public DbSet<StudentEntity> Students { get; set; }
-        public DbSet<StudentCourseEntity> StudentCourses { get; set; }
+        public DbSet<NotifyEntity> Notifies { get; set; }
+        public DbSet<UserNotifyIds> UserNotifyIds { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

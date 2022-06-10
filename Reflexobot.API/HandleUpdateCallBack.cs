@@ -1,4 +1,5 @@
-﻿using Reflexobot.Entities;
+﻿using Newtonsoft.Json;
+using Reflexobot.Entities;
 using Reflexobot.Services.Inerfaces;
 using Reflexobot.Services.Interfaces;
 using Telegram.Bot;
@@ -12,27 +13,58 @@ namespace Reflexobot.API
     {
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService)
+        private readonly IUserService _userService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IUserService userService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
+            _userService = userService;
         }
         public async Task HandleUpdateCallBackAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
             //return;
             if (callbackQuery == null)
                 return;
-            
+            var chatId = callbackQuery.Message.Chat.Id;
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Delay"))
             {
                 var splitData = callbackQuery.Data.Split(";");
-                var currentDelay = Convert.ToInt32(splitData[1]);
+                var notifyGuid = Guid.Parse(splitData[1]);
+                UserNotifyIds userNotifyIds = new UserNotifyIds
+                {
+                     NotifyGuid = notifyGuid,
+                     UserId = callbackQuery.From.Id
+                };
 
+                await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
                 //STEP 3
                 await botClient.SendTextMessageAsync(
-                    chatId: callbackQuery.Message.Chat.Id,
+                    chatId: chatId,
                     text: $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?",
                     cancellationToken: cancellationToken);
+
+                //Получаем список курсов
+                var courses = _courseService.GetCourses();
+                List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
+                foreach (var course in courses)
+                {
+                    EventHandlerCallBack eventHandler = new EventHandlerCallBack()
+                    {
+                        Event = "Courses",
+                        Guid = course.Guid
+                    };
+                    string callBackData = JsonConvert.SerializeObject(eventHandler);
+
+                    var serializeData = course.ToString();
+                    inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
+                }
+                InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
+
+                await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: "Выберите курс:",
+                replyMarkup: inlineCoursesKeyboard,
+                cancellationToken: cancellationToken);
 
                 return;
             }
@@ -45,16 +77,18 @@ namespace Reflexobot.API
                 return;
             }
 
-            var chatId = callbackQuery.Message.Chat.Id;
             if (callbackQuery.Message.Text.Equals("Выберите курс:"))
             {
 
                 var lessons = _courseService.GetLessonEntitiesByCourseGuid(Guid.Parse(callbackQuery.Data));
 
                 List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
+                var i = 0;
                 foreach (var lesson in lessons)
                 {
-                    inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lesson.Name, callbackData: lesson.Guid.ToString()) });
+                    var lessonName = i < 2 ? $"{lesson.Name} ✅" : lesson.Name;
+                    inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lessonName, callbackData: lesson.Guid.ToString()) });
+                    i++;
                 }
 
                 InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
@@ -73,9 +107,10 @@ namespace Reflexobot.API
                 var tasks = _courseService.GetTasksByLessonGuid(Guid.Parse(callbackQuery.Data));
 
                 List<List<InlineKeyboardButton>> inLineTasksList = new List<List<InlineKeyboardButton>>();
+
                 foreach (var task in tasks)
                 {
-                    inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: task.Name, callbackData: task.Guid.ToString()) });
+                    inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: $"{task.Name}", callbackData: task.Guid.ToString()) });
                 }
 
                 InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
@@ -137,13 +172,13 @@ namespace Reflexobot.API
                             chatId: chatId,
                             text: $"Вопрос 2 из 3\n\n {callbackQuery.Message.Chat.FirstName}, как часто ты хотел бы общаться со мной?",
                             cancellationToken: cancellationToken);
-
+                    var delays = _userService.GetNotifies();
                     List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в день", callbackData: "Delay;1") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в неделю", callbackData: "Delay;2") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в 2 недели", callbackData: "Delay;3") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "только в выходной", callbackData: "Delay;4") });
+                    foreach (var delay in delays)
+                    {
+                        inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: delay.Description, callbackData: $"Delay;{delay.Guid}") });
 
+                    }
                     InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineDelayList);
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,

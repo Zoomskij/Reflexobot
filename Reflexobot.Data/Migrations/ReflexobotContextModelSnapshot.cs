@@ -89,6 +89,25 @@ namespace Reflexobot.Data.Migrations
                     b.ToTable("Lessons");
                 });
 
+            modelBuilder.Entity("Reflexobot.Entities.NotifyEntity", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Guid");
+
+                    b.ToTable("Notifies");
+                });
+
             modelBuilder.Entity("Reflexobot.Entities.Person", b =>
                 {
                     b.Property<Guid>("Guid")
@@ -127,33 +146,6 @@ namespace Reflexobot.Data.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("PersonPhrases");
-                });
-
-            modelBuilder.Entity("Reflexobot.Entities.StudentCourseEntity", b =>
-                {
-                    b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CourseGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Percent")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("StudentGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Guid");
-
-                    b.HasIndex("CourseGuid");
-
-                    b.HasIndex("StudentGuid");
-
-                    b.ToTable("StudentCourses");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.StudentEntity", b =>
@@ -304,6 +296,23 @@ namespace Reflexobot.Data.Migrations
                     b.ToTable("Updates");
                 });
 
+            modelBuilder.Entity("Reflexobot.Entities.UserNotifyIds", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("NotifyGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Guid");
+
+                    b.ToTable("UserNotifyIds");
+                });
+
             modelBuilder.Entity("Reflexobot.Entities.UserPersonIds", b =>
                 {
                     b.Property<Guid>("Guid")
@@ -341,25 +350,6 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("Reflexobot.Entities.StudentCourseEntity", b =>
-                {
-                    b.HasOne("Reflexobot.Entities.CourseEntity", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseGuid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Reflexobot.Entities.StudentEntity", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentGuid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.StudentEntity", b =>
