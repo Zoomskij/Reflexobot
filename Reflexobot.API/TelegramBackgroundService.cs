@@ -21,16 +21,10 @@ namespace Reflexobot.API
     public class TelegramBackgroundService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-       // private readonly ICourseService _courseService;
 
         public TelegramBackgroundService(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
-
-            //using (var scope = _scopeFactory.CreateScope())
-            //{
-            //    _courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
-            //}
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -75,22 +69,28 @@ namespace Reflexobot.API
 
                 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
                 {
-                    //return;
-                    switch (update.Type) 
+                    try
                     {
-                        case UpdateType.Message:
-                            Message? message = update?.Message;
-                            if (message != null)
-                                await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message ,cancellationToken);
-                            return;
+                        switch (update.Type)
+                        {
+                            case UpdateType.Message:
+                                Message? message = update?.Message;
+                                if (message != null)
+                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, cancellationToken);
+                                return;
 
-                        case UpdateType.CallbackQuery:
-                            CallbackQuery? callbackQuery = update?.CallbackQuery;
-                            if (callbackQuery != null)
-                              await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
-                            break;
+                            case UpdateType.CallbackQuery:
+                                CallbackQuery? callbackQuery = update?.CallbackQuery;
+                                if (callbackQuery != null)
+                                    await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                                return;
 
-        
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return;
                     }
 
                     try
