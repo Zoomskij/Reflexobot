@@ -15,7 +15,7 @@ namespace Reflexobot.Data
         public DbSet<MessageEntity> Messages { get; set; }
         public DbSet<UpdateEntity> Updates { get; set; }
         public DbSet<Person> Persons { get; set; }
-        public DbSet<UserPersonIds> UserPersonIds { get; set; }
+        public DbSet<StudentPersonIds> StudentPersonIds { get; set; }
         public DbSet<PersonPhraseEntity> PersonPhrases { get; set; }
         public DbSet<CourseEntity> Courses { get; set; }
         public DbSet<LessonEntity> Lessons { get; set; }
@@ -23,7 +23,10 @@ namespace Reflexobot.Data
         public DbSet<GroupEntity> Groups { get; set; }
         public DbSet<StudentEntity> Students { get; set; }
         public DbSet<NotifyEntity> Notifies { get; set; }
-        public DbSet<UserNotifyIds> UserNotifyIds { get; set; }
+        public DbSet<StudentNotifyIds> StudentNotifyIds { get; set; }
+        public DbSet<StudentCourseId> StudentCourseIds { get; set; }
+        public DbSet<StudentLessonId> StudentLessonIds { get; set; }
+        public DbSet<StudentTaskId> StudentTaskIds { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

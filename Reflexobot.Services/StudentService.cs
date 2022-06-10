@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Services
 {
-    public class UserService : IUserService
+    public class StudentService : IStudentService
     {
-        private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IStudentRepository _userRepository;
+        public StudentService(IStudentRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -21,7 +21,7 @@ namespace Reflexobot.Services
             return _userRepository.GetNotifies().ToList();
         }
 
-        public async Task AddOrUpdateUserNotifyId(UserNotifyIds userPersonIds)
+        public async Task AddOrUpdateUserNotifyId(StudentNotifyIds userPersonIds)
         {
             await _userRepository.AddOrUpdateUserNotifyId(userPersonIds);
         }

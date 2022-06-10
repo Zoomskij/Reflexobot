@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reflexobot.Data;
 
@@ -11,9 +12,10 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    partial class ReflexobotContextModelSnapshot : ModelSnapshot
+    [Migration("20220610142840_newEntities")]
+    partial class newEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,7 +164,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasKey("Guid");
 
-                    b.ToTable("StudentCourseIds");
+                    b.ToTable("StudentCourseIs");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.StudentEntity", b =>
@@ -209,9 +211,6 @@ namespace Reflexobot.Data.Migrations
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("LessonGuid")
                         .HasColumnType("uniqueidentifier");
@@ -268,9 +267,6 @@ namespace Reflexobot.Data.Migrations
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("bit");
 
                     b.Property<Guid?>("StudentLessonIdGuid")
                         .HasColumnType("uniqueidentifier");

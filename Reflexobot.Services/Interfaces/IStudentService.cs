@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Services.Interfaces
 {
-    public interface IUserService
+    public interface IStudentService
     {
         IEnumerable<NotifyEntity> GetNotifies();
-        Task AddOrUpdateUserNotifyId(UserNotifyIds userPersonIds);
+        Task AddOrUpdateUserNotifyId(StudentNotifyIds userPersonIds);
     }
 }

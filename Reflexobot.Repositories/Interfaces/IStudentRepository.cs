@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IStudentRepository
     {
         IQueryable<NotifyEntity> GetNotifies();
-        Task AddOrUpdateUserNotifyId(UserNotifyIds userNotifyIds);
+        Task AddOrUpdateUserNotifyId(StudentNotifyIds userNotifyIds);
     }
 }

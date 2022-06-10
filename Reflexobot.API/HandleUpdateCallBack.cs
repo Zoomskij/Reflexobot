@@ -13,8 +13,8 @@ namespace Reflexobot.API
     {
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
-        private readonly IUserService _userService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IUserService userService)
+        private readonly IStudentService _userService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService userService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
@@ -30,7 +30,7 @@ namespace Reflexobot.API
             {
                 var splitData = callbackQuery.Data.Split(";");
                 var notifyGuid = Guid.Parse(splitData[1]);
-                UserNotifyIds userNotifyIds = new UserNotifyIds
+                StudentNotifyIds userNotifyIds = new StudentNotifyIds
                 {
                      NotifyGuid = notifyGuid,
                      UserId = callbackQuery.From.Id
@@ -148,7 +148,7 @@ namespace Reflexobot.API
                 var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
                 if (teacher != null)
                 {
-                    UserPersonIds userPersonIds = new UserPersonIds
+                    StudentPersonIds userPersonIds = new StudentPersonIds
                     {
                         PersonId = teacherId,
                         UserId = callbackQuery.From.Id

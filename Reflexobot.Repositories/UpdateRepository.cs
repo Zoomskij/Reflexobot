@@ -36,9 +36,9 @@ namespace Reflexobot.Repositories
             var data = dbSet.AsNoTracking();
             return data;
         }
-        public async Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds)
+        public async Task AddOrUpdateUserPersonId(StudentPersonIds userPersonIds)
         {
-            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            DbSet<StudentPersonIds> dbSet = _context.Set<StudentPersonIds>();
             var currentTeacher = await dbSet.FirstOrDefaultAsync(x => x.UserId == userPersonIds.UserId);
             if (currentTeacher != null)
             {
@@ -55,7 +55,7 @@ namespace Reflexobot.Repositories
 
         public async Task<Person> GetPersonByUserId(long userId)
         {
-            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            DbSet<StudentPersonIds> dbSet = _context.Set<StudentPersonIds>();
             var userPerson = await dbSet.FirstOrDefaultAsync(x => x.UserId == userId);
             if (userPerson == null)
                 return null;
@@ -72,7 +72,7 @@ namespace Reflexobot.Repositories
 
         public IQueryable<string> GetPhrasesbyUserId(long userId)
         {
-            DbSet<UserPersonIds> dbSet = _context.Set<UserPersonIds>();
+            DbSet<StudentPersonIds> dbSet = _context.Set<StudentPersonIds>();
             var userPerson = dbSet.FirstOrDefault(x => x.UserId == userId);
             if (userPerson == null)
                 return null;

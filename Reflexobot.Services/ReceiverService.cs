@@ -31,7 +31,7 @@ namespace Reflexobot.Services
             return persons.ToList();
         }
 
-        public async Task AddOrUpdateUserPersonId(UserPersonIds userPersonIds)
+        public async Task AddOrUpdateUserPersonId(StudentPersonIds userPersonIds)
         {
             await _updateRepository.AddOrUpdateUserPersonId(userPersonIds);
         }

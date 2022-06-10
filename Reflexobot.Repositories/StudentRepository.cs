@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class StudentRepository : IStudentRepository
     {
         private readonly ReflexobotContext _context;
         //private readonly DbSet<UpdateEntity> _dbSet;
 
-        public UserRepository(ReflexobotContext context)
+        public StudentRepository(ReflexobotContext context)
         {
             _context = context;
             //_dbSet = context.Set<UpdateEntity>();
@@ -28,9 +28,9 @@ namespace Reflexobot.Repositories
             return dbSet.AsNoTracking();
         }
 
-        public async Task AddOrUpdateUserNotifyId(UserNotifyIds userNotifyIds)
+        public async Task AddOrUpdateUserNotifyId(StudentNotifyIds userNotifyIds)
         {
-            DbSet<UserNotifyIds> dbSet = _context.Set<UserNotifyIds>();
+            DbSet<StudentNotifyIds> dbSet = _context.Set<StudentNotifyIds>();
             var currentNotify = await dbSet.FirstOrDefaultAsync(x => x.UserId == userNotifyIds.UserId);
             if (currentNotify != null)
             {

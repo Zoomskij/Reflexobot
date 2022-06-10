@@ -38,7 +38,7 @@ namespace Reflexobot.API
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
                 var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
-                var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+                var userService = scope.ServiceProvider.GetRequiredService<IStudentService>();
 
                 //////////////////////
                 const string Token = "5575017651:AAHbegf79LC3sg1Gqy9vG0C-NmzbNWM65T8";    //DEV
