@@ -57,13 +57,8 @@ namespace Reflexobot.API
                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
                 var chatId = callbackQuery.Message.Chat.Id;
                 var messageId = callbackQuery.Message.MessageId;
-                await botClient.DeleteMessageAsync(chatId, messageId, cancellationToken);
-            
-                await botClient.SendTextMessageAsync(
-                chatId: callbackQuery.Message.Chat.Id,
-                text: $"{phrases[currentTeacher]}",
-                replyMarkup: inlineKeyboardMarkup,
-                cancellationToken: cancellationToken);
+
+                await botClient.EditMessageTextAsync(chatId, messageId, $"{phrases[currentTeacher]}", replyMarkup: inlineKeyboardMarkup);
             }
         }
 
