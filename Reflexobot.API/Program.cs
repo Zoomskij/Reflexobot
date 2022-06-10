@@ -20,17 +20,12 @@ builder.Services.AddTransient<IReceiverService, ReceiverService>();
 builder.Services.AddTransient<ICourseRepository, CourseRepository>();
 builder.Services.AddTransient<ICourseService, CourseService>();
 
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IStudentRepository, StudentRepository>();
+builder.Services.AddTransient<IStudentService, StudentService>();
 
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
 builder.Services.BuildServiceProvider();
-
-
-var config = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false)
-        .Build();
 
 var app = builder.Build();
 

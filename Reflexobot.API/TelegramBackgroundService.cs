@@ -20,11 +20,13 @@ namespace Reflexobot.API
     }
     public class TelegramBackgroundService : BackgroundService
     {
+        private readonly IConfiguration _configuration;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public TelegramBackgroundService(IServiceScopeFactory scopeFactory)
+        public TelegramBackgroundService(IServiceScopeFactory scopeFactory, IConfiguration configuration)
         {
             _scopeFactory = scopeFactory;
+            _configuration = configuration;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,17 +36,15 @@ namespace Reflexobot.API
 
         private async Task DoWork(CancellationToken ct)
         {
+            var token = _configuration.GetSection("Token");
+
             using (var scope = _scopeFactory.CreateScope())
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
                 var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
-                var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+                var userService = scope.ServiceProvider.GetRequiredService<IStudentService>();
 
-                //////////////////////
-                const string Token = "5575017651:AAHbegf79LC3sg1Gqy9vG0C-NmzbNWM65T8";    //DEV
-                //const string Token = "5593861941:AAEzphLQ8HTyJtQlRbASDXMNUNWp7si9Y44";  //PROD
-
-                var botClient = new TelegramBotClient(Token);
+                var botClient = new TelegramBotClient(token.Value);
                 using var cts = new CancellationTokenSource();
 
                 var phrases = await GetPhrases();

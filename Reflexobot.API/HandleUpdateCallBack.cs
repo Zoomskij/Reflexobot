@@ -6,6 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using System.Linq;
 
 namespace Reflexobot.API
 {
@@ -13,8 +14,8 @@ namespace Reflexobot.API
     {
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
-        private readonly IUserService _userService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IUserService userService)
+        private readonly IStudentService _userService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService userService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
@@ -26,15 +27,35 @@ namespace Reflexobot.API
             if (callbackQuery == null)
                 return;
             var chatId = callbackQuery.Message.Chat.Id;
+            var messageId = callbackQuery.Message.MessageId;
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Delay"))
             {
                 var splitData = callbackQuery.Data.Split(";");
                 var notifyGuid = Guid.Parse(splitData[1]);
-                UserNotifyIds userNotifyIds = new UserNotifyIds
+                StudentNotifyIds userNotifyIds = new StudentNotifyIds
                 {
                      NotifyGuid = notifyGuid,
                      UserId = callbackQuery.From.Id
                 };
+
+                var currentMarkup = callbackQuery.Message.ReplyMarkup;
+                if (currentMarkup != null)
+                {
+                    foreach (var keyboardRow in currentMarkup.InlineKeyboard)
+                    {
+                        if (keyboardRow != null)
+                        {
+                            var keyboardCell = keyboardRow.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.CallbackData) && x.CallbackData.Equals(callbackQuery.Data));
+                            keyboardRow.FirstOrDefault()?.Text.Replace("✅", string.Empty);
+                            if (keyboardCell != null)
+                            {
+                                keyboardCell.Text += "✅";
+                            }
+                        }
+                    }
+                }
+               
+                await botClient.EditMessageTextAsync(chatId, messageId, $"{callbackQuery.Message.Text}", replyMarkup: currentMarkup);
 
                 await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
                 //STEP 3
@@ -148,7 +169,7 @@ namespace Reflexobot.API
                 var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
                 if (teacher != null)
                 {
-                    UserPersonIds userPersonIds = new UserPersonIds
+                    StudentPersonIds userPersonIds = new StudentPersonIds
                     {
                         PersonId = teacherId,
                         UserId = callbackQuery.From.Id
@@ -166,32 +187,19 @@ namespace Reflexobot.API
                             text: teacherPhrases[teacherId],
                             cancellationToken: cancellationToken);
 
-
-                    ///STEP 2
-                    await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: $"Вопрос 2 из 3\n\n {callbackQuery.Message.Chat.FirstName}, как часто ты хотел бы общаться со мной?",
-                            cancellationToken: cancellationToken);
                     var delays = _userService.GetNotifies();
+
                     List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
                     foreach (var delay in delays)
                     {
                         inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: delay.Description, callbackData: $"Delay;{delay.Guid}") });
-
                     }
                     InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineDelayList);
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "Выберите ответ:",
+                        text: $"Вопрос 2 из 3\n\n {callbackQuery.Message.Chat.FirstName}, как часто ты хотел бы общаться со мной?",
                         replyMarkup: inlineTaskKeyboard,
                         cancellationToken: cancellationToken);
-
-                    ///STEP 3
-                    //await botClient.SendTextMessageAsync(
-                    //    chatId: chatId,
-                    //    text: $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?",
-                    //    cancellationToken: cancellationToken);
-                    //return;
                 }
             }
         }
