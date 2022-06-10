@@ -83,9 +83,12 @@ namespace Reflexobot.API
                 var lessons = _courseService.GetLessonEntitiesByCourseGuid(Guid.Parse(callbackQuery.Data));
 
                 List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
+                var i = 0;
                 foreach (var lesson in lessons)
                 {
-                    inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lesson.Name, callbackData: lesson.Guid.ToString()) });
+                    var lessonName = i < 2 ? $"{lesson.Name} ✅" : lesson.Name;
+                    inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lessonName, callbackData: lesson.Guid.ToString()) });
+                    i++;
                 }
 
                 InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
@@ -104,9 +107,10 @@ namespace Reflexobot.API
                 var tasks = _courseService.GetTasksByLessonGuid(Guid.Parse(callbackQuery.Data));
 
                 List<List<InlineKeyboardButton>> inLineTasksList = new List<List<InlineKeyboardButton>>();
+
                 foreach (var task in tasks)
                 {
-                    inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: task.Name, callbackData: task.Guid.ToString()) });
+                    inLineTasksList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: $"{task.Name}", callbackData: task.Guid.ToString()) });
                 }
 
                 InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
