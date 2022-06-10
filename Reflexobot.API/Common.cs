@@ -20,7 +20,7 @@ namespace Reflexobot.API
                 List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
 
                 InlineKeyboardButton inLineKeyboard = InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: _currentChoice.ToString());
-                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "NextReason;1");
+                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "NextReason;2");
                 inLineRow.Add(inLineKeyboard);
                 inLineRow.Add(inLineKeyboardNext);
 
