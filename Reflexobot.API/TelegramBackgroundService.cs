@@ -75,18 +75,19 @@ namespace Reflexobot.API
 
                 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
                 {
+                    //return;
                     switch (update.Type) 
                     {
                         case UpdateType.Message:
                             Message? message = update?.Message;
                             if (message != null)
                                 await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message ,cancellationToken);
-                            break;
+                            return;
 
                         case UpdateType.CallbackQuery:
                             CallbackQuery? callbackQuery = update?.CallbackQuery;
                             if (callbackQuery != null)
-                                await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                              await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
                             break;
 
         
