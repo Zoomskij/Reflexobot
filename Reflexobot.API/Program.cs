@@ -27,11 +27,6 @@ builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
 builder.Services.BuildServiceProvider();
 
-
-var config = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false)
-        .Build();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
