@@ -10,6 +10,6 @@ namespace Reflexobot.Entities
     public class UserNotifyIds : BaseEntity
     {
         public long UserId { get; set; }
-        public int NotifyId { get; set; }
+        public Guid NotifyGuid { get; set; }
     }
 }

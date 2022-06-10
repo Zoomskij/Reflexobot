@@ -21,7 +21,6 @@ namespace Reflexobot.Repositories
         }
         public IEnumerable<CourseEntity> GetCourses()
         {
-            //var data = _dbSet.Include(l => l.Lessons).ThenInclude(t => t.Tasks).AsNoTracking();
             var data = _dbSet.AsNoTracking();
             return data;
         }

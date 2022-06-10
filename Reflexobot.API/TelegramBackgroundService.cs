@@ -38,6 +38,7 @@ namespace Reflexobot.API
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
                 var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
+                var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
                 //////////////////////
                 const string Token = "5575017651:AAHbegf79LC3sg1Gqy9vG0C-NmzbNWM65T8";    //DEV
@@ -82,7 +83,7 @@ namespace Reflexobot.API
                             case UpdateType.CallbackQuery:
                                 CallbackQuery? callbackQuery = update?.CallbackQuery;
                                 if (callbackQuery != null)
-                                    await new HandleUpdateCallBack(courseService, receiverService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                                    await new HandleUpdateCallBack(courseService, receiverService, userService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
                                 return;
 
 

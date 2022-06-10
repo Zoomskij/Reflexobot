@@ -12,10 +12,12 @@ namespace Reflexobot.API
     {
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService)
+        private readonly IUserService _userService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IUserService userService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
+            _userService = userService;
         }
         public async Task HandleUpdateCallBackAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
@@ -26,8 +28,14 @@ namespace Reflexobot.API
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Delay"))
             {
                 var splitData = callbackQuery.Data.Split(";");
-                var currentDelay = Convert.ToInt32(splitData[1]);
+                var notifyGuid = Guid.Parse(splitData[1]);
+                UserNotifyIds userNotifyIds = new UserNotifyIds
+                {
+                     NotifyGuid = notifyGuid,
+                     UserId = callbackQuery.From.Id
+                };
 
+                await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
                 //STEP 3
                 await botClient.SendTextMessageAsync(
                     chatId: callbackQuery.Message.Chat.Id,
@@ -137,13 +145,13 @@ namespace Reflexobot.API
                             chatId: chatId,
                             text: $"Вопрос 2 из 3\n\n {callbackQuery.Message.Chat.FirstName}, как часто ты хотел бы общаться со мной?",
                             cancellationToken: cancellationToken);
-
+                    var delays = _userService.GetNotifies();
                     List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в день", callbackData: "Delay;1") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в неделю", callbackData: "Delay;2") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "1 раз в 2 недели", callbackData: "Delay;3") });
-                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "только в выходной", callbackData: "Delay;4") });
+                    foreach (var delay in delays)
+                    {
+                        inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: delay.Description, callbackData: $"Delay;{delay.Guid}") });
 
+                    }
                     InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineDelayList);
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
