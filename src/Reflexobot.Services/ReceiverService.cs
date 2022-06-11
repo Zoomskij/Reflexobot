@@ -55,5 +55,10 @@ namespace Reflexobot.Services
         {
             await _updateRepository.AddPhrase(teacherId, phrase);
         }
+
+        public IEnumerable<ChatEntity> GetChats()
+        {
+            return _updateRepository.GetChats().ToList().GroupBy(x => x.Id).SelectMany(x => x);
+        }
     }
 }

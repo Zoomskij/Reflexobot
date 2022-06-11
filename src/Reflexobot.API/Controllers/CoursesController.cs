@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reflexobot.Entities.Telegram;
+using Reflexobot.Services.Inerfaces;
 using Reflexobot.Services.Interfaces;
 
 namespace Reflexobot.API.Controllers
@@ -8,9 +10,11 @@ namespace Reflexobot.API.Controllers
     public class CoursesController : Controller
     {
         private readonly ICourseService _courseService;
-        public CoursesController(ICourseService courseService)
+        private readonly IReceiverService _reseiverService;
+        public CoursesController(ICourseService courseService, IReceiverService reseiverService)
         {
             _courseService = courseService;
+            _reseiverService = reseiverService;
         }
 
         [HttpGet]
@@ -35,5 +39,31 @@ namespace Reflexobot.API.Controllers
             var lessons = _courseService.GetTasksByLessonGuid(lessonGuid);
             return Ok(lessons);
         }
+
+        [HttpGet]
+        [Route("chats")]
+        public IActionResult GetChats()
+        {
+            List<ChatEntityDto> groupedChats = new List<ChatEntityDto>();
+            var chats = _reseiverService.GetChats();
+            foreach (var chat in chats.GroupBy(x=> x.Id))
+            {
+                groupedChats.Add(new ChatEntityDto
+                {
+                    Id = chat.Key,
+                    FirstName = chat.FirstOrDefault(x => x.Id == chat.Key).FirstName,
+                    LastName = chat.FirstOrDefault(x => x.Id == chat.Key).LastName
+                });
+            }
+            return Ok(groupedChats);
+        }
+    }
+
+    public class ChatEntityDto 
+    {
+        public long Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
     }
 }
