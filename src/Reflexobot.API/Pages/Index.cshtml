@@ -15,34 +15,48 @@
 <div class="text-center">
     <div id="app">
         <div class="common">
-            <div>
-                <el-card class="box-card avatar">
-                  <div>
-                      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712038.png" height="150px" weight="150px" />
-                      <h2>{{botInfo.firstName}}</h2>
-                  </div>
-                </el-card>
-            </div>
+            <div id="top" class="top">
+                <div>
+                    <el-card class="box-card avatar">
+                      <div>
+                          <img src="https://cdn-icons-png.flaticon.com/512/4712/4712038.png" height="150px" weight="150px" />
+                          <h2>{{botInfo.firstName}}</h2>
+                      </div>
+                    </el-card>
+                </div>
 
-            <div style="padding-left:10px">
-                <el-card class="box-card" v-for="course in courses">
-                    <div slot="header" class="clearfix">
-                    <span>{{course.name}}</span>
-                    <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
-                    </div>
-                    <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
-                        {{lesson.name}}
-                    </div>
-                </el-card>
-            </div>
+                <div style="padding-left:10px">
+                    <el-card class="box-card" v-for="course in courses">
+                        <div slot="header" class="clearfix">
+                        <span>{{course.name}}</span>
+                        <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
+                        </div>
+                        <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
+                            {{lesson.name}}
+                        </div>
+                    </el-card>
+                </div>
 
-            <div>
-                <el-card class="box-card teacher">
-                  <div>
-                      <img :src="myTeacher.img" height="150px" weight="150px" />
-                      <h2>{{myTeacher.name}}</h2>
-                  </div>
-                </el-card>
+                <div>
+                    <el-card class="box-card teacher">
+                      <div>
+                          <img :src="myTeacher.img" height="150px" weight="150px" />
+                          <h2>{{myTeacher.name}}</h2>
+                      </div>
+                    </el-card>
+                </div>
+            </div>
+            <div id="center" class="center">
+                <div style="width:300px">
+                    <el-card class="box-card achievments">
+                          <img v-for="achievment in achievments"
+                            :src='achievment.img' 
+                            :title='achievment.description'
+                            height="60px" 
+                            weight="60px" />
+
+                    </el-card>
+                </div>
             </div>
         </div>
     </div>
@@ -56,6 +70,7 @@ var app = new Vue({
     data: {
         courses: [],
         lessons: [],
+        achievments: [],
         botInfo: {},
         myTeacher: {},
         telegramUserId: ''
@@ -66,6 +81,7 @@ var app = new Vue({
         this.getBotInfo();
         this.getMyTeacher();
         this.getCourses();
+        this.getAchievments();
 
     },
     methods: {
@@ -91,6 +107,18 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        //Get Achievments
+        getAchievments: function () {
+            var self = this;
+            axios.get('/achievment')
+            .then(function (response) {
+                self.achievments = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        //Get bot info
         getBotInfo: function () {
             var self = this;
             axios.get('/telegram/status')
@@ -101,6 +129,7 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        //Get my current teacher
         getMyTeacher: function (telegramUserId) {
             var self = this;
             if (this.telegramUserId !== null && this.telegramUserId !== '') {
@@ -119,9 +148,19 @@ var app = new Vue({
 
 <style>
   .common {
+  
+  }
+  .top {
     display:flex;
     justify-content: start; 
   }
+
+  .center {
+    display:flex;
+    justify-content: start; 
+    padding-top:10px;
+  }
+
   .text {
     font-size: 14px;
   }

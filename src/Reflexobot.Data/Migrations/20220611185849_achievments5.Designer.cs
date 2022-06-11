@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reflexobot.Data;
 
@@ -11,9 +12,10 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    partial class ReflexobotContextModelSnapshot : ModelSnapshot
+    [Migration("20220611185849_achievments5")]
+    partial class achievments5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +42,12 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("StudentEntityGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Guid");
+
+                    b.HasIndex("StudentEntityGuid");
 
                     b.ToTable("Achievments");
                 });
@@ -183,17 +190,12 @@ namespace Reflexobot.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("StudentEntityGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Guid");
 
                     b.HasIndex("AchievmentGuid");
-
-                    b.HasIndex("StudentEntityGuid");
 
                     b.ToTable("StudentAchievments");
                 });
@@ -447,6 +449,13 @@ namespace Reflexobot.Data.Migrations
                     b.ToTable("Updates");
                 });
 
+            modelBuilder.Entity("Reflexobot.Entities.Achievment", b =>
+                {
+                    b.HasOne("Reflexobot.Entities.StudentEntity", null)
+                        .WithMany("Achievments")
+                        .HasForeignKey("StudentEntityGuid");
+                });
+
             modelBuilder.Entity("Reflexobot.Entities.GroupEntity", b =>
                 {
                     b.HasOne("Reflexobot.Entities.CourseEntity", "Course")
@@ -476,10 +485,6 @@ namespace Reflexobot.Data.Migrations
                         .HasForeignKey("AchievmentGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Reflexobot.Entities.StudentEntity", null)
-                        .WithMany("StudentAchievments")
-                        .HasForeignKey("StudentEntityGuid");
 
                     b.Navigation("Achievment");
                 });
@@ -566,7 +571,7 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.StudentEntity", b =>
                 {
-                    b.Navigation("StudentAchievments");
+                    b.Navigation("Achievments");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.StudentLessonId", b =>

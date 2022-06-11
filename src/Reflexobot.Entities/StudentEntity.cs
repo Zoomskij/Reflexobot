@@ -14,6 +14,7 @@ namespace Reflexobot.Entities
         public int Age { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public List<StudentAchievment> StudentAchievments { get; set; }
         public Guid GroupGuid { get; set; }
         public GroupEntity Group { get; set; }
     }

@@ -24,6 +24,9 @@ builder.Services.AddTransient<ICourseService, CourseService>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient<IStudentService, StudentService>();
 
+builder.Services.AddTransient<IAchievmentRepository, AchievmentRepository>();
+builder.Services.AddTransient<IAchievmentService, AchievmentService>();
+
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
 builder.Services.BuildServiceProvider();
