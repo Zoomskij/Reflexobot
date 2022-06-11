@@ -23,5 +23,7 @@ namespace Reflexobot.Services.Inerfaces
         IEnumerable<string> GetPhrasesbyUserId(long userId);
 
         Task AddPhrase(int teacherId, string phrase);
+
+        IEnumerable<ChatEntity> GetChats();
     }
 }

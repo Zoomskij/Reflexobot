@@ -22,5 +22,7 @@ namespace Reflexobot.Repositories.Interfaces
         IQueryable<string> GetPhrasesbyUserId(long userId);
 
         Task AddPhrase(int teacherId, string phrase);
+
+        IQueryable<ChatEntity> GetChats();
     }
 }

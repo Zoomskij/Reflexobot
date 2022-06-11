@@ -47,14 +47,33 @@
                 </div>
             </div>
             <div id="center" class="center">
-                <div style="width:300px">
+                <div style="width:320px">
                     <el-card class="box-card achievments">
                           <h3>Мои достижения</h3>
-                          <img v-for="achievment in achievments"
-                            :src='achievment.img' 
-                            :title='achievment.description'
-                            height="60px" 
-                            weight="60px" />
+                          <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                              <img 
+                                :src='achievment.img' 
+                                height="60px" 
+                                weight="60px" />
+                            </el-tooltip>
+
+                    </el-card>
+                </div>
+                <div style="padding-left:10px">
+                    <el-card v-for="chat in chats" class="box-card achievments">
+                        <div style="display:flex; justify-content: left; align-items:center">
+                            <span><b>{{chat.firstName}} {{chat.firstName}}</b></span>
+                            <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                              <img 
+                                :src='achievment.img' 
+                                height="30px" 
+                                weight="30px" />
+                            </el-tooltip>
+                        </div>
+
+                        <div style="padding-top:5px">
+                            <el-progress :text-inside="true" :stroke-width="16" :percentage="Math.floor(Math.random() * 100)" status="success"></el-progress>
+                        </div>
 
                     </el-card>
                 </div>
@@ -72,6 +91,7 @@ var app = new Vue({
         courses: [],
         lessons: [],
         achievments: [],
+        chats: [],
         botInfo: {},
         myTeacher: {},
         telegramUserId: ''
@@ -83,6 +103,7 @@ var app = new Vue({
         this.getMyTeacher();
         this.getCourses();
         this.getAchievments();
+        this.getChats();
 
     },
     methods: {
@@ -142,6 +163,16 @@ var app = new Vue({
                     console.log(error);
                 });
             }
+        },
+        getChats: function() {
+            var self = this;
+            axios.get('/courses/chats')
+            .then(function (response) {
+                self.chats = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     },
 })
@@ -169,6 +200,10 @@ var app = new Vue({
   .item {
     margin-bottom: 18px;
   }
+
+  .item-tooltip {
+      margin: 4px;
+    }
 
   .clearfix:before,
   .clearfix:after {

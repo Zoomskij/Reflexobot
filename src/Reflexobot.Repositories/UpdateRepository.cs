@@ -94,5 +94,13 @@ namespace Reflexobot.Repositories
             await dbSetPhrases.AddAsync(phraseEntity);
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<ChatEntity> GetChats()
+        {
+            DbSet<ChatEntity> dbSetChat= _context.Set<ChatEntity>();
+            var chats = dbSetChat.AsNoTracking();
+
+            return chats;
+        }
     }
 }
