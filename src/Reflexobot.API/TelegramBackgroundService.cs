@@ -115,49 +115,6 @@ namespace Reflexobot.API
                     {
                         return;
                     }
-
-                    try
-                    {
-                        long userId = 0;
-                        var chatId = update.Message?.Chat.Id;
-                        var messageText = update.Message?.Text;
-                        var channelPost = update.ChannelPost;
-                        if (update.Message != null && update.Message.From != null)
-                        {
-                            userId = update.Message.From.Id;
-                        }
-
-
-
-                        ////////////
-                        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-                        {
-                            new KeyboardButton[] { "Получить информацию о курсе" },
-                            new KeyboardButton[] { "Выбрать персонажа", "/guruhelp", "/meditation" },
-                            new KeyboardButton[] { "/mygoal", "/rasp", "/achievments" },
-                        })
-                        {
-                            ResizeKeyboard = true
-                        };
-                        //Message markupMessage = await botClient.SendTextMessageAsync(
-                        //    chatId: chatId,
-                        //    text: "Выберите действие",
-                        //    replyMarkup: replyKeyboardMarkup,
-                        //    cancellationToken: cancellationToken);
-                        ////////////////////
-
-
-                        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-                        //////
-
-
-
-                    }
-                    catch (Exception ex)
-                    {
-                        return;
-                    }
-
                 }
 
                 Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
