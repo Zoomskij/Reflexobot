@@ -1,0 +1,148 @@
+﻿@page
+@model Reflexobot.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Reflexobot Dashboard";
+}
+<!-- import CSS -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+<!-- import JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+<div class="text-center">
+    <div id="app">
+        <div class="common">
+            <div>
+                <el-card class="box-card avatar">
+                  <div>
+                      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712038.png" height="150px" weight="150px" />
+                      <h2>{{botInfo.firstName}}</h2>
+                  </div>
+                </el-card>
+            </div>
+
+            <div style="padding-left:10px">
+                <el-card class="box-card" v-for="course in courses">
+                    <div slot="header" class="clearfix">
+                    <span>{{course.name}}</span>
+                    <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
+                    </div>
+                    <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
+                        {{lesson.name}}
+                    </div>
+                </el-card>
+            </div>
+
+            <div>
+                <el-card class="box-card teacher">
+                  <div>
+                      <img :src="myTeacher.img" height="150px" weight="150px" />
+                      <h2>{{myTeacher.name}}</h2>
+                  </div>
+                </el-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        courses: [],
+        lessons: [],
+        botInfo: {},
+        myTeacher: {},
+        telegramUserId: ''
+    },
+    mounted() {
+        //TODO: rewrite + authorize
+        this.telegramUserId = window.location.search.substring(5);
+        this.getBotInfo();
+        this.getMyTeacher();
+        this.getCourses();
+
+    },
+    methods: {
+        //Get courses
+        getCourses: function () {
+            var self = this;
+            axios.get('/courses')
+            .then(function (response) {
+                self.courses = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        //Get Lessons by course Guid
+        getLessons: function (courseGuid) {
+            var self = this;
+            axios.get('/lessons/' + courseGuid)
+            .then(function (response) {
+                self.lessons = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        getBotInfo: function () {
+            var self = this;
+            axios.get('/telegram/status')
+            .then(function (response) {
+                self.botInfo = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        getMyTeacher: function (telegramUserId) {
+            var self = this;
+            if (this.telegramUserId !== null && this.telegramUserId !== '') {
+                axios.get('/teachers/' + self.telegramUserId)
+                .then(function (response) {
+                    self.myTeacher = response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }
+    },
+})
+</script>
+
+<style>
+  .common {
+    display:flex;
+    justify-content: start; 
+  }
+  .text {
+    font-size: 14px;
+  }
+
+  .item {
+    margin-bottom: 18px;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+@@media screen and (max-width: 900px) {
+  .common {
+      display: block;
+  }
+}
+
+</style>
