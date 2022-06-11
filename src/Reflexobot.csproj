@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Reflexobot.Data\Reflexobot.Data.csproj" />
-    <ProjectReference Include="..\Reflexobot.Entities\Reflexobot.Entities.csproj" />
-    <ProjectReference Include="..\Reflexobot.Models\Reflexobot.Models.csproj" />
-    <ProjectReference Include="..\Reflexobot.Repositories\Reflexobot.Repositories.csproj" />
-    <ProjectReference Include="..\Reflexobot.Services\Reflexobot.Services.csproj" />
+    <ProjectReference Include="Reflexobot.Data\Reflexobot.Data.csproj" />
+    <ProjectReference Include="Reflexobot.Entities\Reflexobot.Entities.csproj" />
+    <ProjectReference Include="Reflexobot.Models\Reflexobot.Models.csproj" />
+    <ProjectReference Include="Reflexobot.Repositories\Reflexobot.Repositories.csproj" />
+    <ProjectReference Include="Reflexobot.Services\Reflexobot.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
