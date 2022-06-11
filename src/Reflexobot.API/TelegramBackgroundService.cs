@@ -13,11 +13,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Reflexobot.API
 {
-    public class EventHandlerCallBack
-    {
-        public string Event { get; set; }
-        public Guid Guid { get; set; }
-    }
     public class TelegramBackgroundService : BackgroundService
     {
         private readonly IConfiguration _configuration;
