@@ -1,0 +1,90 @@
+﻿@page
+@model Reflexobot.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Reflexobot Dashboard";
+}
+<!-- import CSS -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+<!-- import JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+<div class="text-center">
+    <div id="app">
+        <el-card class="box-card" v-for="course in courses">
+            <div slot="header" class="clearfix">
+            <span>{{course.name}}</span>
+            <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
+            </div>
+            <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
+                {{lesson.name}}
+            </div>
+        </el-card>
+    </div>
+</div>
+
+
+<script>
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        courses: [],
+        lessons: []
+    },
+    mounted() {
+
+        this.getCourses();
+    },
+    methods: {
+        //Get courses
+        getCourses: function () {
+            var self = this;
+            axios.get('/courses')
+            .then(function (response) {
+                self.courses = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        //Get Lessons by course Guid
+        getLessons: function (courseGuid) {
+            var self = this;
+            axios.get('/lessons/' + courseGuid)
+            .then(function (response) {
+                self.lessons = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+    },
+})
+</script>
+
+<style>
+  .text {
+    font-size: 14px;
+  }
+
+  .item {
+    margin-bottom: 18px;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    width: 480px;
+  }
+</style>
