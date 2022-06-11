@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Models", "..\Reflexobot.Models\Reflexobot.Models.csproj", "{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Models", "Reflexobot.Models\Reflexobot.Models.csproj", "{E0EA8420-DEF5-4E98-AE6F-75A66186EBC9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Data", "..\Reflexobot.Data\Reflexobot.Data.csproj", "{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Data", "Reflexobot.Data\Reflexobot.Data.csproj", "{90ECA2CE-E6E0-4926-BDD8-1CBC39873881}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Entities", "..\Reflexobot.Entities\Reflexobot.Entities.csproj", "{F871272F-2130-443C-8604-7266357A8FDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Entities", "Reflexobot.Entities\Reflexobot.Entities.csproj", "{F871272F-2130-443C-8604-7266357A8FDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Repositories", "..\Reflexobot.Repositories\Reflexobot.Repositories.csproj", "{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Repositories", "Reflexobot.Repositories\Reflexobot.Repositories.csproj", "{B5AD9C6C-AEF2-406C-9D5A-E2D290FECC1D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.API", "..\Reflexobot.API\Reflexobot.API.csproj", "{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.API", "Reflexobot.API\Reflexobot.API.csproj", "{5E0C1DBB-C852-442B-A944-BF3A7BC4CFDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Services", "..\Reflexobot.Services\Reflexobot.Services.csproj", "{C02659FF-9E07-4149-BE5B-BCC4D00E6372}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Services", "Reflexobot.Services\Reflexobot.Services.csproj", "{C02659FF-9E07-4149-BE5B-BCC4D00E6372}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
