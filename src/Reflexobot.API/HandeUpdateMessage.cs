@@ -47,10 +47,31 @@ namespace Reflexobot.API
 
                     }
 
+                    if (message.Text.Equals("Открыть на сайте 🌐"))
+                    {
+
+                        InlineKeyboardMarkup inlineKeyboard = new(new[]
+                            {
+                                InlineKeyboardButton.WithUrl(
+                                    text: "Открыть на сайте 🌐",
+                                    url: $"http://zoomskij-001-site1.ctempurl.com/?uid={message.Chat.Id}"
+                                )
+                            }
+                        );
+
+                        Message sentMessage = await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Перейдите на Web-сайт, чтобы увидеть больше информации",
+                            replyMarkup: inlineKeyboard,
+                            cancellationToken: cancellationToken);
+                    }
+
+
                     // Создание нижней клавиатуры
                     ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
                     {
                             new KeyboardButton[] { "Старт 🏁" },
+                            new KeyboardButton[] { "Открыть на сайте 🌐" }
                     })
                     {
                         //ResizeKeyboard = true
