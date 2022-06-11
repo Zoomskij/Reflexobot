@@ -37,7 +37,7 @@
                     </el-card>
                 </div>
 
-                <div>
+                <div style="padding-left:10px" v-if=myTeacher.name>
                     <el-card class="box-card teacher">
                       <div>
                           <img :src="myTeacher.img" height="150px" weight="150px" />
@@ -49,6 +49,7 @@
             <div id="center" class="center">
                 <div style="width:300px">
                     <el-card class="box-card achievments">
+                          <h3>Мои достижения</h3>
                           <img v-for="achievment in achievments"
                             :src='achievment.img' 
                             :title='achievment.description'
