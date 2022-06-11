@@ -47,8 +47,6 @@ namespace Reflexobot.API
                 var botClient = new TelegramBotClient(token.Value);
                 using var cts = new CancellationTokenSource();
 
-                var phrases = await GetPhrases();
-
                 var receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = Array.Empty<UpdateType>()
@@ -176,17 +174,6 @@ namespace Reflexobot.API
                 }
 
             }
-        }
-
-        async Task<string[]> GetPhrases()
-        {
-            string[] phrases =
-            {
-                "Привет! Я - твой Гуру и буду помогать тебе постигать твой путь обучения и дойти до поставленной тобой цели!",
-                "Спасибо, что выбрал меня",
-                "Я знаю, что ты поставил себе большую и амбициозную цель- и я уверен, что у тебя все получится. Я буду рядом и не дам тебе остановиться на полпути!"
-            };
-            return phrases;
         }
 
         string GetRandomPhrase(IReceiverService receiverService, long userId)
