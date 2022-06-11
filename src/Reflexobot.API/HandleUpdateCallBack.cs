@@ -55,14 +55,6 @@ namespace Reflexobot.API
                 List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
                 foreach (var course in courses)
                 {
-                    EventHandlerCallBack eventHandler = new EventHandlerCallBack()
-                    {
-                        Event = "Courses",
-                        Guid = course.Guid
-                    };
-                    string callBackData = JsonConvert.SerializeObject(eventHandler);
-
-                    var serializeData = course.ToString();
                     inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
                 }
                 InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
@@ -138,9 +130,6 @@ namespace Reflexobot.API
                 return;
             }
 
-            EventHandlerCallBack data;
-
-            // Account account = JsonConvert.DeserializeObject<Account>(json); 
             var teacherId = int.Parse(callbackQuery.Data);
             var teachers = _receiverService.GetTeachers();
 
