@@ -29,6 +29,7 @@ builder.Services.AddTransient<IAchievmentService, AchievmentService>();
 
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<PingBackgroundService>();
+builder.Services.AddHostedService<NotifyBackgroundService>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
 builder.Services.BuildServiceProvider();
 
