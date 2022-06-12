@@ -36,43 +36,90 @@ namespace Reflexobot.API
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Delay"))
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) & callbackQuery.Data.Contains("AnswerSelected"))
             {
                 var splitData = callbackQuery.Data.Split(";");
-                var notifyGuid = Guid.Parse(splitData[1]);
-                StudentNotifyIds userNotifyIds = new StudentNotifyIds
-                {
-                     NotifyGuid = notifyGuid,
-                     UserId = callbackQuery.From.Id
-                };
+                var selecteTeacherId = Convert.ToInt32(splitData[1]);
+                var allTeachers = GetTeacherPhrases();
 
-                await botClient.EditMessageTextAsync(chatId, messageId, $"Вопрос 3 из 3\n\nКакие курсы ты проходишь в Нетологии?", replyMarkup: null);
-
-                await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
-
-                //Получаем список курсов
-                var courses = _courseService.GetCourses();
-                List<InlineKeyboardButton> inLineCoursesList = new List<InlineKeyboardButton>();
-                foreach (var course in courses)
-                {
-                    inLineCoursesList.Add(InlineKeyboardButton.WithCallbackData(text: course.Name, callbackData: course.Guid.ToString()));
-                }
-                InlineKeyboardMarkup inlineCoursesKeyboard = new InlineKeyboardMarkup(inLineCoursesList);
-
-                await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "Выберите курс:",
-                replyMarkup: inlineCoursesKeyboard,
-                cancellationToken: cancellationToken);
-
+                await botClient.EditMessageTextAsync(chatId, messageId, $"{allTeachers[selecteTeacherId]}", replyMarkup: null, parseMode: ParseMode.Html);
                 return;
             }
+
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && (callbackQuery.Data.Contains("Delay") || callbackQuery.Data.Contains("QuestionAnwer")))
+            {
+                if (callbackQuery.Data.Contains("Delay"))
+                {
+                    var splitData = callbackQuery.Data.Split(";");
+                    var notifyGuid = Guid.Parse(splitData[1]);
+                    StudentNotifyIds userNotifyIds = new StudentNotifyIds
+                    {
+                        NotifyGuid = notifyGuid,
+                        UserId = callbackQuery.From.Id
+                    };
+
+                    await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
+
+                    var questionComon = "🤔расскажи, что обычно мотивирует тебя не терять интерес и фокусироваться на своей цели? Какое из описаний ниже совпадает с тобой максимально точно? \n\n👌это поможет мне лучше подстроиться под тебя и общаться с тобой на одной волне!";
+
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: questionComon,
+                        cancellationToken: cancellationToken);
+                }
+                var answerId = 1;
+                if (callbackQuery.Data.Contains("QuestionAnwer"))
+                {
+                    var splitData = callbackQuery.Data.Split(";");
+                    answerId = Convert.ToInt32(splitData[1]);
+                }
+
+                var questions = GetTeacherQuestions();
+                if (questions != null)
+                {
+                    List<List<InlineKeyboardButton>> inLineList = new List<List<InlineKeyboardButton>>();
+                    List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                    if (answerId > 1)
+                    {
+                        InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"QuestionAnwer;{answerId - 1}");
+                        inLineRow.Add(inLineKeyboardPrev);
+                    }
+
+                    InlineKeyboardButton inLineKeyboard = InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: $"AnswerSelected;{answerId}");
+                    inLineRow.Add(inLineKeyboard);
+
+                    if (answerId < questions.Count())
+                    {
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"QuestionAnwer;{answerId + 1}");
+                        inLineRow.Add(inLineKeyboardNext);
+                    }
+
+                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                    if (callbackQuery.Data.Contains("QuestionAnwer"))
+                        await botClient.EditMessageTextAsync(chatId, messageId, $"{questions[answerId]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+                    else
+                    {
+                        botClient.SendTextMessageAsync(chatId, $"{questions[answerId]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+                    }
+                    return;
+                }
+            }
+
 
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Reason"))
             {
                 var splitData = callbackQuery.Data.Split(";");
                 var currentTeacher = Convert.ToInt32(splitData[1]);
                 await new Common().ChooseTeacher(botClient, callbackQuery, currentTeacher, cancellationToken);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Training"))
+            {
+                var splitData = callbackQuery.Data.Split(";");
+                var currentTraining = Convert.ToInt32(splitData[1]);
+                await new Common().Training(botClient, callbackQuery, currentTraining, cancellationToken);
                 return;
             }
 
@@ -129,67 +176,95 @@ namespace Reflexobot.API
                 await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите задачу:", replyMarkup: inlineTaskKeyboard);
                 return;
             }
+            return;
 
-            var teacherId = int.Parse(callbackQuery.Data);
-            var teachers = _receiverService.GetTeachers();
+            //var teacherId = int.Parse(callbackQuery.Data);
+            //var teachers = _receiverService.GetTeachers();
 
-            if (teachers != null)
-            {
-                var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
-                if (teacher != null)
-                {
-                    StudentPersonIds userPersonIds = new StudentPersonIds
-                    {
-                        PersonId = teacherId,
-                        UserId = callbackQuery.From.Id
-                    };
-                    await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
+            //if (teachers != null)
+            //{
+            //   var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
+            //   if (teacher != null)
+            //   {
+            //       StudentPersonIds userPersonIds = new StudentPersonIds
+            //       {
+            //           PersonId = teacherId,
+            //           UserId = callbackQuery.From.Id
+            //       };
+            //       await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
 
-                    await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
+            //       await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
 
-                    await botClient.SendStickerAsync(
-                        chatId: chatId,
-                        sticker: teacher.Img,
-                        cancellationToken: cancellationToken);
+            //       await botClient.SendStickerAsync(
+            //           chatId: chatId,
+            //           sticker: teacher.Img,
+            //           cancellationToken: cancellationToken);
 
-                    var teacherPhrases = GetTeacherPhrases();
+            //       var teacherPhrases = GetTeacherPhrases();
 
-                    await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: teacherPhrases[teacherId],
-                            cancellationToken: cancellationToken);
+            //       await botClient.SendTextMessageAsync(
+            //               chatId: chatId,
+            //               text: teacherPhrases[teacherId],
+            //               cancellationToken: cancellationToken);
 
-                }
-            }
+            //   }
+            //}
+        }
+
+        public Dictionary<int, string> GetTeacherQuestions()
+        {
+            Dictionary<int, string> phrases = new Dictionary<int, string>();
+            //phrases.Add(0, $"🤔расскажи, что обычно мотивирует тебя не терять интерес и фокусироваться на своей цели? Какое из описаний ниже совпадает с тобой максимально точно? \n\n👌это поможет мне лучше подстроиться под тебя и общаться с тобой на одной волне!");
+            
+            phrases.Add(1, $"🙏 Я - Мыслитель.\n\nЛюблю осознанно подходить к любому процессу, размышляю и во всем ищу смысл.\n\nЯ держу фокус на цели и возвращаюсь к ней время от времени.");
+
+            phrases.Add(2, $"💥Я – Активист.\n\nМне нравится держать ритм и соревноваться, поддерживаю спортивный интерес даже в обучении.\n\nСамодисциплина - моя основа и залог высокой мотивации.");
+
+            phrases.Add(3, $"😎Я – Прагматик. \n\nЯ всегда просчитываю варианты и выгоды, видение будущего успеха помогает мне.\n\nМеня вдохновляют и мотивируют истории успеха.");
+           
+            phrases.Add(4, $"😂Я – Прокрастинатор.\n\nЯ постоянно нахожу важные дела, чтобы не садиться за домашку.\n\nГлавное для меня — это побороть свою лень и договориться с собой.\n\nМоя основа и причина успехов — это внутренняя работа с собой.");
+
+            return phrases;
         }
         public Dictionary<int, string> GetTeacherPhrases()
         {
             Dictionary<int, string> phrases = new Dictionary<int, string>();
-            phrases.Add(1, "Здорово! Будем знакомы! Я -  твой Гуру,  я, также как и ты, люблю осознанность и смысл во всем." +
-                "\nЯ знаю, что ты поставил себе большую и амбициозную цель - и я уверен, что у тебя все получится.Я буду рядом и не дам тебе остановиться на полпути!" +
-                "\nЯ готов появиться в любой момент, когда буду нужен тебе:\n✓  ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp" +
-                "\n✓ ты хочешь услышать мой голос и помедитировать - /meditation" +
-                "\n✓ ты хочешь сфокусироваться на цели - /mygoal" +
-                "\nПомни! Цель не в том, чтобы быть лучше, чем кто - либо, а в том, чтобы быть лучше прежнего тебя.Сегодня ты на верном пути!");
+            phrases.Add(1, "😊Здорово, будем знакомы! Я -  Цифровой Гуру." +
+                            "\nЯ, так же, как и ты, люблю осознанность и смысл во всем." +
+                            "\nЯ знаю, что ты поставил себе большую и амбициозную цель - и я уверен, что у тебя все получится.Я буду рядом и не дам тебе остановиться на полпути!" +
+                            "\n\nЯ готов появиться в любой момент, когда буду нужен тебе: " +
+                            "\n✅ты чувствуешь, что тебе нужна помощь и поддержка - /help" +
+                            "\n✅ты хочешь услышать мой голос и помедитировать - /meditation" +
+                            "\n✅ты хочешь узнать о своих успехах - /mysuccess" +
+                            "\n✅ты хочешь узнать о себе больше - /tellme" +
+                            "\n\n🌟Помни! Цель не в том, чтобы быть лучше, чем кто - либо, а в том, чтобы быть лучше прежнего тебя.");
 
-            phrases.Add(2, "Ух ты!! Я рад, что ты, как и я,  любишь движение вперед! Будем знакомы- я твой Фитнес-тренер на пути обучения!" +
-                            "\nМы вместе добьемся лучших результатов, ты прокачаешься новыми знаниями по полной!" +
-                            "\nЯ готов появиться в любой момент, когда буду нужен тебе: " +
-                            "\n✓  ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /trenerhelp" +
-                            "\n✓ ты хочешь услышать мой голос и взбодриться - /trenerdvizh" +
-                            "\n✓ ты хочешь вспомнить как звучит твоя цель - /mygoal");
+            phrases.Add(2, "Ух ты!! Я рад, что ты, как и я, любишь движение вперед! 🤩"+
+                            "\n\nБудем знакомы - я твой Фитнес - тренер на пути обучения!" +
+                            "\n\n💪Мы вместе добьемся лучших результатов, ты прокачаешься новыми знаниями по полной! Я не дам тебе снизить ритм и потерять форму!" +
+                            "\n\nЯ готов появиться в любой момент, когда буду нужен тебе: " +
+                            "\n✅ты чувствуешь, что тебе нужна помощь и поддержка - /help" +
+                            "\n✅ты хочешь услышать мой голос и помедитировать - /meditation" +
+                            "\n✅ты хочешь узнать о своих успехах - /mysuccess" +
+                            "\n✅ты хочешь узнать о себе больше - /tellme");
 
-            phrases.Add(3, "Коллега, я рад знакомству! Здесь я твой Бизнес-партнер и мы вместе пойдем к твоей цели, чтобы прийти к твоему успеху максимально быстро!" +
-                            "\nЯ разделяю твой бизнес - подход, мне нравится достигать успеха и я также постоянно совершенствуюсь!" +
+            phrases.Add(3, "Коллега, я рад знакомству!" +
+                            "\n\nЗдесь, я твой Бизнес - партнер 😎" +
+                            "\n\nи мы вместе пойдем к твоей цели, чтобы прийти к твоему успеху максимально быстро🚀!" +
+                            "\n\nЯ разделяю твой бизнес - подход, мне нравится достигать успеха, и я также постоянно экспериментирую!" +
+                            "\n\nЯ готов появиться в любой момент, когда буду нужен тебе:" +
+                            "\n✅ты чувствуешь, что тебе нужна помощь и поддержка - /help" +
+                            "\n✅ты хочешь услышать мой голос и помедитировать - /meditation" +
+                            "\n✅ты хочешь узнать о своих успехах - /mysuccess" +
+                            "\n✅ты хочешь узнать о себе больше - /tellme");
+
+            phrases.Add(4, "🌟Круто! Я - Федор Лежебокин и твое отражение!" +
+                            "\n\nЯ буду задавать тебе много вопросов и эмоционально поддерживать тебя. 💪Мы вместе будем бороться с твоей прокрастинацией и идти к твоей цели." +
                             "\nЯ готов появиться в любой момент, когда буду нужен тебе:" +
-                            "\n✓  ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /guruhelp" +
-                            "\n✓ ты хочешь услышать мой голос и удержать фокус на цели -/businessgoal" +
-                            "\n✓ ты хочешь узнать историю успеха - /success");
-
-            phrases.Add(4, "Круто! Я, Федор лежебокин, и я - твое отражение! Я буду задавать тебе много вопросов и эмоционально поддерживать тебя. Мы вместе будем бороться с твоей прокрастинацией и идти к твоей цели." +
-                            "\nЯ готов появиться в любой момент, когда буду нужен тебе: ✓  ты чувствуешь, что теряешь мотивацию и тебе нужна поддержка - /fedorhelp " +
-                            "\n✓ ты хочешь порефлексировать и поразбираться в себе -/fedorref" +
-                            "\n✓ ты хочешь вспомнить как звучит твоя цель - /mygoal");
+                            "\n✅ты чувствуешь, что тебе нужна помощь и поддержка - /help" +
+                            "\n✅ты хочешь услышать мой голос и помедитировать - /meditation" +
+                            "\n✅ты хочешь узнать о своих успехах - /mysuccess" +
+                            "\n✅ты хочешь узнать о себе больше - /tellme");
             return phrases;
         }
     }

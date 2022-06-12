@@ -92,10 +92,76 @@ namespace Reflexobot.API
 
                 
                 await botClient.EditMessageTextAsync(chatId, messageId, $"{phrases[currentHello]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
-
             }
         }
 
+        public async Task Training(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        {
+            Dictionary<int, string> phrases = GetTrainingPhrases();
+            if (phrases != null)
+            {
+                List<List<InlineKeyboardButton>> inLineList = new List<List<InlineKeyboardButton>>();
+                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+
+                InlineKeyboardButton inLineKeyboard = InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: _currentChoice.ToString());
+                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Training;2");
+                inLineRow.Add(inLineKeyboard);
+                inLineRow.Add(inLineKeyboardNext);
+
+                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                await botClient.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: $"{phrases[1]}",
+                replyMarkup: inlineKeyboardMarkup,
+                cancellationToken: cancellationToken);
+            }
+        }
+
+        public async Task Training(ITelegramBotClient botClient, CallbackQuery callbackQuery, int currentTraining, CancellationToken cancellationToken)
+        {
+            Dictionary<int, string> phrases = GetTrainingPhrases();
+            if (phrases != null)
+            {
+                List<List<InlineKeyboardButton>> inLineList = new List<List<InlineKeyboardButton>>();
+                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                if (currentTraining > 1)
+                {
+                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"Training;{currentTraining - 1}");
+                    inLineRow.Add(inLineKeyboardPrev);
+                }
+                if (currentTraining < phrases.Count())
+                {
+                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"Training;{currentTraining + 1}");
+                    inLineRow.Add(inLineKeyboardNext);
+                }
+
+                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+                var chatId = callbackQuery.Message.Chat.Id;
+                var messageId = callbackQuery.Message.MessageId;
+
+
+                await botClient.EditMessageTextAsync(chatId, messageId, $"{phrases[currentTraining]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+            }
+        }
+
+        public Dictionary<int, string> GetTrainingPhrases()
+        {
+            Dictionary<int, string> phrases = new Dictionary<int, string>();
+            phrases.Add(1, "Энергию на достижения мы всегда берем из нашего будущего");
+            phrases.Add(2, "Мы научимся переворачивать наши проблемы в идеальные ситуации");
+            phrases.Add(3, "А как бы я хотел? Это первая ступенька к формированию ВИДЕНИЯ");
+            phrases.Add(4, "Опиши идеальную ситуацию в 2-3 предложениях");
+            phrases.Add(5, "Например\n<b>Что меня смущает?\nЯ не могу сосредоточится на обучении, меня все отвлекает, у меня нет времени</b>");
+            phrases.Add(6, "<b>Идеальная ситуация: я спокоен, у меня есть время, и все условия для успешного обучения</b>");
+            phrases.Add(7, "Назовём эту идеальную ситуацию точкой Б");
+            phrases.Add(8, "Каким бы простым не был навык переворачивания проблемы в идеальную ситуацию");
+            phrases.Add(9, "Он позволяет концентрировать наш мозг на том в чем состоит решение вопроса");
+            phrases.Add(10, "И включает программы подсознания, которые помогают найти решение УДОВЛЕТВОРЯЮЩЕЕ НАШЕЙ ЦЕЛИ");
+            phrases.Add(11, "Здесь мы с Вами научимся выявлять некорректные программы которые мешают решать проблемные ситуации в Вашей жизни и заставляют не замечать возможностей. Начнём?");
+
+            return phrases;
+        }
 
         public Dictionary<int, string> GetHelloPhrases()
         {

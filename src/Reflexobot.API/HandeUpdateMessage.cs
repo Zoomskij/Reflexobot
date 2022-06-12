@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Reflexobot.Services.Inerfaces;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -8,7 +9,7 @@ namespace Reflexobot.API
     public class HandeUpdateMessage
     {
 
-        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, CancellationToken cancellationToken)
         {
             if (message == null)
                 return;
@@ -19,7 +20,7 @@ namespace Reflexobot.API
                     if (string.IsNullOrWhiteSpace(message.Text))
                         return;
 
-                    if (message.Text.Equals("/start") || message.Text.Equals("Старт 🏁"))
+                    if (message.Text.Equals("/start"))
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
@@ -46,29 +47,39 @@ namespace Reflexobot.API
                         text: $"{helloText}",
                         replyMarkup: inlineKeyboardMarkup,
                         cancellationToken: cancellationToken);
-
-                        //await Task.Delay(800);
-
-                        //await botClient.SendTextMessageAsync(
-                        //    chatId: message.Chat.Id,
-                        //    text: $@"Чтобы предложить тебе максимально комфортную для тебя поддержку, давай  познакомимся поближе?",
-                        //    cancellationToken: cancellationToken);
-
-                        //await Task.Delay(800);
-
-                        //await botClient.SendTextMessageAsync(
-                        //    chatId: message.Chat.Id,
-                        //    text: $"Вопрос 1 из 3\n\nРасскажи, что мотивирует конкретно тебя не терять интерес и фокусироваться на цели?",
-                        //    cancellationToken: cancellationToken);
-                       
-                        //await Task.Delay(800);
-
-                        //await new Common().ChooseTeacher(botClient, message, cancellationToken);
                         break;
 
                     }
 
-                    if (message.Text.Equals("Открыть на сайте 🌐"))
+                    if (message.Text.Equals("/training"))
+                    {
+                        await new Common().Training(botClient, message, cancellationToken);
+                    }
+
+                    if (message.Text.Equals("/help"))
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Надейся и жди",
+                            cancellationToken: cancellationToken);
+                    }
+
+                    if (message.Text.Equals("/meditation"))
+                    {
+                        var phrases = receiverService.GetPhrases().ToArray();
+                        if (phrases != null)
+                        {
+                            Random rnd = new Random();
+                            int id = rnd.Next(1, phrases.Count());
+
+                            await botClient.SendTextMessageAsync(
+                                chatId: message.Chat.Id,
+                                text: phrases[id],
+                                cancellationToken: cancellationToken);
+                        }
+                    }
+
+                    if (message.Text.Equals("/web"))
                     {
 
                         InlineKeyboardMarkup inlineKeyboard = new(new[]
@@ -86,22 +97,6 @@ namespace Reflexobot.API
                             replyMarkup: inlineKeyboard,
                             cancellationToken: cancellationToken);
                     }
-
-
-                    // Создание нижней клавиатуры
-                    ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-                    {
-                            new KeyboardButton[] { "Старт 🏁" },
-                            new KeyboardButton[] { "Открыть на сайте 🌐" }
-                    })
-                    {
-                        //ResizeKeyboard = true
-                    };
-                    await botClient.SendTextMessageAsync(
-                        chatId: message.Chat.Id,
-                        text: "Выберите действие",
-                        replyMarkup: replyKeyboardMarkup,
-                        cancellationToken: cancellationToken);
 
                     return;
             }

@@ -10,6 +10,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script srs="https://unpkg.com/vue-chartjs@3.5.1/dist/vue-chartjs.min.js"></script>
+
 
 
 <div class="text-center">
@@ -19,8 +22,8 @@
                 <div>
                     <el-card class="box-card avatar">
                       <div>
-                          <img src="https://cdn-icons-png.flaticon.com/512/4712/4712038.png" height="150px" weight="150px" />
-                          <h2>{{botInfo.firstName}}</h2>
+                          <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="150px" weight="150px" />
+                          <h2>&nbsp;&nbsp;{{botInfo.firstName}}</h2>
                       </div>
                     </el-card>
                 </div>
@@ -29,7 +32,7 @@
                     <el-card class="box-card" v-for="course in courses">
                         <div slot="header" class="clearfix">
                         <span>{{course.name}}</span>
-                        <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
+
                         </div>
                         <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
                             {{lesson.name}}
@@ -37,7 +40,13 @@
                     </el-card>
                 </div>
 
-                <div style="padding-left:10px" v-if=myTeacher.name>
+                <div style="padding-left:10px">
+                    <el-card class="box-card chart-container" style="padding-left:10px; position: relative; height:26vh; width:40vh">
+                        <canvas id="myChart"></canvas>
+                    </el-card>
+                </div>
+
+                <div style="padding-left:10px" v-if=false>
                     <el-card class="box-card teacher">
                       <div>
                           <img :src="myTeacher.img" height="150px" weight="150px" />
@@ -47,7 +56,7 @@
                 </div>
             </div>
             <div id="center" class="center">
-                <div style="width:320px">
+                <div style="width:500px">
                     <el-card class="box-card achievments">
                           <h3>Мои достижения</h3>
                           <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
@@ -62,13 +71,14 @@
                 <div style="padding-left:10px">
                     <el-card v-for="chat in chats" class="box-card achievments">
                         <div style="display:flex; justify-content: left; align-items:center">
-                            <span><b>{{chat.firstName}} {{chat.firstName}}</b></span>
-                            <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                            <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
+                            <el-tooltip v-for="achievment in achievments.slice(0,Math.floor(Math.random() * 9))" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
                               <img 
                                 :src='achievment.img' 
                                 height="30px" 
                                 weight="30px" />
                             </el-tooltip>
+                            
                         </div>
 
                         <div style="padding-top:5px">
@@ -76,6 +86,18 @@
                         </div>
 
                     </el-card>
+                </div>
+
+                <div>
+                      <el-timeline>
+                        <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
+                          <el-card>
+                            <h4>{{lesson.name}}</h4>
+                            <p>{{lesson.description}}</p>
+                          </el-card>
+                        </el-timeline-item>
+    
+                      </el-timeline>
                 </div>
             </div>
         </div>
@@ -104,7 +126,7 @@ var app = new Vue({
         this.getCourses();
         this.getAchievments();
         this.getChats();
-
+        //this.initCharts();
     },
     methods: {
         //Get courses
@@ -113,6 +135,9 @@ var app = new Vue({
             axios.get('/courses')
             .then(function (response) {
                 self.courses = response.data;
+                if (self.courses !== null && self.courses) {
+                    self.getLessons(self.courses[0].guid);
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -173,9 +198,95 @@ var app = new Vue({
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        /////CHARTS////
+        initCharts: function() {
+            this.gradient = canvas
+              .getContext("2d")
+              .createLinearGradient(0, 0, 0, 450);
+            this.gradient2 = this.$refs.canvas
+              .getContext("2d")
+              .createLinearGradient(0, 0, 0, 450);
+
+            this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
+            this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
+            this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+
+            this.gradient2.addColorStop(0, "rgba(0, 231, 255, 0.9)");
+            this.gradient2.addColorStop(0.5, "rgba(0, 231, 255, 0.25)");
+            this.gradient2.addColorStop(1, "rgba(0, 231, 255, 0)");
+
+            this.renderChart(
+              {
+                labels: [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July"
+                ],
+                datasets: [
+                  {
+                    label: "Data One",
+                    borderColor: "#FC2525",
+                    pointBackgroundColor: "white",
+                    borderWidth: 1,
+                    pointBorderColor: "white",
+                    backgroundColor: this.gradient,
+                    data: [40, 39, 10, 40, 39, 80, 40]
+                  },
+                  {
+                    label: "Data Two",
+                    borderColor: "#05CBE1",
+                    pointBackgroundColor: "white",
+                    pointBorderColor: "white",
+                    borderWidth: 1,
+                    backgroundColor: this.gradient2,
+                    data: [60, 55, 32, 10, 2, 12, 53]
+                  }
+                ]
+              },
+              { responsive: true, maintainAspectRatio: false }
+            );
         }
     },
 })
+</script>
+
+<script>
+  const labels = [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Твой прогресс обучения',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: [0, 10, 5, 2, 20, 30, 45],
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {}
+  };
+</script>
+
+<script>
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
 </script>
 
 <style>
