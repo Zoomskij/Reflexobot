@@ -42,7 +42,30 @@ namespace Reflexobot.API
                 var selecteTeacherId = Convert.ToInt32(splitData[1]);
                 var allTeachers = GetTeacherPhrases();
 
-                await botClient.EditMessageTextAsync(chatId, messageId, $"{allTeachers[selecteTeacherId]}", replyMarkup: null, parseMode: ParseMode.Html);
+                var teachers = _receiverService.GetTeachers();
+
+                if (teachers != null)
+                {
+                    var teacher = teachers.FirstOrDefault(x => x.Id == selecteTeacherId);
+                    if (teacher != null)
+                    {
+                        StudentPersonIds userPersonIds = new StudentPersonIds
+                        {
+                            PersonId = selecteTeacherId,
+                            UserId = callbackQuery.From.Id
+                        };
+                        await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
+
+                        await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
+
+                        await botClient.SendStickerAsync(
+                            chatId: chatId,
+                            sticker: teacher.Img,
+                            cancellationToken: cancellationToken);
+                    }
+                }
+
+                await botClient.SendTextMessageAsync(chatId, $"{allTeachers[selecteTeacherId]}", replyMarkup: null, parseMode: ParseMode.Html);
                 return;
             }
 
@@ -139,30 +162,14 @@ namespace Reflexobot.API
                 return;
             }
 
-            if (callbackQuery.Message.Text.Equals("Выберите курс:"))
-            {
-
-                var lessons = _courseService.GetLessonEntitiesByCourseGuid(Guid.Parse(callbackQuery.Data));
-
-                List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
-                var i = 0;
-                foreach (var lesson in lessons)
-                {
-                    var lessonName = i < 2 ? $"{lesson.Name} ✅" : lesson.Name;
-                    inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lessonName, callbackData: lesson.Guid.ToString()) });
-                    i++;
-                }
-
-                InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
-
-                await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите урок:", replyMarkup: inlineLessonKeyboard);
-                return;
-            }
-
             if (callbackQuery.Message.Text.Equals("Выберите урок:"))
             {
-
                 var tasks = _courseService.GetTasksByLessonGuid(Guid.Parse(callbackQuery.Data));
+                if (tasks == null || !tasks.Any())
+                {
+                    await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите урок:", replyMarkup: callbackQuery.Message.ReplyMarkup);
+                    return;
+                }
 
                 List<List<InlineKeyboardButton>> inLineTasksList = new List<List<InlineKeyboardButton>>();
 
@@ -174,41 +181,10 @@ namespace Reflexobot.API
                 InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineTasksList);
 
                 await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите задачу:", replyMarkup: inlineTaskKeyboard);
-                return;
             }
             return;
 
-            //var teacherId = int.Parse(callbackQuery.Data);
-            //var teachers = _receiverService.GetTeachers();
 
-            //if (teachers != null)
-            //{
-            //   var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
-            //   if (teacher != null)
-            //   {
-            //       StudentPersonIds userPersonIds = new StudentPersonIds
-            //       {
-            //           PersonId = teacherId,
-            //           UserId = callbackQuery.From.Id
-            //       };
-            //       await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
-
-            //       await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
-
-            //       await botClient.SendStickerAsync(
-            //           chatId: chatId,
-            //           sticker: teacher.Img,
-            //           cancellationToken: cancellationToken);
-
-            //       var teacherPhrases = GetTeacherPhrases();
-
-            //       await botClient.SendTextMessageAsync(
-            //               chatId: chatId,
-            //               text: teacherPhrases[teacherId],
-            //               cancellationToken: cancellationToken);
-
-            //   }
-            //}
         }
 
         public Dictionary<int, string> GetTeacherQuestions()

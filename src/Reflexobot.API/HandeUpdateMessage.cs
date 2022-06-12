@@ -1,4 +1,5 @@
 ﻿using Reflexobot.Services.Inerfaces;
+using Reflexobot.Services.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -9,7 +10,7 @@ namespace Reflexobot.API
     public class HandeUpdateMessage
     {
 
-        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, CancellationToken cancellationToken)
+        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, ICourseService courseService, CancellationToken cancellationToken)
         {
             if (message == null)
                 return;
@@ -54,6 +55,30 @@ namespace Reflexobot.API
                     if (message.Text.Equals("/training"))
                     {
                         await new Common().Training(botClient, message, cancellationToken);
+                    }
+
+                    if (message.Text.Equals("/lessons"))
+                    {
+                        var courses = courseService.GetCourses();
+                        if (courses != null)
+                        {
+                            var firstCourseId = courses.First().Guid;
+                            var lessons = courseService.GetLessonEntitiesByCourseGuid(firstCourseId);
+                            List<List<InlineKeyboardButton>> inLineLessonsList = new List<List<InlineKeyboardButton>>();
+                            foreach (var lesson in lessons)
+                                inLineLessonsList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: lesson.Name, callbackData: lesson.Guid.ToString()) });
+ 
+
+                            InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonsList);
+
+                            await botClient.SendTextMessageAsync(message.Chat.Id, "Выберите урок: ", replyMarkup: inlineLessonKeyboard);
+                            return;
+                        }
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Надейся и жди",
+                            cancellationToken: cancellationToken);
                     }
 
                     if (message.Text.Equals("/help"))
