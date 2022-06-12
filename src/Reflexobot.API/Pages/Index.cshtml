@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div id="center" class="center">
-                <div style="width:320px">
+                <div style="width:500px">
                     <el-card class="box-card achievments">
                           <h3>Мои достижения</h3>
                           <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
@@ -72,12 +72,13 @@
                     <el-card v-for="chat in chats" class="box-card achievments">
                         <div style="display:flex; justify-content: left; align-items:center">
                             <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
-                            <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                            <el-tooltip v-for="achievment in achievments.slice(0,Math.floor(Math.random() * 9))" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
                               <img 
                                 :src='achievment.img' 
                                 height="30px" 
                                 weight="30px" />
                             </el-tooltip>
+                            
                         </div>
 
                         <div style="padding-top:5px">
@@ -115,7 +116,7 @@ var app = new Vue({
         chats: [],
         botInfo: {},
         myTeacher: {},
-        telegramUserId: '',
+        telegramUserId: ''
     },
     mounted() {
         //TODO: rewrite + authorize
