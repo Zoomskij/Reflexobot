@@ -92,7 +92,6 @@ namespace Reflexobot.API
 
                 
                 await botClient.EditMessageTextAsync(chatId, messageId, $"{phrases[currentHello]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
-
             }
         }
 
