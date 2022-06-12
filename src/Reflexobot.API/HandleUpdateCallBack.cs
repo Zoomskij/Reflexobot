@@ -115,6 +115,14 @@ namespace Reflexobot.API
                 return;
             }
 
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Training"))
+            {
+                var splitData = callbackQuery.Data.Split(";");
+                var currentTraining = Convert.ToInt32(splitData[1]);
+                await new Common().Training(botClient, callbackQuery, currentTraining, cancellationToken);
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Second"))
             {
                 var delays = _userService.GetNotifies();
@@ -168,38 +176,39 @@ namespace Reflexobot.API
                 await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите задачу:", replyMarkup: inlineTaskKeyboard);
                 return;
             }
+            return;
 
-            var teacherId = int.Parse(callbackQuery.Data);
-            var teachers = _receiverService.GetTeachers();
+            //var teacherId = int.Parse(callbackQuery.Data);
+            //var teachers = _receiverService.GetTeachers();
 
-            if (teachers != null)
-            {
-                var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
-                if (teacher != null)
-                {
-                    StudentPersonIds userPersonIds = new StudentPersonIds
-                    {
-                        PersonId = teacherId,
-                        UserId = callbackQuery.From.Id
-                    };
-                    await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
+            //if (teachers != null)
+            //{
+            //    var teacher = teachers.FirstOrDefault(x => x.Id == teacherId);
+            //    if (teacher != null)
+            //    {
+            //        StudentPersonIds userPersonIds = new StudentPersonIds
+            //        {
+            //            PersonId = teacherId,
+            //            UserId = callbackQuery.From.Id
+            //        };
+            //        await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
 
-                    await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
+            //        await botClient.DeleteMessageAsync(chatId, callbackQuery.Message.MessageId, cancellationToken);
 
-                    await botClient.SendStickerAsync(
-                        chatId: chatId,
-                        sticker: teacher.Img,
-                        cancellationToken: cancellationToken);
+            //        await botClient.SendStickerAsync(
+            //            chatId: chatId,
+            //            sticker: teacher.Img,
+            //            cancellationToken: cancellationToken);
 
-                    var teacherPhrases = GetTeacherPhrases();
+            //        var teacherPhrases = GetTeacherPhrases();
 
-                    await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: teacherPhrases[teacherId],
-                            cancellationToken: cancellationToken);
+            //        await botClient.SendTextMessageAsync(
+            //                chatId: chatId,
+            //                text: teacherPhrases[teacherId],
+            //                cancellationToken: cancellationToken);
 
-                }
-            }
+            //    }
+            //}
         }
 
         public Dictionary<int, string> GetTeacherQuestions()
