@@ -29,7 +29,7 @@
                     <el-card class="box-card" v-for="course in courses">
                         <div slot="header" class="clearfix">
                         <span>{{course.name}}</span>
-                        <el-button style="float: right; padding: 3px 0" type="text" @@click="getLessons(course.guid)">Открыть</el-button>
+
                         </div>
                         <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
                             {{lesson.name}}
@@ -77,6 +77,18 @@
 
                     </el-card>
                 </div>
+
+                <div>
+                      <el-timeline>
+                        <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
+                          <el-card>
+                            <h4>{{lesson.name}}</h4>
+                            <p>{{lesson.description}}</p>
+                          </el-card>
+                        </el-timeline-item>
+    
+                      </el-timeline>
+                </div>
             </div>
         </div>
     </div>
@@ -94,7 +106,7 @@ var app = new Vue({
         chats: [],
         botInfo: {},
         myTeacher: {},
-        telegramUserId: ''
+        telegramUserId: '',
     },
     mounted() {
         //TODO: rewrite + authorize
@@ -113,6 +125,9 @@ var app = new Vue({
             axios.get('/courses')
             .then(function (response) {
                 self.courses = response.data;
+                if (self.courses !== null && self.courses) {
+                    self.getLessons(self.courses[0].guid);
+                }
             })
             .catch(function (error) {
                 console.log(error);
