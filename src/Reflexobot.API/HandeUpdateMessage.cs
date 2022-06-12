@@ -56,6 +56,14 @@ namespace Reflexobot.API
                         await new Common().Training(botClient, message, cancellationToken);
                     }
 
+                    if (message.Text.Equals("/help"))
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Надейся и жди",
+                            cancellationToken: cancellationToken);
+                    }
+
                     if (message.Text.Equals("/meditation"))
                     {
                         var phrases = receiverService.GetPhrases().ToArray();
