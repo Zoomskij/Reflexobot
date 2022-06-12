@@ -41,12 +41,12 @@
                 </div>
 
                 <div style="padding-left:10px">
-                    <el-card class="box-card chart-container" style="padding-left:10px; position: relative; height:40vh; width:40vw">
+                    <el-card class="box-card chart-container" style="padding-left:10px; position: relative; height:26vh; width:40vh">
                         <canvas id="myChart"></canvas>
                     </el-card>
                 </div>
 
-                <div style="padding-left:10px" v-if=myTeacher.name>
+                <div style="padding-left:10px" v-if=false>
                     <el-card class="box-card teacher">
                       <div>
                           <img :src="myTeacher.img" height="150px" weight="150px" />
@@ -71,7 +71,7 @@
                 <div style="padding-left:10px">
                     <el-card v-for="chat in chats" class="box-card achievments">
                         <div style="display:flex; justify-content: left; align-items:center">
-                            <span><b>{{chat.firstName}} {{chat.firstName}}</b></span>
+                            <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
                             <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
                               <img 
                                 :src='achievment.img' 
