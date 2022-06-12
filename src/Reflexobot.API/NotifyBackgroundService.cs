@@ -10,13 +10,13 @@ namespace Reflexobot.API
         public NotifyBackgroundService(IServiceScopeFactory scopeFactory, IConfiguration configuration)
         {
             _scopeFactory = scopeFactory;
-            _configuration = configuration; 
+            _configuration = configuration;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-//#if !DEBUG
-//TODO: Закомментировал, чтобы не было рассылок от бота, севрис рабочий.
+            //#if !DEBUG
+            //TODO: Закомментировал, чтобы не было рассылок от бота, севрис рабочий.
 
             //while (cancellationToken.IsCancellationRequested == false)
             //{
@@ -43,13 +43,14 @@ namespace Reflexobot.API
             //        await Task.Delay(6000000, cancellationToken);
             //    }
             //}
-//#endif
+            //#endif
         }
         public class ChatEntityDto
-    {
-        public long Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Username { get; set; }
+        {
+            public long Id { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Username { get; set; }
+        }
     }
 }
