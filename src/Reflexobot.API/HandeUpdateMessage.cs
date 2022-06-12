@@ -19,7 +19,7 @@ namespace Reflexobot.API
                     if (string.IsNullOrWhiteSpace(message.Text))
                         return;
 
-                    if (message.Text.Equals("/start") || message.Text.Equals("Старт 🏁"))
+                    if (message.Text.Equals("/start"))
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
@@ -68,7 +68,7 @@ namespace Reflexobot.API
 
                     }
 
-                    if (message.Text.Equals("Открыть на сайте 🌐"))
+                    if (message.Text.Equals("/web"))
                     {
 
                         InlineKeyboardMarkup inlineKeyboard = new(new[]
@@ -86,22 +86,6 @@ namespace Reflexobot.API
                             replyMarkup: inlineKeyboard,
                             cancellationToken: cancellationToken);
                     }
-
-
-                    // Создание нижней клавиатуры
-                    ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-                    {
-                            new KeyboardButton[] { "Старт 🏁" },
-                            new KeyboardButton[] { "Открыть на сайте 🌐" }
-                    })
-                    {
-                        //ResizeKeyboard = true
-                    };
-                    await botClient.SendTextMessageAsync(
-                        chatId: message.Chat.Id,
-                        text: "Выберите действие",
-                        replyMarkup: replyKeyboardMarkup,
-                        cancellationToken: cancellationToken);
 
                     return;
             }

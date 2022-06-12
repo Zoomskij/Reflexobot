@@ -10,6 +10,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script srs="https://unpkg.com/vue-chartjs@3.5.1/dist/vue-chartjs.min.js"></script>
+
 
 
 <div class="text-center">
@@ -34,6 +37,12 @@
                         <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
                             {{lesson.name}}
                         </div>
+                    </el-card>
+                </div>
+
+                <div style="padding-left:10px">
+                    <el-card class="box-card chart-container" style="padding-left:10px; position: relative; height:40vh; width:40vw">
+                        <canvas id="myChart"></canvas>
                     </el-card>
                 </div>
 
@@ -116,7 +125,7 @@ var app = new Vue({
         this.getCourses();
         this.getAchievments();
         this.getChats();
-
+        //this.initCharts();
     },
     methods: {
         //Get courses
@@ -188,9 +197,95 @@ var app = new Vue({
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        /////CHARTS////
+        initCharts: function() {
+            this.gradient = canvas
+              .getContext("2d")
+              .createLinearGradient(0, 0, 0, 450);
+            this.gradient2 = this.$refs.canvas
+              .getContext("2d")
+              .createLinearGradient(0, 0, 0, 450);
+
+            this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
+            this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
+            this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+
+            this.gradient2.addColorStop(0, "rgba(0, 231, 255, 0.9)");
+            this.gradient2.addColorStop(0.5, "rgba(0, 231, 255, 0.25)");
+            this.gradient2.addColorStop(1, "rgba(0, 231, 255, 0)");
+
+            this.renderChart(
+              {
+                labels: [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July"
+                ],
+                datasets: [
+                  {
+                    label: "Data One",
+                    borderColor: "#FC2525",
+                    pointBackgroundColor: "white",
+                    borderWidth: 1,
+                    pointBorderColor: "white",
+                    backgroundColor: this.gradient,
+                    data: [40, 39, 10, 40, 39, 80, 40]
+                  },
+                  {
+                    label: "Data Two",
+                    borderColor: "#05CBE1",
+                    pointBackgroundColor: "white",
+                    pointBorderColor: "white",
+                    borderWidth: 1,
+                    backgroundColor: this.gradient2,
+                    data: [60, 55, 32, 10, 2, 12, 53]
+                  }
+                ]
+              },
+              { responsive: true, maintainAspectRatio: false }
+            );
         }
     },
 })
+</script>
+
+<script>
+  const labels = [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Твой прогресс обучения',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: [0, 10, 5, 2, 20, 30, 45],
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {}
+  };
+</script>
+
+<script>
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
 </script>
 
 <style>
