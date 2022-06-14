@@ -71,7 +71,6 @@ namespace Reflexobot.API
                                 Message? message = update?.Message;
                                 if (message != null)
                                 {
-                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, cancellationToken);
 
                                     UpdateEntity updateEntity = new UpdateEntity
                                     {
@@ -94,8 +93,12 @@ namespace Reflexobot.API
                                             }
                                         }
                                     };
-
                                     await receiverService.AddUpdate(updateEntity);
+
+
+                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, cancellationToken);
+
+
                                 }
                                 return;
 

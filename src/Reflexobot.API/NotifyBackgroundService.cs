@@ -34,11 +34,12 @@ namespace Reflexobot.API
             //            {
             //                Id = chat.Key
             //            });
-
-            //            foreach (var groupedChat in groupedChats)
-            //            {
-            //                await botClient.SendTextMessageAsync(groupedChat.Id, "<b>Медитация</b> «Если вы думаете, что способны выполнить что-то, или думаете, что не способны на это, вы правы в обоих случаях», — Генри Форд.", Telegram.Bot.Types.Enums.ParseMode.Html);
-            //            }
+            //        }
+            //        foreach (var groupedChat in groupedChats)
+            //        {
+            //            if (groupedChat.Id == 2101741991)
+            //                continue;
+            //            await botClient.SendTextMessageAsync(groupedChat.Id, "<b>Медитация</b> «Для победы недостаточно быть сильным. Вся команда должна верить в победу ». Эмили Войлс", Telegram.Bot.Types.Enums.ParseMode.Html);
             //        }
             //        await Task.Delay(6000000, cancellationToken);
             //    }
