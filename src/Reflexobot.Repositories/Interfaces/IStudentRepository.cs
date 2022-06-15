@@ -11,5 +11,7 @@ namespace Reflexobot.Repositories.Interfaces
     {
         IQueryable<NotifyEntity> GetNotifies();
         Task AddOrUpdateUserNotifyId(StudentNotifyIds userNotifyIds);
+        Task<StudentEntity> GetStudentByChatIdAsync(long chatId);
+        Task AddStudentAsync(StudentEntity student);
     }
 }

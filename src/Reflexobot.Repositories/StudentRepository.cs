@@ -44,6 +44,19 @@ namespace Reflexobot.Repositories
 
             await _context.SaveChangesAsync();
         }
-    
+
+        public async Task<StudentEntity> GetStudentByChatIdAsync(long chatId)
+        {
+            DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();
+            var student = await dbSet.FirstOrDefaultAsync(x => x.ChatId == chatId);
+            return student;
+        }
+        public async Task AddStudentAsync(StudentEntity student)
+        {
+            DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();
+            await dbSet.AddAsync(student);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
