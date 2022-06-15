@@ -8,7 +8,7 @@ namespace Reflexobot.Entities
 {
     public class StudentCourseId : BaseEntity
     {
-        public long UserId { get; set; }
+        public Guid StudentGuid { get; set; }
         public Guid CourseGuid { get; set; }
         public IEnumerable<StudentLessonId> StudentLessonIds { get; set; }
     }

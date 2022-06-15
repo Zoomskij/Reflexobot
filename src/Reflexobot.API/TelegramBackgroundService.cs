@@ -92,22 +92,9 @@ namespace Reflexobot.API
                                             }
                                         }
                                     };
-                                    //Если этой новый чат, созданим под него студента
-                                    var student = await studentService.GetStudentByChatIdAsync(message.From.Id);
-                                    if (student == null)
-                                    {
-                                        student = new StudentEntity
-                                        {
-                                            FirstName = message.From.FirstName,
-                                            LastName = message.From.LastName,
-                                            Username = message.From.Username,
-                                            ChatId = message.From.Id,
-                                        };
-                                        await studentService.AddStudentAsync(student);
-                                    }
                                     await receiverService.AddUpdate(updateEntity);
 
-                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, cancellationToken);
+                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, studentService, cancellationToken);
                                 }
                                 return;
 

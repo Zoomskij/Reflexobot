@@ -8,7 +8,7 @@ namespace Reflexobot.Entities
 {
     public class StudentTaskId : BaseEntity
     {
-        public long UserId { get; set; }
+        public Guid StudentGuid { get; set; }
         public Guid TaskGuid { get; set; }
         public bool IsComplete { get; set; } = false;
     }

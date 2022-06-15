@@ -36,9 +36,9 @@ namespace Reflexobot.Services
             await _updateRepository.AddOrUpdateUserPersonId(userPersonIds);
         }
 
-        public async Task<Person> GetPersonByUserId(long userId)
+        public async Task<Person> GetPersonByStudentGuid(Guid studentGuid)
         {
-            return await _updateRepository.GetPersonByUserId(userId);
+            return await _updateRepository.GetPersonByStudentGuid(studentGuid);
         }
 
         public IEnumerable<string> GetPhrases()
@@ -46,9 +46,9 @@ namespace Reflexobot.Services
             return _updateRepository.GetPhrases().ToList();
         }
 
-        public IEnumerable<string> GetPhrasesbyUserId(long userId)
+        public IEnumerable<string> GetPhrasesByStudentGuid(Guid studentGuid)
         {
-            return _updateRepository.GetPhrasesbyUserId(userId).ToList();
+            return _updateRepository.GetPhrasesByStudentGuid(studentGuid).ToList();
         }
 
         public async Task AddPhrase(int teacherId, string phrase)

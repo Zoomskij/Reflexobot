@@ -15,11 +15,11 @@ namespace Reflexobot.Repositories.Interfaces
 
         Task AddOrUpdateUserPersonId(StudentPersonIds userPersonIds);
 
-        Task<Person> GetPersonByUserId(long userId);
+        Task<Person> GetPersonByStudentGuid(Guid studentGuid);
 
         IEnumerable<string> GetPhrases();
 
-        IQueryable<string> GetPhrasesbyUserId(long userId);
+        IQueryable<string> GetPhrasesByStudentGuid(Guid studentGuid);
 
         Task AddPhrase(int teacherId, string phrase);
 

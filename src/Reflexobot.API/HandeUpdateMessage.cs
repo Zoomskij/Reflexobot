@@ -1,4 +1,5 @@
-﻿using Reflexobot.Services.Inerfaces;
+﻿using Reflexobot.Entities;
+using Reflexobot.Services.Inerfaces;
 using Reflexobot.Services.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,7 +11,7 @@ namespace Reflexobot.API
     public class HandeUpdateMessage
     {
 
-        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, ICourseService courseService, CancellationToken cancellationToken)
+        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, ICourseService courseService, IStudentService studentService, CancellationToken cancellationToken)
         {
             if (message == null)
                 return;
@@ -23,6 +24,20 @@ namespace Reflexobot.API
 
                     if (message.Text.Equals("/start"))
                     {
+                        //Если этой новый чат, созданим под него студента
+                        var student = await studentService.GetStudentByChatIdAsync(message.From.Id);
+                        if (student == null)
+                        {
+                            student = new StudentEntity
+                            {
+                                FirstName = message.From.FirstName,
+                                LastName = message.From.LastName,
+                                Username = message.From.Username,
+                                ChatId = message.From.Id,
+                            };
+                            await studentService.AddStudentAsync(student);
+                        }
+
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: $@"Привет, {message.Chat.FirstName}! Я твой личный помощник и ментор на курсе в Нетологии 🙌",
@@ -39,7 +54,7 @@ namespace Reflexobot.API
                                         "\n✅ и сокращать прокрастинацию!";
        
                         List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Hello;1");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Hello;2");
                         inLineRow.Add(inLineKeyboardNext);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
 

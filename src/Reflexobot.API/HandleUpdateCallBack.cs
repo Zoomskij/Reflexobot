@@ -16,12 +16,12 @@ namespace Reflexobot.API
     {
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
-        private readonly IStudentService _userService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService userService)
+        private readonly IStudentService _studentService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService studentService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
-            _userService = userService;
+            _studentService = studentService;
         }
         public async Task HandleUpdateCallBackAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
@@ -29,7 +29,9 @@ namespace Reflexobot.API
             if (callbackQuery == null)
                 return;
             var chatId = callbackQuery.Message.Chat.Id;
-            var messageId = callbackQuery.Message.MessageId; 
+            var messageId = callbackQuery.Message.MessageId;
+            var student = await _studentService.GetStudentByChatIdAsync(chatId);
+
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Hello"))
             {
                 var splitData = callbackQuery.Data.Split(";");
@@ -55,7 +57,7 @@ namespace Reflexobot.API
                         StudentPersonIds userPersonIds = new StudentPersonIds
                         {
                             PersonId = selecteTeacherId,
-                            UserId = callbackQuery.From.Id
+                            StudentGuid = student.Guid
                         };
                         await _receiverService.AddOrUpdateUserPersonId(userPersonIds);
 
@@ -81,10 +83,10 @@ namespace Reflexobot.API
                     StudentNotifyIds userNotifyIds = new StudentNotifyIds
                     {
                         NotifyGuid = notifyGuid,
-                        UserId = callbackQuery.From.Id
+                        StudentGuid = student.Guid
                     };
 
-                    await _userService.AddOrUpdateUserNotifyId(userNotifyIds);
+                    await _studentService.AddOrUpdateUserNotifyId(userNotifyIds);
 
                     var questionComon = "🤔расскажи, что обычно мотивирует тебя не терять интерес и фокусироваться на своей цели? Какое из описаний ниже совпадает с тобой максимально точно? \n\n👌это поможет мне лучше подстроиться под тебя и общаться с тобой на одной волне!";
 
@@ -134,7 +136,7 @@ namespace Reflexobot.API
 
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Second"))
             {
-                var delays = _userService.GetNotifies();
+                var delays = _studentService.GetNotifies();
 
                 List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
                 foreach (var delay in delays)

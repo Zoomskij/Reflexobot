@@ -9,7 +9,7 @@ namespace Reflexobot.Entities
 {
     public class StudentPersonIds : BaseEntity
     {
-        public long UserId { get; set; }
+        public Guid StudentGuid { get; set; }
         public int PersonId { get; set; }
     }
 }

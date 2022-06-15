@@ -10,7 +10,7 @@ namespace Reflexobot.Entities
     public class StudentAchievment : BaseEntity
     {
         public DateTime CreatedDate { get; set; }
-        public long UserId { get; set; }
+        public Guid StudentGuid { get; set; }
         public Guid AchievmentGuid { get; set; }
         [ForeignKey("AchievmentGuid")]
         public Achievment Achievment { get; set; }
