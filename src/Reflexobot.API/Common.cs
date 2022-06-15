@@ -1,4 +1,5 @@
 ﻿using Reflexobot.API.Helpers;
+using Reflexobot.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,34 +15,65 @@ namespace Reflexobot.API
         public async Task ChooseTeacher(ITelegramBotClient botClient, CallbackQuery callbackQuery, int currentTeacher, CancellationToken cancellationToken)
         {
             var phrases = GetStarStringtPhrases();
-            var chatId = callbackQuery.Message.Chat.Id;
-            var messageId = callbackQuery.Message.MessageId;
-            await PaginationHelper.Pagination(botClient, phrases, chatId, messageId, "NextReason", "SelectReason", string.Empty);
+            NavigationModel model = new NavigationModel
+            {
+                Items = phrases,
+                ChatId = callbackQuery.Message.Chat.Id,
+                MessageId = callbackQuery.Message.MessageId,
+                NavigationCommand = "NextReason",
+                SelectCommand = "SelectReason",
+                NextStepCommand = String.Empty
+            };
+            await NavigationHelper.Navigation(botClient, model);
         }
 
         //Фразы приветствия (самое начало)
         public async Task ChooseHello(ITelegramBotClient botClient, CallbackQuery callbackQuery, int currentHello, CancellationToken cancellationToken)
         {
             var phrases = GetHelloPhrases();
-            var chatId = callbackQuery.Message.Chat.Id;
-            var messageId = callbackQuery.Message.MessageId;
-            await PaginationHelper.Pagination(botClient, phrases, chatId, messageId, "Hello", string.Empty, "Second", currentHello);
+            NavigationModel model = new NavigationModel
+            {
+                Items = phrases,
+                ChatId = callbackQuery.Message.Chat.Id,
+                MessageId = callbackQuery.Message.MessageId,
+                NavigationCommand = "Hello",
+                SelectCommand = string.Empty,
+                NextStepCommand = "Second",
+                CurrentPosition = currentHello
+            };
+            await NavigationHelper.Navigation(botClient, model);
         }
 
         public async Task Training(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
             var phrases = GetTrainingPhrases();
-            var chatId = message.Chat.Id;
-            var messageId = message.MessageId;
-            await PaginationHelper.Pagination(botClient, phrases, chatId, messageId, "Training", string.Empty, string.Empty, isNew: true);
+            NavigationModel model = new NavigationModel
+            {
+                Items = phrases,
+                ChatId = message.Chat.Id,
+                MessageId = message.MessageId,
+                NavigationCommand = "Training",
+                SelectCommand = string.Empty,
+                NextStepCommand = string.Empty,
+                IsNew = true
+            };
+            await NavigationHelper.Navigation(botClient, model);
         }
 
         public async Task Training(ITelegramBotClient botClient, CallbackQuery callbackQuery, int currentTraining, CancellationToken cancellationToken)
         {
             var phrases = GetTrainingPhrases();
-            var chatId = callbackQuery.Message.Chat.Id;
-            var messageId = callbackQuery.Message.MessageId;
-            await PaginationHelper.Pagination(botClient, phrases, chatId, messageId, "Training", string.Empty, string.Empty, currentTraining);
+            NavigationModel model = new NavigationModel
+            {
+                Items = phrases,
+                ChatId = callbackQuery.Message.Chat.Id,
+                MessageId = callbackQuery.Message.MessageId,
+                NavigationCommand = "Training",
+                SelectCommand = string.Empty,
+                NextStepCommand = string.Empty,
+                CurrentPosition = currentTraining
+            };
+            await NavigationHelper.Navigation(botClient, model);
         }
 
         public string[] GetTrainingPhrases()

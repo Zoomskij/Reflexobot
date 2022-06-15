@@ -8,6 +8,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Linq;
 using Reflexobot.API.Helpers;
+using Reflexobot.Common;
 
 namespace Reflexobot.API
 {
@@ -92,7 +93,7 @@ namespace Reflexobot.API
                         text: questionComon,
                         cancellationToken: cancellationToken);
                 }
-                var answerId = 1;
+                var answerId = 0;
                 if (callbackQuery.Data.Contains("QuestionAnwer"))
                 {
                     var splitData = callbackQuery.Data.Split(";");
@@ -100,7 +101,18 @@ namespace Reflexobot.API
                 }
 
                 var questions = GetTeacherQuestions();
-                await PaginationHelper.Pagination(botClient, questions, chatId, messageId, "QuestionAnwer", "AnswerSelected", string.Empty, answerId);
+                NavigationModel model = new NavigationModel
+                {
+                    Items = questions,
+                    ChatId = callbackQuery.Message.Chat.Id,
+                    MessageId = callbackQuery.Message.MessageId,
+                    NavigationCommand = "QuestionAnwer",
+                    SelectCommand = "AnswerSelected",
+                    NextStepCommand = string.Empty,
+                    CurrentPosition = answerId
+                };
+
+                await NavigationHelper.Navigation(botClient, model);
             }
 
 

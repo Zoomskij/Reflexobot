@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reflexobot.Common\Reflexobot.Common.csproj" />
     <ProjectReference Include="..\Reflexobot.Services\Reflexobot.Services.csproj" />
   </ItemGroup>
 
