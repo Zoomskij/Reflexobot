@@ -31,7 +31,7 @@ namespace Reflexobot.Repositories
         public async Task AddOrUpdateUserNotifyId(StudentNotifyIds userNotifyIds)
         {
             DbSet<StudentNotifyIds> dbSet = _context.Set<StudentNotifyIds>();
-            var currentNotify = await dbSet.FirstOrDefaultAsync(x => x.UserId == userNotifyIds.UserId);
+            var currentNotify = await dbSet.FirstOrDefaultAsync(x => x.StudentGuid == userNotifyIds.StudentGuid);
             if (currentNotify != null)
             {
                 currentNotify.NotifyGuid = currentNotify.NotifyGuid;

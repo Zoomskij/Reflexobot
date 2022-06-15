@@ -16,11 +16,11 @@ namespace Reflexobot.Services.Inerfaces
 
         Task AddOrUpdateUserPersonId(StudentPersonIds userPersonIds);
 
-        Task<Person> GetPersonByUserId(long userId);
+        Task<Person> GetPersonByStudentGuid(Guid studentGuid);
 
         IEnumerable<string> GetPhrases();
 
-        IEnumerable<string> GetPhrasesbyUserId(long userId);
+        IEnumerable<string> GetPhrasesByStudentGuid(Guid studentGuid);
 
         Task AddPhrase(int teacherId, string phrase);
 

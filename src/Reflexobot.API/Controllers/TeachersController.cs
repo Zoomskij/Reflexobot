@@ -28,9 +28,9 @@ namespace Reflexobot.API.Controllers
 
         [HttpGet]
         [Route("{userId}")]
-        public async Task<IActionResult> GetTeacher(long userId)
+        public async Task<IActionResult> GetTeacher(Guid studentGuid)
         {
-            var currentTeacher = await _updateRepository.GetPersonByUserId(userId);
+            var currentTeacher = await _updateRepository.GetPersonByStudentGuid(studentGuid);
             return Ok(currentTeacher);
         }
     }
