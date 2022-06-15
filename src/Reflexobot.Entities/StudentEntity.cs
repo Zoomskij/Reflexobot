@@ -11,11 +11,12 @@ namespace Reflexobot.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
-        public int Age { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public List<StudentAchievment> StudentAchievments { get; set; }
-        public Guid GroupGuid { get; set; }
+        public long ChatId { get; set; }
+        public int? Age { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public List<StudentAchievment>? StudentAchievments { get; set; }
+        public Guid? GroupGuid { get; set; }
         public GroupEntity Group { get; set; }
     }
 }

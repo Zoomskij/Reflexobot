@@ -9,8 +9,6 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-
 namespace Reflexobot.API
 {
     public class TelegramBackgroundService : BackgroundService
@@ -37,7 +35,8 @@ namespace Reflexobot.API
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
                 var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
-                var userService = scope.ServiceProvider.GetRequiredService<IStudentService>();
+                var studentService = scope.ServiceProvider.GetRequiredService<IStudentService>();
+
 
                 var botClient = new TelegramBotClient(token.Value);
                 using var cts = new CancellationTokenSource();
@@ -71,7 +70,6 @@ namespace Reflexobot.API
                                 Message? message = update?.Message;
                                 if (message != null)
                                 {
-                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, cancellationToken);
 
                                     UpdateEntity updateEntity = new UpdateEntity
                                     {
@@ -94,15 +92,29 @@ namespace Reflexobot.API
                                             }
                                         }
                                     };
-
+                                    //Если этой новый чат, созданим под него студента
+                                    var student = await studentService.GetStudentByChatIdAsync(message.From.Id);
+                                    if (student == null)
+                                    {
+                                        student = new StudentEntity
+                                        {
+                                            FirstName = message.From.FirstName,
+                                            LastName = message.From.LastName,
+                                            Username = message.From.Username,
+                                            ChatId = message.From.Id,
+                                        };
+                                        await studentService.AddStudentAsync(student);
+                                    }
                                     await receiverService.AddUpdate(updateEntity);
+
+                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, cancellationToken);
                                 }
                                 return;
 
                             case UpdateType.CallbackQuery:
                                 CallbackQuery? callbackQuery = update?.CallbackQuery;
                                 if (callbackQuery != null)
-                                    await new HandleUpdateCallBack(courseService, receiverService, userService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                                    await new HandleUpdateCallBack(courseService, receiverService, studentService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
                                 return;
                         }
                     }
@@ -126,18 +138,6 @@ namespace Reflexobot.API
                 }
 
             }
-        }
-
-        string GetRandomPhrase(IReceiverService receiverService, long userId)
-        {
-
-            var phrases = receiverService.GetPhrasesbyUserId(userId).ToArray();
-            if (phrases == null)
-                return "Некогда медетировать";
-
-            Random rnd = new Random();
-            int num = rnd.Next(0, phrases.Length);
-            return phrases[num];
         }
     }
 }

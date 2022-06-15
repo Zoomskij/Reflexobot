@@ -7,6 +7,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Linq;
+using Reflexobot.API.Helpers;
+using Reflexobot.Common;
 
 namespace Reflexobot.API
 {
@@ -40,6 +42,7 @@ namespace Reflexobot.API
             {
                 var splitData = callbackQuery.Data.Split(";");
                 var selecteTeacherId = Convert.ToInt32(splitData[1]);
+                selecteTeacherId--; //TODO; временно до изменения айдишников персонажей
                 var allTeachers = GetTeacherPhrases();
 
                 var teachers = _receiverService.GetTeachers();
@@ -90,7 +93,7 @@ namespace Reflexobot.API
                         text: questionComon,
                         cancellationToken: cancellationToken);
                 }
-                var answerId = 1;
+                var answerId = 0;
                 if (callbackQuery.Data.Contains("QuestionAnwer"))
                 {
                     var splitData = callbackQuery.Data.Split(";");
@@ -98,35 +101,18 @@ namespace Reflexobot.API
                 }
 
                 var questions = GetTeacherQuestions();
-                if (questions != null)
+                NavigationModel model = new NavigationModel
                 {
-                    List<List<InlineKeyboardButton>> inLineList = new List<List<InlineKeyboardButton>>();
-                    List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                    if (answerId > 1)
-                    {
-                        InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"QuestionAnwer;{answerId - 1}");
-                        inLineRow.Add(inLineKeyboardPrev);
-                    }
+                    Items = questions,
+                    ChatId = callbackQuery.Message.Chat.Id,
+                    MessageId = callbackQuery.Message.MessageId,
+                    NavigationCommand = "QuestionAnwer",
+                    SelectCommand = "AnswerSelected",
+                    NextStepCommand = string.Empty,
+                    CurrentPosition = answerId
+                };
 
-                    InlineKeyboardButton inLineKeyboard = InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: $"AnswerSelected;{answerId}");
-                    inLineRow.Add(inLineKeyboard);
-
-                    if (answerId < questions.Count())
-                    {
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"QuestionAnwer;{answerId + 1}");
-                        inLineRow.Add(inLineKeyboardNext);
-                    }
-
-                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
-
-                    if (callbackQuery.Data.Contains("QuestionAnwer"))
-                        await botClient.EditMessageTextAsync(chatId, messageId, $"{questions[answerId]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
-                    else
-                    {
-                        botClient.SendTextMessageAsync(chatId, $"{questions[answerId]}", replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
-                    }
-                    return;
-                }
+                await NavigationHelper.Navigation(botClient, model);
             }
 
 
@@ -187,19 +173,15 @@ namespace Reflexobot.API
 
         }
 
-        public Dictionary<int, string> GetTeacherQuestions()
+        public string[] GetTeacherQuestions()
         {
-            Dictionary<int, string> phrases = new Dictionary<int, string>();
+            string[] phrases = { 
             //phrases.Add(0, $"🤔расскажи, что обычно мотивирует тебя не терять интерес и фокусироваться на своей цели? Какое из описаний ниже совпадает с тобой максимально точно? \n\n👌это поможет мне лучше подстроиться под тебя и общаться с тобой на одной волне!");
-            
-            phrases.Add(1, $"🙏 Я - Мыслитель.\n\nЛюблю осознанно подходить к любому процессу, размышляю и во всем ищу смысл.\n\nЯ держу фокус на цели и возвращаюсь к ней время от времени.");
-
-            phrases.Add(2, $"💥Я – Активист.\n\nМне нравится держать ритм и соревноваться, поддерживаю спортивный интерес даже в обучении.\n\nСамодисциплина - моя основа и залог высокой мотивации.");
-
-            phrases.Add(3, $"😎Я – Прагматик. \n\nЯ всегда просчитываю варианты и выгоды, видение будущего успеха помогает мне.\n\nМеня вдохновляют и мотивируют истории успеха.");
-           
-            phrases.Add(4, $"😂Я – Прокрастинатор.\n\nЯ постоянно нахожу важные дела, чтобы не садиться за домашку.\n\nГлавное для меня — это побороть свою лень и договориться с собой.\n\nМоя основа и причина успехов — это внутренняя работа с собой.");
-
+                $"🙏 Я - Мыслитель.\n\nЛюблю осознанно подходить к любому процессу, размышляю и во всем ищу смысл.\n\nЯ держу фокус на цели и возвращаюсь к ней время от времени.",
+                $"💥Я – Активист.\n\nМне нравится держать ритм и соревноваться, поддерживаю спортивный интерес даже в обучении.\n\nСамодисциплина - моя основа и залог высокой мотивации.",
+                $"😎Я – Прагматик. \n\nЯ всегда просчитываю варианты и выгоды, видение будущего успеха помогает мне.\n\nМеня вдохновляют и мотивируют истории успеха.",
+                $"😂Я – Прокрастинатор.\n\nЯ постоянно нахожу важные дела, чтобы не садиться за домашку.\n\nГлавное для меня — это побороть свою лень и договориться с собой.\n\nМоя основа и причина успехов — это внутренняя работа с собой."
+            };
             return phrases;
         }
         public Dictionary<int, string> GetTeacherPhrases()

@@ -39,7 +39,7 @@ namespace Reflexobot.API
                                         "\n✅ и сокращать прокрастинацию!";
        
                         List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Hello;2");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Hello;1");
                         inLineRow.Add(inLineKeyboardNext);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
 
