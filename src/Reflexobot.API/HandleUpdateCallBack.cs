@@ -117,7 +117,7 @@ namespace Reflexobot.API
                 await NavigationHelper.Navigation(botClient, model);
             }
 
-            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Course"))
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("NavigationCourse;"))
             {
                 var courses = _courseService.GetCourses();
                 var images = courses.Select(x => x.Img).ToArray();
@@ -129,8 +129,8 @@ namespace Reflexobot.API
                     Images = images,
                     ChatId = callbackQuery.Message.Chat.Id,
                     MessageId = callbackQuery.Message.MessageId,
-                    NavigationCommand = "Course",
-                    SelectCommand = string.Empty,
+                    NavigationCommand = "NavigationCourse",
+                    SelectCommand = "SelectedCourse",
                     NextStepCommand = string.Empty,
                     CurrentPosition = currentCourse
                 };
@@ -170,6 +170,33 @@ namespace Reflexobot.API
                 await botClient.EditMessageTextAsync(chatId, messageId, $"☝️<b>как часто ты хотел бы общаться со мной?</b>", replyMarkup: inlineTaskKeyboard, parseMode: ParseMode.Html);
 
                 return;
+            }
+
+            if (callbackQuery.Data.Contains("SelectedCourse;"))
+            {
+                var splitData = callbackQuery.Data.Split(";");
+                var currentTeacher = Convert.ToInt32(splitData[1]);
+
+                //TODO: брать из параметра
+                var courseGuid = Guid.Parse("8B7AFF9B-E2D0-494F-85BD-D29F96C6AB65");
+                var lessons = _courseService.GetLessonEntitiesByCourseGuid(courseGuid);
+
+                if (lessons == null || !lessons.Any())
+                {
+                    await botClient.EditMessageTextAsync(chatId, messageId, $"Выберите урок:", replyMarkup: callbackQuery.Message.ReplyMarkup);
+                    return;
+                }
+
+                List<List<InlineKeyboardButton>> inLineLessonList = new List<List<InlineKeyboardButton>>();
+
+                foreach (var lesson in lessons)
+                {
+                    inLineLessonList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: $"{lesson.Name}", callbackData: lesson.Guid.ToString()) });
+                }
+
+                InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonList);
+                await botClient.EditMessageReplyMarkupAsync(chatId, messageId);
+                await botClient.SendTextMessageAsync(chatId,"<b>Выберите урок:</b>", replyMarkup: inlineLessonKeyboard, parseMode: ParseMode.Html);
             }
 
             if (callbackQuery.Data.Equals("Выберите урок:"))

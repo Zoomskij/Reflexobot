@@ -93,13 +93,9 @@ namespace Reflexobot.API.Helpers
                 {
                     await botClient.SendMediaGroupAsync(model.ChatId, media);
                 }
-
-                    //await botClient.SendStickerAsync(model.ChatId, sticker: url,  replyMarkup: inlineKeyboardMarkup);
                 else
                 {
                     await botClient.EditMessageMediaAsync(model.ChatId, model.MessageId, photo, replyMarkup: inlineKeyboardMarkup);
-                    //await botClient.DeleteMessageAsync(model.ChatId, model.MessageId);
-                   // await botClient.SendStickerAsync(model.ChatId, sticker: url, replyMarkup: inlineKeyboardMarkup);
                 }
             }
         }

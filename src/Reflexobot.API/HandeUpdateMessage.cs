@@ -75,7 +75,7 @@ namespace Reflexobot.API
                     if (message.Text.Equals("/courses"))
                     {
                         List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: "Course;1");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: "NavigationCourse;1");
                         inLineRow.Add(inLineKeyboardNext);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
                         var courses = courseService.GetCourses();
