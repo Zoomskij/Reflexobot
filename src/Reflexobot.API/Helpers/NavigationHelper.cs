@@ -16,7 +16,7 @@ namespace Reflexobot.API.Helpers
                 List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
                 if (model.CurrentPosition > 0)
                 {
-                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{model.NavigationCommand};{model.CurrentPosition - 1}");
+                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "⬅️ Назад", callbackData: $"{model.NavigationCommand};{model.CurrentPosition - 1}");
                     inLineRow.Add(inLineKeyboardPrev);
                 }
 
@@ -28,14 +28,14 @@ namespace Reflexobot.API.Helpers
 
                 if (model.CurrentPosition < model.Items.Count()-1)
                 {
-                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NavigationCommand};{model.CurrentPosition + 1}");
+                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: $"{model.NavigationCommand};{model.CurrentPosition + 1}");
                     inLineRow.Add(inLineKeyboardNext);
                 }
                 else 
                 {
                     if (!string.IsNullOrWhiteSpace(model.NextStepCommand))
                     {
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NextStepCommand}");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: $"{model.NextStepCommand}");
                         inLineRow.Add(inLineKeyboardNext);
                     }
 
@@ -55,7 +55,7 @@ namespace Reflexobot.API.Helpers
                 List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
                 if (model.CurrentPosition > 0)
                 {
-                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{model.NavigationCommand};{model.CurrentPosition - 1}");
+                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "⬅️ Назад", callbackData: $"{model.NavigationCommand};{model.CurrentPosition - 1}");
                     inLineRow.Add(inLineKeyboardPrev);
                 }
 
@@ -67,27 +67,39 @@ namespace Reflexobot.API.Helpers
 
                 if (model.CurrentPosition < model.Images.Count() - 1)
                 {
-                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NavigationCommand};{model.CurrentPosition + 1}");
+                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: $"{model.NavigationCommand};{model.CurrentPosition + 1}");
                     inLineRow.Add(inLineKeyboardNext);
                 }
                 else
                 {
                     if (!string.IsNullOrWhiteSpace(model.NextStepCommand))
                     {
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NextStepCommand}");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: $"{model.NextStepCommand}");
                         inLineRow.Add(inLineKeyboardNext);
                     }
 
                 }
                 var url = model.Images[model.CurrentPosition];
+
+                InputMediaPhoto photo = new InputMediaPhoto(url);
+
                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
 
+                var media = new IAlbumInputMedia[]
+                {
+                        new InputMediaPhoto(url)
+                };
                 if (model.IsNew)
-                    await botClient.SendStickerAsync(model.ChatId, sticker: url,  replyMarkup: inlineKeyboardMarkup);
+                {
+                    await botClient.SendMediaGroupAsync(model.ChatId, media);
+                }
+
+                    //await botClient.SendStickerAsync(model.ChatId, sticker: url,  replyMarkup: inlineKeyboardMarkup);
                 else
                 {
-                    await botClient.DeleteMessageAsync(model.ChatId, model.MessageId);
-                    await botClient.SendStickerAsync(model.ChatId, sticker: url, replyMarkup: inlineKeyboardMarkup);
+                    await botClient.EditMessageMediaAsync(model.ChatId, model.MessageId, photo, replyMarkup: inlineKeyboardMarkup);
+                    //await botClient.DeleteMessageAsync(model.ChatId, model.MessageId);
+                   // await botClient.SendStickerAsync(model.ChatId, sticker: url, replyMarkup: inlineKeyboardMarkup);
                 }
             }
         }

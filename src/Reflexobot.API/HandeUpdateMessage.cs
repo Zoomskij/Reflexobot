@@ -75,17 +75,19 @@ namespace Reflexobot.API
                     if (message.Text.Equals("/courses"))
                     {
                         List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Course;1");
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше ➡️", callbackData: "Course;1");
                         inLineRow.Add(inLineKeyboardNext);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
                         var courses = courseService.GetCourses();
                         var course = courses.First();
-                        await botClient.SendStickerAsync(
-                            chatId: message.Chat.Id,
-                            sticker: course.Img,
-                            replyMarkup: inlineKeyboardMarkup,
-                            cancellationToken: cancellationToken);
 
+                        //Hack: Так как апишка не позвоялет нам послать одним сообщением картику и разметку к ней, 
+                        //посылаем сообщение и сразу же делаем инкремент сообщения.
+                        //Возможны коллизии при одновременной отправке сообщений
+                        InputMediaPhoto photo = new InputMediaPhoto(course.Img);
+                        var media = new IAlbumInputMedia[] { photo };
+                        await botClient.SendMediaGroupAsync(message.Chat.Id, media);
+                        await botClient.EditMessageMediaAsync(message.Chat.Id, message.MessageId+1, photo, replyMarkup: inlineKeyboardMarkup);
                     }
 
                     if (message.Text.Equals("/lessons"))
