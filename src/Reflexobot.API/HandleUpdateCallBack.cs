@@ -117,6 +117,28 @@ namespace Reflexobot.API
                 await NavigationHelper.Navigation(botClient, model);
             }
 
+            if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Course"))
+            {
+                var courses = _courseService.GetCourses();
+                var images = courses.Select(x => x.Img).ToArray();
+
+                var splitData = callbackQuery.Data.Split(";");
+                var currentCourse = Convert.ToInt32(splitData[1]);
+                NavigationModel model = new NavigationModel
+                {
+                    Images = images,
+                    ChatId = callbackQuery.Message.Chat.Id,
+                    MessageId = callbackQuery.Message.MessageId,
+                    NavigationCommand = "Course",
+                    SelectCommand = string.Empty,
+                    NextStepCommand = string.Empty,
+                    CurrentPosition = currentCourse
+                };
+
+                await NavigationHelper.Navigation(botClient, model);
+                return;
+            }
+
 
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Reason"))
             {
@@ -150,7 +172,7 @@ namespace Reflexobot.API
                 return;
             }
 
-            if (callbackQuery.Message.Text.Equals("Выберите урок:"))
+            if (callbackQuery.Data.Equals("Выберите урок:"))
             {
                 var tasks = _courseService.GetTasksByLessonGuid(Guid.Parse(callbackQuery.Data));
                 if (tasks == null || !tasks.Any())

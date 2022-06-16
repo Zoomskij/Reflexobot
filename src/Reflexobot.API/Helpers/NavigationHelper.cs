@@ -1,5 +1,7 @@
 ﻿using Reflexobot.Common;
 using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Reflexobot.API.Helpers
@@ -45,6 +47,48 @@ namespace Reflexobot.API.Helpers
                     await botClient.SendTextMessageAsync(model.ChatId, $"{text}", replyMarkup: inlineKeyboardMarkup, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
                 else
                     await botClient.EditMessageTextAsync(model.ChatId, model.MessageId, $"{text}", replyMarkup: inlineKeyboardMarkup, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+            }
+            // Навигация по изображениям
+            if (model.Images != null)
+            {
+                List<List<InlineKeyboardButton>> inLineList = new List<List<InlineKeyboardButton>>();
+                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                if (model.CurrentPosition > 0)
+                {
+                    InlineKeyboardButton inLineKeyboardPrev = InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{model.NavigationCommand};{model.CurrentPosition - 1}");
+                    inLineRow.Add(inLineKeyboardPrev);
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.SelectCommand))
+                {
+                    InlineKeyboardButton inLineKeyboard = InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: $"{model.SelectCommand};{model.CurrentPosition}");
+                    inLineRow.Add(inLineKeyboard);
+                }
+
+                if (model.CurrentPosition < model.Images.Count() - 1)
+                {
+                    InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NavigationCommand};{model.CurrentPosition + 1}");
+                    inLineRow.Add(inLineKeyboardNext);
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(model.NextStepCommand))
+                    {
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{model.NextStepCommand}");
+                        inLineRow.Add(inLineKeyboardNext);
+                    }
+
+                }
+                var url = model.Images[model.CurrentPosition];
+                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                if (model.IsNew)
+                    await botClient.SendStickerAsync(model.ChatId, sticker: url,  replyMarkup: inlineKeyboardMarkup);
+                else
+                {
+                    await botClient.DeleteMessageAsync(model.ChatId, model.MessageId);
+                    await botClient.SendStickerAsync(model.ChatId, sticker: url, replyMarkup: inlineKeyboardMarkup);
+                }
             }
         }
     }

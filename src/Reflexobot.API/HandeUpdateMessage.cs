@@ -72,6 +72,22 @@ namespace Reflexobot.API
                         await new Common().Training(botClient, message, cancellationToken);
                     }
 
+                    if (message.Text.Equals("/courses"))
+                    {
+                        List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                        InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: "Course;1");
+                        inLineRow.Add(inLineKeyboardNext);
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+                        var courses = courseService.GetCourses();
+                        var course = courses.First();
+                        await botClient.SendStickerAsync(
+                            chatId: message.Chat.Id,
+                            sticker: course.Img,
+                            replyMarkup: inlineKeyboardMarkup,
+                            cancellationToken: cancellationToken);
+
+                    }
+
                     if (message.Text.Equals("/lessons"))
                     {
                         var courses = courseService.GetCourses();

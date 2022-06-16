@@ -13,6 +13,10 @@ namespace Reflexobot.Common
         /// </summary>
         public string[] Items { get; set; }
         /// <summary>
+        /// Список для навигации по картинкам
+        /// </summary>
+        public string[] Images { get; set; }
+        /// <summary>
         /// Id чата
         /// </summary>
         public long ChatId { get; set; }
