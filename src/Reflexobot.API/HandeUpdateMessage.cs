@@ -11,7 +11,13 @@ namespace Reflexobot.API
     public class HandeUpdateMessage
     {
 
-        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, Message message, IReceiverService receiverService, ICourseService courseService, IStudentService studentService, CancellationToken cancellationToken)
+        public async Task HandeUpdateMessageAsync(ITelegramBotClient botClient, 
+            Message message, 
+            IReceiverService receiverService, 
+            ICourseService courseService, 
+            IStudentService studentService,
+            INoteService noteService,
+            CancellationToken cancellationToken)
         {
             if (message == null)
                 return;
@@ -63,7 +69,7 @@ namespace Reflexobot.API
                         text: $"{helloText}",
                         replyMarkup: inlineKeyboardMarkup,
                         cancellationToken: cancellationToken);
-                        break;
+                        return;
 
                     }
 
@@ -155,6 +161,31 @@ namespace Reflexobot.API
                             replyMarkup: inlineKeyboard,
                             cancellationToken: cancellationToken);
                     }
+
+                    if (message.Text.Equals("/note"))
+                    {
+                        var notes = noteService.GetNotes();
+                        if (notes != null)
+                        {
+                            foreach (var note in notes)
+                            {
+                                await botClient.SendTextMessageAsync(
+                                chatId: message.Chat.Id,
+                                text: note.Text,
+                                cancellationToken: cancellationToken);
+                            }
+                        }
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Добавьте замтеку: ",
+                            cancellationToken: cancellationToken);
+                        return;
+                    }
+
+                    //TODO: add command for reciever
+                    //var currentStudent = await studentService.GetStudentByChatIdAsync(message.From.Id);
+                    //await noteService.AddNoteAsync(message.Text, currentStudent.Guid);
+
 
                     return;
             }

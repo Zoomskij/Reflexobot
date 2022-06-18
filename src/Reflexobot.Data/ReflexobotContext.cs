@@ -27,6 +27,7 @@ namespace Reflexobot.Data
         public DbSet<StudentTaskId> StudentTaskIds { get; set; }
         public DbSet<Achievment> Achievments { get; set; }
         public DbSet<StudentAchievment> StudentAchievments { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

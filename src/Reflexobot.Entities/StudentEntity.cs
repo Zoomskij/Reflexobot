@@ -18,5 +18,6 @@ namespace Reflexobot.Entities
         public List<StudentAchievment>? StudentAchievments { get; set; }
         public Guid? GroupGuid { get; set; }
         public GroupEntity Group { get; set; }
+        public IEnumerable<Note> Notes { get; set; }
     }
 }
