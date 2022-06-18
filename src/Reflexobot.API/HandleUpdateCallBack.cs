@@ -90,16 +90,19 @@ namespace Reflexobot.API
 
                     var questionComon = "🤔расскажи, что обычно мотивирует тебя не терять интерес и фокусироваться на своей цели? Какое из описаний ниже совпадает с тобой максимально точно? \n\n👌это поможет мне лучше подстроиться под тебя и общаться с тобой на одной волне!";
 
-                    await botClient.SendTextMessageAsync(
+                    await botClient.EditMessageTextAsync(
                         chatId: chatId,
+                        messageId: messageId,
                         text: questionComon,
                         cancellationToken: cancellationToken);
                 }
                 var answerId = 0;
+                var isNew = true;
                 if (callbackQuery.Data.Contains("QuestionAnwer"))
                 {
                     var splitData = callbackQuery.Data.Split(";");
                     answerId = Convert.ToInt32(splitData[1]);
+                    isNew = false;
                 }
 
                 var questions = GetTeacherQuestions();
@@ -111,7 +114,8 @@ namespace Reflexobot.API
                     NavigationCommand = "QuestionAnwer",
                     SelectCommand = "AnswerSelected",
                     NextStepCommand = string.Empty,
-                    CurrentPosition = answerId
+                    CurrentPosition = answerId,
+                    IsNew = isNew
                 };
 
                 await NavigationHelper.Navigation(botClient, model);
