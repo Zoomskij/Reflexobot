@@ -10,8 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script srs="https://unpkg.com/vue-chartjs@3.5.1/dist/vue-chartjs.min.js"></script>
 
 
 
@@ -28,10 +26,10 @@
                     </el-card>
                 </div>
 
-                <div style="padding-left:10px">
-                    <el-card class="box-card" v-for="course in courses">
+                <div v-for="course in courses" style="padding-left:10px; display: flex;">
+                    <el-card class="box-card" >
                         <div slot="header" class="clearfix">
-                        <span>{{course.name}}</span>
+                        <span><b>{{course.name}}</b></span>
 
                         </div>
                         <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
@@ -40,9 +38,16 @@
                     </el-card>
                 </div>
 
-                <div style="padding-left:10px">
-                    <el-card class="box-card chart-container" style="padding-left:10px; position: relative; height:26vh; width:40vh">
-                        <canvas id="myChart"></canvas>
+                <div style="padding-left:10px; display: flex;">
+                    <el-card class="box-card achievments">
+                          <h3>Мои достижения</h3>
+                          <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                              <img 
+                                :src='achievment.img' 
+                                height="60px" 
+                                weight="60px" />
+                            </el-tooltip>
+
                     </el-card>
                 </div>
 
@@ -56,18 +61,7 @@
                 </div>
             </div>
             <div id="center" class="center">
-                <div style="width:500px">
-                    <el-card class="box-card achievments">
-                          <h3>Мои достижения</h3>
-                          <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
-                              <img 
-                                :src='achievment.img' 
-                                height="60px" 
-                                weight="60px" />
-                            </el-tooltip>
 
-                    </el-card>
-                </div>
                 <div style="padding-left:10px">
                     <el-card v-for="chat in chats" class="box-card achievments">
                         <div style="display:flex; justify-content: left; align-items:center">
@@ -136,7 +130,7 @@ var app = new Vue({
             .then(function (response) {
                 self.courses = response.data;
                 if (self.courses !== null && self.courses) {
-                    self.getLessons(self.courses[0].guid);
+                    self.getLessons('8B7AFF9B-E2D0-494F-85BD-D29F96C6AB65');
                 }
             })
             .catch(function (error) {
@@ -255,39 +249,7 @@ var app = new Vue({
 })
 </script>
 
-<script>
-  const labels = [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-  ];
 
-  const data = {
-    labels: labels,
-    datasets: [{
-      label: 'Твой прогресс обучения',
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: [0, 10, 5, 2, 20, 30, 45],
-    }]
-  };
-
-  const config = {
-    type: 'line',
-    data: data,
-    options: {}
-  };
-</script>
-
-<script>
-  const myChart = new Chart(
-    document.getElementById('myChart'),
-    config
-  );
-</script>
 
 <style>
   .common {
