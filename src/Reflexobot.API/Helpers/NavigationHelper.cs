@@ -40,7 +40,9 @@ namespace Reflexobot.API.Helpers
                     }
 
                 }
-                var text = model.Items[model.CurrentPosition];
+                string text = "1";
+                if (model.CurrentPosition < model.Items.Count())
+                    text = model.Items[model.CurrentPosition];
                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
                 
                 if (model.IsNew)
