@@ -10,6 +10,7 @@ namespace Reflexobot.Services.Interfaces
     public interface ICourseService
     {
         IEnumerable<CourseEntity> GetCourses();
+        Task<CourseEntity> GetCourse(Guid guid);
         IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid);
         IEnumerable<TaskEntity> GetTasksByLessonGuid(Guid guid);
     }

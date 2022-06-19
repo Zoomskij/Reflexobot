@@ -21,7 +21,13 @@ namespace Reflexobot.Repositories
         }
         public IEnumerable<CourseEntity> GetCourses()
         {
-            var data = _dbSet.AsNoTracking();
+            var data = _dbSet.Include(x => x.Goal).AsNoTracking();
+            return data;
+        }
+
+        public async Task<CourseEntity> GetCourse(Guid guid)
+        {
+            var data = await _dbSet.Include(x => x.Goal).FirstOrDefaultAsync(x => x.Guid == guid);
             return data;
         }
 

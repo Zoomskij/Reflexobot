@@ -200,6 +200,10 @@ namespace Reflexobot.API
 
                 InlineKeyboardMarkup inlineLessonKeyboard = new InlineKeyboardMarkup(inLineLessonList);
                 await botClient.EditMessageReplyMarkupAsync(chatId, messageId);
+
+                var curse = await _courseService.GetCourse(courseGuid);
+                await botClient.SendTextMessageAsync(chatId, $"<b>Цель курса:</b>{curse?.Goal?.Text}", parseMode: ParseMode.Html);
+
                 await botClient.SendTextMessageAsync(chatId,"<b>Выберите урок:</b>", replyMarkup: inlineLessonKeyboard, parseMode: ParseMode.Html);
             }
 
