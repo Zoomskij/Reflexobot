@@ -30,6 +30,9 @@ builder.Services.AddTransient<IAchievmentService, AchievmentService>();
 builder.Services.AddTransient<INoteRepository, NoteRepository>();
 builder.Services.AddTransient<INoteService, NoteService>();
 
+builder.Services.AddTransient<IGoalRepository, GoalRepository>();
+builder.Services.AddTransient<IGoalService, GoalService>();
+
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<PingBackgroundService>();
 builder.Services.AddHostedService<NotifyBackgroundService>();
