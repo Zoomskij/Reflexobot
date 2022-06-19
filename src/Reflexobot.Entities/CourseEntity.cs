@@ -13,5 +13,6 @@ namespace Reflexobot.Entities
         public string Img { get; set; }
         public IEnumerable<LessonEntity> Lessons { get; set; }
         public IEnumerable<GroupEntity> Groups { get; set; }
+        public Goal? Goal { get; set; }
     }
 }

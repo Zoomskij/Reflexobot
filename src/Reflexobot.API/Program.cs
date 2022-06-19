@@ -27,6 +27,9 @@ builder.Services.AddTransient<IStudentService, StudentService>();
 builder.Services.AddTransient<IAchievmentRepository, AchievmentRepository>();
 builder.Services.AddTransient<IAchievmentService, AchievmentService>();
 
+builder.Services.AddTransient<INoteRepository, NoteRepository>();
+builder.Services.AddTransient<INoteService, NoteService>();
+
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<PingBackgroundService>();
 builder.Services.AddHostedService<NotifyBackgroundService>();

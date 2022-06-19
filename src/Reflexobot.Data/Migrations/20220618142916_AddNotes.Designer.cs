@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reflexobot.Data;
 
@@ -11,9 +12,10 @@ using Reflexobot.Data;
 namespace Reflexobot.Data.Migrations
 {
     [DbContext(typeof(ReflexobotContext))]
-    partial class ReflexobotContextModelSnapshot : ModelSnapshot
+    [Migration("20220618142916_AddNotes")]
+    partial class AddNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,9 +57,6 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("GoalGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Img")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -68,27 +67,7 @@ namespace Reflexobot.Data.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("GoalGuid");
-
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("Reflexobot.Entities.Goal", b =>
-                {
-                    b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Guid");
-
-                    b.ToTable("Goals");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.GroupEntity", b =>
@@ -128,9 +107,6 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("GoalGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -138,8 +114,6 @@ namespace Reflexobot.Data.Migrations
                     b.HasKey("Guid");
 
                     b.HasIndex("CourseGuid");
-
-                    b.HasIndex("GoalGuid");
 
                     b.ToTable("Lessons");
                 });
@@ -286,9 +260,6 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("GoalGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("GroupGuid")
                         .HasColumnType("uniqueidentifier");
 
@@ -304,8 +275,6 @@ namespace Reflexobot.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Guid");
-
-                    b.HasIndex("GoalGuid");
 
                     b.HasIndex("GroupGuid");
 
@@ -406,9 +375,6 @@ namespace Reflexobot.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("GoalGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("LessonGuid")
                         .HasColumnType("uniqueidentifier");
 
@@ -417,8 +383,6 @@ namespace Reflexobot.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Guid");
-
-                    b.HasIndex("GoalGuid");
 
                     b.HasIndex("LessonGuid");
 
@@ -510,15 +474,6 @@ namespace Reflexobot.Data.Migrations
                     b.ToTable("Updates");
                 });
 
-            modelBuilder.Entity("Reflexobot.Entities.CourseEntity", b =>
-                {
-                    b.HasOne("Reflexobot.Entities.Goal", "Goal")
-                        .WithMany()
-                        .HasForeignKey("GoalGuid");
-
-                    b.Navigation("Goal");
-                });
-
             modelBuilder.Entity("Reflexobot.Entities.GroupEntity", b =>
                 {
                     b.HasOne("Reflexobot.Entities.CourseEntity", "Course")
@@ -538,13 +493,7 @@ namespace Reflexobot.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reflexobot.Entities.Goal", "Goal")
-                        .WithMany()
-                        .HasForeignKey("GoalGuid");
-
                     b.Navigation("Course");
-
-                    b.Navigation("Goal");
                 });
 
             modelBuilder.Entity("Reflexobot.Entities.Note", b =>
@@ -575,15 +524,9 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.StudentEntity", b =>
                 {
-                    b.HasOne("Reflexobot.Entities.Goal", "Goal")
-                        .WithMany()
-                        .HasForeignKey("GoalGuid");
-
                     b.HasOne("Reflexobot.Entities.GroupEntity", "Group")
                         .WithMany("Students")
                         .HasForeignKey("GroupGuid");
-
-                    b.Navigation("Goal");
 
                     b.Navigation("Group");
                 });
@@ -604,17 +547,11 @@ namespace Reflexobot.Data.Migrations
 
             modelBuilder.Entity("Reflexobot.Entities.TaskEntity", b =>
                 {
-                    b.HasOne("Reflexobot.Entities.Goal", "Goal")
-                        .WithMany()
-                        .HasForeignKey("GoalGuid");
-
                     b.HasOne("Reflexobot.Entities.LessonEntity", "Lesson")
                         .WithMany("Tasks")
                         .HasForeignKey("LessonGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Goal");
 
                     b.Navigation("Lesson");
                 });

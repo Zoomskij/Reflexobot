@@ -15,5 +15,6 @@ namespace Reflexobot.Entities
         public Guid LessonGuid { get; set; }
         [JsonIgnore]
         public LessonEntity Lesson { get; set; }
+        public Goal? Goal { get; set; }
     }
 }
