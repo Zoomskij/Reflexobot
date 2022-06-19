@@ -19,5 +19,6 @@ namespace Reflexobot.Entities
         public Guid? GroupGuid { get; set; }
         public GroupEntity Group { get; set; }
         public IEnumerable<Note> Notes { get; set; }
+        public Goal? Goal { get; set; }
     }
 }
