@@ -23,5 +23,12 @@ namespace Reflexobot.API.Controllers
             return Ok(scenarios);
         }
 
+        [HttpPost]
+        [Route("")]
+        public async Task AddScenario(string text)
+        {
+            await _scenarioService.AddAsync(text, Guid.Empty);
+        }
+
     }
 }

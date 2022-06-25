@@ -35,10 +35,11 @@ namespace Reflexobot.Services
             var tree = dto.GenerateScenarioTree(c => c.Id, c => c.ParrentGuid);
             return tree;
         }
-        public async Task AddAsync(string text)
+        public async Task AddAsync(string text, Guid parrentGuid)
         {
             var scenario = new Scenario
             {
+                ParrentGuid = parrentGuid,
                 Text = text
             };
             await _scenarioRepository.AddAsync(scenario);

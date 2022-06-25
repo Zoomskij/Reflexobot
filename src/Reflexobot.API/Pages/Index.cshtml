@@ -104,7 +104,7 @@
                                 default-expand-all
                                 :expand-on-click-node="false">
                                 <span class="custom-tree-node" slot-scope="{ node, scenarios }">
-                                <span>{{ node.label }}</span>
+                                <span style="width:500px">{{ node.label }}</span>
                                 <span>
                                     
                                     <el-button
@@ -163,11 +163,24 @@ var app = new Vue({
     methods: {
         //TREE METHODS 
         append(node) {
+            var self = this;
+
+            let parrentId = node.data.guid;
             const newChild = { id: 15, label: 'testtest', children: [],  };
             if (!node.children) {
                 this.$set(node, 'children', []);
             }
             node.children.push(newChild);
+
+            var scenario = {
+                //parrentGuid: parrentId,
+                text: 'SampleText'
+            }
+            axios.post('/scenario', { text: "Test" }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
 
         remove(node, data) {
