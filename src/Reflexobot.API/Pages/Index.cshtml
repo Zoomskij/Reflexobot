@@ -83,15 +83,46 @@
                 </div>
 
                 <div>
-                      <el-timeline>
+                    <el-timeline>
                         <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
-                          <el-card>
+                            <el-card>
                             <h4>{{lesson.name}}</h4>
                             <p>{{lesson.description}}</p>
-                          </el-card>
+                            </el-card>
                         </el-timeline-item>
-    
-                      </el-timeline>
+                    </el-timeline>
+
+                    <div style="padding-left:50px">
+                        <div class="block">
+                            <p>Scenarios</p>
+                            <el-tree
+                                :data="scenarios"
+                                empty-text="Сценарии загружаются..."
+                                show-checkbox
+                                node-key="id"
+                                default-expand-all
+                                :expand-on-click-node="false">
+                                <span class="custom-tree-node" slot-scope="{ node, scenarios }">
+                                <span>{{ node.label }}</span>
+                                <span>
+                                    <el-button
+                                        type="text"
+                                        size="mini"
+                                        @@click="() => append(node)">
+                                        Append
+                                    </el-button>
+                                    <el-button
+                                        type="text"
+                                        size="mini"
+                                        @@click="() => remove(node, scenarios)">
+                                        Delete
+                                    </el-button>
+                                </span>
+                                </span>
+                            </el-tree>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,7 +141,8 @@ var app = new Vue({
         chats: [],
         botInfo: {},
         myTeacher: {},
-        telegramUserId: ''
+        telegramUserId: '',
+        scenarios: [],
     },
     mounted() {
         //TODO: rewrite + authorize
@@ -120,9 +152,25 @@ var app = new Vue({
         this.getCourses();
         this.getAchievments();
         this.getChats();
-        //this.initCharts();
+        this.getScenarios();
     },
     methods: {
+        //TREE METHODS 
+        append(node) {
+            const newChild = { id: 15, label: 'testtest', children: [],  };
+            if (!node.children) {
+                this.$set(node, 'children', []);
+            }
+            node.children.push(newChild);
+        },
+
+        remove(node, data) {
+            const parent = node.parent;
+            const children = parent.data.children || parent.data;
+            const index = children.findIndex(d => d.id === data.id);
+            children.splice(index, 1);
+        },
+
         //Get courses
         getCourses: function () {
             var self = this;
@@ -193,58 +241,16 @@ var app = new Vue({
                 console.log(error);
             });
         },
-        /////CHARTS////
-        initCharts: function() {
-            this.gradient = canvas
-              .getContext("2d")
-              .createLinearGradient(0, 0, 0, 450);
-            this.gradient2 = this.$refs.canvas
-              .getContext("2d")
-              .createLinearGradient(0, 0, 0, 450);
-
-            this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-            this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-            this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-
-            this.gradient2.addColorStop(0, "rgba(0, 231, 255, 0.9)");
-            this.gradient2.addColorStop(0.5, "rgba(0, 231, 255, 0.25)");
-            this.gradient2.addColorStop(1, "rgba(0, 231, 255, 0)");
-
-            this.renderChart(
-              {
-                labels: [
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July"
-                ],
-                datasets: [
-                  {
-                    label: "Data One",
-                    borderColor: "#FC2525",
-                    pointBackgroundColor: "white",
-                    borderWidth: 1,
-                    pointBorderColor: "white",
-                    backgroundColor: this.gradient,
-                    data: [40, 39, 10, 40, 39, 80, 40]
-                  },
-                  {
-                    label: "Data Two",
-                    borderColor: "#05CBE1",
-                    pointBackgroundColor: "white",
-                    pointBorderColor: "white",
-                    borderWidth: 1,
-                    backgroundColor: this.gradient2,
-                    data: [60, 55, 32, 10, 2, 12, 53]
-                  }
-                ]
-              },
-              { responsive: true, maintainAspectRatio: false }
-            );
-        }
+        getScenarios: function() {
+            var self = this;
+            axios.get('/scenario')
+            .then(function (response) {
+                self.scenarios = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
     },
 })
 </script>
@@ -287,6 +293,14 @@ var app = new Vue({
     clear: both
   }
 
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
 @@media screen and (max-width: 900px) {
   .common {
       display: block;
