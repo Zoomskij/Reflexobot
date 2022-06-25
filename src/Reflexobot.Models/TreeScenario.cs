@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace Reflexobot.Models
 {
-    public class ScenarioDto
+    public class TreeScenario
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Guid? ParrentGuid { get; set; } = null;
         public string Command { get; set; }
         public string Label { get; set; }
-        public ScenarioDto Item { get; set; }
-        public IEnumerable<ScenarioDto> Children { get; set; }
+        public IEnumerable<TreeScenario> Children { get; set; }
     }
 }

@@ -16,46 +16,11 @@ namespace Reflexobot.API.Controllers
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetAchievments()
+        public IActionResult GetScenariosTree()
         {
-            var scenarios = _scenarioService.Get().OrderBy(x => x.CreatedDate);
-            
-            List<ScenarioDto> scenarioDtoList = new List<ScenarioDto>();
-
-            foreach (var scenario in scenarios)
-            {
-                scenarioDtoList.Add(new ScenarioDto
-                {
-                    Id = scenario.Guid,
-                    ParrentGuid = scenario.ParrentGuid,
-                    CreatedDate = scenario.CreatedDate,
-                    Command = scenario.Command,
-                    Label = !string.IsNullOrWhiteSpace(scenario.Text) ? scenario.Text : scenario.Command,
-                    Children = new List<ScenarioDto>()
-                });
-            }
-
-            var groups = scenarioDtoList.GroupBy(x => x.ParrentGuid);
-            List<ScenarioDto> scenarioDto = new List<ScenarioDto>();
-
-            foreach (var group in groups)
-            {
-                foreach (var item in group)
-                {
-                    var b = group.Select(x => x);
-                    scenarioDto.Add(new ScenarioDto
-                    {
-                        Id = item.Id,
-                        ParrentGuid = item.ParrentGuid,
-                        CreatedDate = item.CreatedDate,
-                        Command = item.Command,
-                        Label = item.Label,
-                        Children = group.Select(x => x).ToList()
-                    });
-                }
-            }
-
-            return Ok(scenarioDto);
+            var scenarios = _scenarioService.GetTree();
+           
+            return Ok(scenarios);
         }
 
     }

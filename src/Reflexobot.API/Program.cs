@@ -40,6 +40,7 @@ builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<PingBackgroundService>();
 builder.Services.AddHostedService<NotifyBackgroundService>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.BuildServiceProvider();
 
 var app = builder.Build();

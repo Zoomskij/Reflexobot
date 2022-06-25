@@ -1,6 +1,10 @@
-﻿using Reflexobot.Entities;
+﻿using AutoMapper;
+using Reflexobot.Entities;
+using Reflexobot.Models;
 using Reflexobot.Repositories.Interfaces;
+using Reflexobot.Services.Helpers;
 using Reflexobot.Services.Interfaces;
+using Reflexobot.Services.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +16,24 @@ namespace Reflexobot.Services
     public class ScenarioService : IScenarioService
     {
         private readonly IScenarioRepository _scenarioRepository;
-        public ScenarioService(IScenarioRepository scenarioRepository)
+        public readonly IMapper _mapper;
+        public ScenarioService(IScenarioRepository scenarioRepository, IMapper mapper)
         {
             _scenarioRepository = scenarioRepository;
+            _mapper = mapper;
         }
 
         public IEnumerable<Scenario> Get()
         {
             return _scenarioRepository.Get();
+        }
+
+        public IEnumerable<ScenarioDto> GetTree()
+        {
+            var scenarios = _scenarioRepository.Get().ToList();
+            var dto = _mapper.Map<List<ScenarioDto>>(scenarios);
+            var tree = dto.GenerateScenarioTree(c => c.Id, c => c.ParrentGuid);
+            return tree;
         }
         public async Task AddAsync(string text)
         {

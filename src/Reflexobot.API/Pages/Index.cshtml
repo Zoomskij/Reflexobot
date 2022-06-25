@@ -97,6 +97,7 @@
                             <p>Scenarios</p>
                             <el-tree
                                 :data="scenarios"
+              
                                 empty-text="Сценарии загружаются..."
                                 show-checkbox
                                 node-key="id"
@@ -105,6 +106,7 @@
                                 <span class="custom-tree-node" slot-scope="{ node, scenarios }">
                                 <span>{{ node.label }}</span>
                                 <span>
+                                    
                                     <el-button
                                         type="text"
                                         size="mini"
@@ -120,7 +122,6 @@
                                 </span>
                                 </span>
                             </el-tree>
-
                         </div>
                     </div>
                 </div>
@@ -143,6 +144,11 @@ var app = new Vue({
         myTeacher: {},
         telegramUserId: '',
         scenarios: [],
+        //treeProps: {
+        //  id: 'guid',
+        //  children: 'children',
+        //  label: 'item.text'
+        //}
     },
     mounted() {
         //TODO: rewrite + authorize
