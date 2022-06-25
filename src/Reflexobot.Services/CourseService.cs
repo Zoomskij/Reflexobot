@@ -21,6 +21,11 @@ namespace Reflexobot.Services
             return _courseRepository.GetCourses();
         }
 
+        public async Task<CourseEntity> GetCourse(Guid guid)
+        {
+            return await _courseRepository.GetCourse(guid);
+        }
+
         public IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid)
         {
             return _courseRepository.GetLessonEntitiesByCourseGuid(guid);
