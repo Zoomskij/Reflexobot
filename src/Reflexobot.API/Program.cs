@@ -33,6 +33,9 @@ builder.Services.AddTransient<INoteService, NoteService>();
 builder.Services.AddTransient<IGoalRepository, GoalRepository>();
 builder.Services.AddTransient<IGoalService, GoalService>();
 
+builder.Services.AddTransient<IScenarioRepository, ScenarioRepository>();
+builder.Services.AddTransient<IScenarioService, ScenarioService>();
+
 builder.Services.AddDbContext<ReflexobotContext>();
 builder.Services.AddHostedService<PingBackgroundService>();
 builder.Services.AddHostedService<NotifyBackgroundService>();
