@@ -97,7 +97,7 @@
                             <p>Scenarios</p>
                             <el-tree
                                 :data="scenarios"
-              
+                                :prpps="treeProps"
                                 empty-text="Сценарии загружаются..."
                                 show-checkbox
                                 node-key="id"
@@ -144,11 +144,11 @@ var app = new Vue({
         myTeacher: {},
         telegramUserId: '',
         scenarios: [],
-        //treeProps: {
-        //  id: 'guid',
-        //  children: 'children',
-        //  label: 'item.text'
-        //}
+        treeProps: {
+          id: 'guid',
+          //children: 'children',
+          //label: 'item.text'
+        }
     },
     mounted() {
         //TODO: rewrite + authorize
@@ -165,8 +165,8 @@ var app = new Vue({
         append(node) {
             var self = this;
 
-            let parrentId = node.data.id;
-            const newChild = { id: 15, label: 'testtest', children: [],  };
+            let parrentId = node.data.guid;
+            const newChild = { guid: 15, label: 'testtest', children: [],  };
             if (!node.children) {
                 this.$set(node, 'children', []);
             }
@@ -186,7 +186,7 @@ var app = new Vue({
 
         remove(node, data) {
             var self = this;
-            let guid = node.data.id;
+            let guid = node.data.guid;
             axios.delete('/scenario/' + guid).then(function (response) {
                 console.log(response);
                 self.getScenarios();

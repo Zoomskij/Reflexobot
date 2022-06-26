@@ -8,7 +8,7 @@ namespace Reflexobot.Models
 {
     public class ScenarioDto
     {
-        public Guid Id { get; set; }
+        public Guid Guid { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Guid? ParrentGuid { get; set; } = null;
         public string Command { get; set; }
