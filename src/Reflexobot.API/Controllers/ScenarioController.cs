@@ -25,10 +25,22 @@ namespace Reflexobot.API.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task AddScenario(string text)
+        public async Task AddScenario(ScenarioAddDto scenarioAddDto)
         {
-            await _scenarioService.AddAsync(text, Guid.Empty);
+            await _scenarioService.AddAsync(scenarioAddDto.Text, scenarioAddDto.ParrentGuid);
+        }
+
+        [HttpDelete]
+        [Route("{guid}")]
+        public async Task DeleteScenario(Guid guid)
+        {
+            await _scenarioService.DeleteAsync(guid);
         }
 
     }
+}
+public class ScenarioAddDto
+{
+    public string Text { get; set; }
+    public Guid ParrentGuid { get; set; }
 }
