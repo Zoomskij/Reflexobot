@@ -35,11 +35,25 @@ namespace Reflexobot.API.Controllers
         [Route("")]
         public async Task UpdateScenario(ScenarioAddDto scenarioAddDto)
         {
-            Scenario scenario = new Scenario
+            Scenario scenario = new Scenario()
             {
-                Text = scenarioAddDto.Text,
                 Guid = scenarioAddDto.Guid
             };
+
+
+            //TODO: rewrite (сейчас определяем обновляем команду или текст по первому символу /
+            if (!string.IsNullOrWhiteSpace(scenarioAddDto.Text))
+            {
+                if (scenarioAddDto.Text[0] == '/')
+                {
+                    scenario.Command = scenarioAddDto.Text;
+                }
+                else
+                {
+                    scenario.Text = scenarioAddDto.Text;
+
+                }
+            }
             await _scenarioService.UpdateAsync(scenario);
         }
 

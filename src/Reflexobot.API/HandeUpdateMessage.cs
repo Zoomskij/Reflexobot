@@ -17,11 +17,28 @@ namespace Reflexobot.API
             ICourseService courseService, 
             IStudentService studentService,
             INoteService noteService,
+            IScenarioService scenarioService,
             CancellationToken cancellationToken)
         {
             if (message == null)
                 return;
+            var commands = scenarioService.Get();
+            if (commands.Any(x => !string.IsNullOrWhiteSpace(x.Command) && x.Command.Equals(message.Text)))
+            {
+                var parrent = commands.First(x => !string.IsNullOrWhiteSpace(x.Command) && x.Command.Equals(message.Text));
+                var scenarios = commands.Where(x => x.ParrentGuid == parrent.Guid).OrderBy(x => x.CreatedDate);
 
+                foreach (var scenario in scenarios)
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: scenario.Text,
+                        cancellationToken: cancellationToken);
+                    await Task.Delay(800);
+                }
+
+                return;
+            }
             switch (message.Type)
             {
                 case MessageType.Text:
