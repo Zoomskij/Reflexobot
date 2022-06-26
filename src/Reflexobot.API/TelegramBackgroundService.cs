@@ -37,6 +37,7 @@ namespace Reflexobot.API
                 var courseService = scope.ServiceProvider.GetRequiredService<ICourseService>();
                 var studentService = scope.ServiceProvider.GetRequiredService<IStudentService>();
                 var noteService = scope.ServiceProvider.GetRequiredService<INoteService>();
+                var scenarioService = scope.ServiceProvider.GetRequiredService<IScenarioService>();
 
                 var botClient = new TelegramBotClient(token.Value);
                 using var cts = new CancellationTokenSource();
@@ -94,7 +95,7 @@ namespace Reflexobot.API
                                     };
                                     await receiverService.AddUpdate(updateEntity);
 
-                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, studentService, noteService, cancellationToken);
+                                    await new HandeUpdateMessage().HandeUpdateMessageAsync(botClient, message, receiverService, courseService, studentService, noteService, scenarioService, cancellationToken);
                                 }
                                 return;
 

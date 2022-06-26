@@ -37,6 +37,7 @@ namespace Reflexobot.Repositories
             if (currentScenario != null)
             {
                 currentScenario.Text = scenario.Text;
+                currentScenario.Command = scenario.Command;
                 _context.Entry(currentScenario).CurrentValues.SetValues(currentScenario);
             }
 
