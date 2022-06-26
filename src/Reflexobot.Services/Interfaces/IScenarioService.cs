@@ -12,7 +12,7 @@ namespace Reflexobot.Services.Interfaces
     {
         IEnumerable<Scenario> Get();
         IEnumerable<ScenarioDto> GetTree();
-        Task AddAsync(string text);
+        Task AddAsync(string text, string? command, Guid parrentGuid);
         Task UpdateAsync(Scenario scenario);
         Task DeleteAsync(Guid guid);
     }

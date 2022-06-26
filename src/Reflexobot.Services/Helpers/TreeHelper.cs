@@ -49,7 +49,7 @@ namespace Reflexobot.Services.Helpers
             {
                 yield return new ScenarioDto
                 {
-                    Id = c.Id,
+                    Guid = c.Guid,
                     ParrentGuid = c.ParrentGuid,
                     Command = c.Command,
                     CreatedDate = c.CreatedDate,

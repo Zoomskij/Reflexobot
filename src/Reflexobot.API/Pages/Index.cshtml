@@ -66,7 +66,7 @@
                     <el-card v-for="chat in chats" class="box-card achievments">
                         <div style="display:flex; justify-content: left; align-items:center">
                             <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
-                            <el-tooltip v-for="achievment in achievments.slice(0,Math.floor(Math.random() * 9))" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                            <el-tooltip v-for="achievment in achievmentsRand" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
                               <img 
                                 :src='achievment.img' 
                                 height="30px" 
@@ -76,7 +76,7 @@
                         </div>
 
                         <div style="padding-top:5px">
-                            <el-progress :text-inside="true" :stroke-width="16" :percentage="Math.floor(Math.random() * 100)" status="success"></el-progress>
+                            <el-progress :text-inside="true" :stroke-width="16" :percentage="percentageRand" status="success"></el-progress>
                         </div>
 
                     </el-card>
@@ -94,30 +94,41 @@
 
                     <div style="padding-left:50px">
                         <div class="block">
-                            <p>Scenarios</p>
+                            <div style="display:flex; justify-content:space-between">
+                                <span><b>Сценарии</b></span>
+                                <el-button type="primary" size="small" @@click="newScenarioVisible = true">Создать новый сценарий</el-button>
+                            </div>
+
                             <el-tree
                                 :data="scenarios"
-              
+                                :prpps="treeProps"
                                 empty-text="Сценарии загружаются..."
                                 show-checkbox
                                 node-key="id"
                                 default-expand-all
-                                :expand-on-click-node="false">
+                                :expand-on-click-node="false"
+                                style="padding-top:10px">
                                 <span class="custom-tree-node" slot-scope="{ node, scenarios }">
-                                <span>{{ node.label }}</span>
-                                <span>
+                                <span class="sticky">{{ convertLongLabel(node.label) }}</span>
+                                <span class="tree-buttons">
                                     
                                     <el-button
                                         type="text"
                                         size="mini"
                                         @@click="() => append(node)">
-                                        Append
+                                        Добавить
+                                    </el-button>
+                                    <el-button
+                                        type="text"
+                                        size="mini"
+                                        @@click="() => edit(node)">
+                                        Редактировать
                                     </el-button>
                                     <el-button
                                         type="text"
                                         size="mini"
                                         @@click="() => remove(node, scenarios)">
-                                        Delete
+                                        Удалить
                                     </el-button>
                                 </span>
                                 </span>
@@ -127,6 +138,30 @@
                 </div>
             </div>
         </div>
+
+        @*Создать новый сценарий (Диалог)*@
+        <el-dialog title="Создать новый сценарий" :visible.sync="newScenarioVisible">
+          <el-input placeholder="/command" v-model="command"></el-input>
+
+          <span slot="footer" class="dialog-footer">
+            <el-button @@click="newScenarioVisible = false">Отменить</el-button>
+            <el-button type="primary" @@click="createScenario()">Создать</el-button>
+          </span>
+        </el-dialog>
+
+        @*Редактировать сценарий (Диалог)*@
+        <el-dialog title="Редактирование сценария" :visible.sync="dialogFormVisible">
+          <el-input
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="Сценарий"
+              v-model="selectedNodeText">
+            </el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button @@click="dialogFormVisible = false">Отменить</el-button>
+            <el-button type="primary" @@click="save()">Сохранить</el-button>
+          </span>
+        </el-dialog>
     </div>
 </div>
 
@@ -144,11 +179,16 @@ var app = new Vue({
         myTeacher: {},
         telegramUserId: '',
         scenarios: [],
-        //treeProps: {
-        //  id: 'guid',
-        //  children: 'children',
-        //  label: 'item.text'
-        //}
+        treeProps: {
+          id: 'guid',
+          //children: 'children',
+          //label: 'item.text'
+        },
+        dialogFormVisible: false,
+        newScenarioVisible: false,
+        selectedNode:{},
+        selectedNodeText: '',
+        command: ''
     },
     mounted() {
         //TODO: rewrite + authorize
@@ -160,21 +200,95 @@ var app = new Vue({
         this.getChats();
         this.getScenarios();
     },
+    computed: {
+        // геттер вычисляемого значения
+        achievmentsRand: function () {
+          // `this` указывает на экземпляр vm
+          return this.achievments.slice(0,Math.floor(Math.random() * 9))
+        },
+        percentageRand: function () {
+            return Math.floor(Math.random() * 100);
+        },
+    },
     methods: {
+        convertLongLabel(text) {
+            if (text.length < 150) {
+                return text;
+            }
+            return text.substring(0,150) + "...";
+        },
+        createScenario(){
+            this.newScenarioVisible = true;
+        },
         //TREE METHODS 
         append(node) {
-            const newChild = { id: 15, label: 'testtest', children: [],  };
+            var self = this;
+
+            let parrentId = node.data.guid;
+            const newChild = { guid: 15, label: 'testtest', children: [],  };
             if (!node.children) {
                 this.$set(node, 'children', []);
             }
             node.children.push(newChild);
+
+            var scenarioAddDto = {
+                parrentGuid: parrentId,
+                text: 'Текст для редактирования'
+            }
+            axios.post('/scenario', scenarioAddDto).then(function (response) {
+                console.log(response);
+                self.getScenarios();
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+
+        edit(node) {
+            this.selectedNode = node;
+            this.selectedNodeText = node.data.label;
+            this.dialogFormVisible = true;
+        },
+
+        createScenario() {
+            var self = this;
+            var scenarioAddDto = {
+                text: '',
+                command: this.command,
+            }
+            axios.post('/scenario', scenarioAddDto).then(function (response) {
+                console.log(response);
+                self.newScenarioVisible = false;
+                self.getScenarios();
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+
+        save() {
+            var self = this;
+            var scenarioAddDto = {
+                guid: this.selectedNode.data.guid,
+                text: this.selectedNodeText
+            }
+
+            axios.put('/scenario', scenarioAddDto).then(function (response) {
+                console.log(response);
+                self.getScenarios();
+                self.dialogFormVisible = false;
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
 
         remove(node, data) {
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
+            var self = this;
+            let guid = node.data.guid;
+            axios.delete('/scenario/' + guid).then(function (response) {
+                console.log(response);
+                self.getScenarios();
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
 
         //Get courses
@@ -306,7 +420,19 @@ var app = new Vue({
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+    width:500px;
   }
+
+span.tree-buttons {
+    display: block;
+}
+
+span:not(.sticky) { /* can use another selector, just wanted it to be exceptionally clear what i was referring to here */
+
+}
+span.sticky {
+
+}
 @@media screen and (max-width: 900px) {
   .common {
       display: block;

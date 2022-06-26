@@ -32,14 +32,16 @@ namespace Reflexobot.Services
         {
             var scenarios = _scenarioRepository.Get().ToList();
             var dto = _mapper.Map<List<ScenarioDto>>(scenarios);
-            var tree = dto.GenerateScenarioTree(c => c.Id, c => c.ParrentGuid);
+            var tree = dto.GenerateScenarioTree(c => c.Guid, c => c.ParrentGuid);
             return tree;
         }
-        public async Task AddAsync(string text)
+        public async Task AddAsync(string text, string? command, Guid parrentGuid)
         {
             var scenario = new Scenario
             {
-                Text = text
+                ParrentGuid = !string.IsNullOrWhiteSpace(command) ? null : parrentGuid,
+                Text = text,
+                Command = command
             };
             await _scenarioRepository.AddAsync(scenario);
         }
