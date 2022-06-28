@@ -15,11 +15,12 @@ namespace Reflexobot.Services.Mapper
         {
             CreateMap<Scenario, ScenarioDto>()
                 .ForMember(dest => dest.Guid,opt => opt.MapFrom(src => src.Guid))
-                .ForMember(dest => dest.Label,opt => opt.MapFrom(src => !string.IsNullOrWhiteSpace(src.Text) ? src.Text : src.Command));
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.Label,opt => opt.MapFrom(src => $"{src.Command} {src.Text}"));
 
             CreateMap<ScenarioDto, Scenario>()
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid))
-                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Label));
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text));
 
             //CreateMap<IEnumerable<Scenario>, IEnumerable<ScenarioDto>>();
             //CreateMap<IEnumerable<Scenario>, IEnumerable<ScenarioDto>>().ReverseMap();

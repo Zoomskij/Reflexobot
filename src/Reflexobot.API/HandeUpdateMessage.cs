@@ -30,9 +30,34 @@ namespace Reflexobot.API
 
                 foreach (var scenario in scenarios)
                 {
+                    // Send text with buttons
+                    if (!string.IsNullOrWhiteSpace(scenario.Command))
+                    {
+                        switch (scenario.Command)
+                        {
+                            case "Next":
+                                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{scenario.Guid}");
+                                inLineRow.Add(inLineKeyboardNext);
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                                await botClient.SendTextMessageAsync(
+                                    chatId: message.Chat.Id,
+                                    text: scenario.Text ?? "empty message",
+                                    replyMarkup: inlineKeyboardMarkup,
+                                    parseMode: ParseMode.Html,
+                                    cancellationToken: cancellationToken);
+                                continue;
+                            default:
+                                continue;
+                        }
+                    }
+
+                    // Send just text
                     await botClient.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: scenario.Text,
+                        text: scenario.Text ?? "empty message",
+                        parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
                     await Task.Delay(800);
                 }
@@ -85,6 +110,7 @@ namespace Reflexobot.API
                         chatId: message.Chat.Id,
                         text: $"{helloText}",
                         replyMarkup: inlineKeyboardMarkup,
+                        parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
                         return;
 
