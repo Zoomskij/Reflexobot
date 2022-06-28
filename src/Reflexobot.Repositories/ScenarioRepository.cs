@@ -22,7 +22,7 @@ namespace Reflexobot.Repositories
 
         public IEnumerable<Scenario> Get()
         {
-            var data = _dbSet.AsNoTracking();
+            var data = _dbSet.OrderBy(x=>x.CreatedDate).AsNoTracking();
             return data;
         }
 

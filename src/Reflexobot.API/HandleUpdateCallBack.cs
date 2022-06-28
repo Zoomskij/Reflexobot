@@ -17,11 +17,13 @@ namespace Reflexobot.API
         private readonly ICourseService _courseService;
         private readonly IReceiverService _receiverService;
         private readonly IStudentService _studentService;
-        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService studentService)
+        private readonly IScenarioService _scenarioService;
+        public HandleUpdateCallBack(ICourseService courseService, IReceiverService receiverService, IStudentService studentService, IScenarioService scenarioService)
         {
             _courseService = courseService;
             _receiverService = receiverService;
             _studentService = studentService;
+            _scenarioService = scenarioService;
         }
         public async Task HandleUpdateCallBackAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
@@ -31,6 +33,64 @@ namespace Reflexobot.API
             var chatId = callbackQuery.Message.Chat.Id;
             var messageId = callbackQuery.Message.MessageId;
             var student = await _studentService.GetStudentByChatIdAsync(chatId);
+
+            Guid.TryParse(callbackQuery.Data, out Guid callbackGuid);
+            if (callbackGuid != Guid.Empty)
+            {
+                var allScenarios = _scenarioService.Get().ToList();
+                var scenarios = allScenarios.Where(x => x.ParrentGuid == callbackGuid);
+
+                foreach (var scenario in scenarios)
+                {
+                    // Send text with buttons
+                    if (!string.IsNullOrWhiteSpace(scenario.Command))
+                    {
+                        switch (scenario.Command)
+                        {
+                            case "Next":
+                                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{scenario.Guid}");
+                                inLineRow.Add(inLineKeyboardNext);
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                                await botClient.EditMessageTextAsync(
+                                    messageId: messageId,
+                                    chatId: chatId,
+                                    text: scenario.Text ?? "empty message",
+                                    replyMarkup: inlineKeyboardMarkup,
+                                    parseMode: ParseMode.Html,
+                                    cancellationToken: cancellationToken);
+                                continue;
+
+                            case "Choose":
+                                var chooses = allScenarios.Where(x => x.ParrentGuid == scenario.Guid);
+
+                                List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
+                                foreach (var choose in chooses)
+                                {
+                                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: choose.Text, callbackData: $"{choose.Guid}") });
+                                }
+                                InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineDelayList);
+
+                                await botClient.EditMessageTextAsync(chatId, messageId, text: scenario.Text ?? "empty message", replyMarkup: inlineTaskKeyboard, parseMode: ParseMode.Html);
+                                continue;
+                           
+                            default:
+                                continue;
+                        }
+                    }
+
+                    // Send just text
+                    await botClient.EditMessageTextAsync(
+                        messageId: messageId,
+                        chatId: chatId,
+                        text: scenario.Text ?? "empty message",
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                    await Task.Delay(800);
+                }
+                return;
+            }
 
             if (!string.IsNullOrWhiteSpace(callbackQuery.Data) && callbackQuery.Data.Contains("Hello"))
             {

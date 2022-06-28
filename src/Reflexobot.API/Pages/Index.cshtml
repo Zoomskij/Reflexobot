@@ -17,7 +17,7 @@
     <div id="app">
         <div class="common">
             <div id="top" class="top">
-                <div>
+                <div v-if=false>
                     <el-card class="box-card avatar">
                       <div>
                           <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="150px" weight="150px" />
@@ -151,12 +151,16 @@
 
         @*Редактировать сценарий (Диалог)*@
         <el-dialog title="Редактирование сценария" :visible.sync="dialogFormVisible">
+          <span>Текст</span>
           <el-input
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="Сценарий"
               v-model="selectedNodeText">
-            </el-input>
+           </el-input>
+
+           <span>Команда</span>
+           <el-input type="text" v-model="selectedNodeCommand"></el-input>
           <span slot="footer" class="dialog-footer">
             <el-button @@click="dialogFormVisible = false">Отменить</el-button>
             <el-button type="primary" @@click="save()">Сохранить</el-button>
@@ -188,6 +192,7 @@ var app = new Vue({
         newScenarioVisible: false,
         selectedNode:{},
         selectedNodeText: '',
+        selectedNodeCommand: '',
         command: ''
     },
     mounted() {
@@ -245,7 +250,8 @@ var app = new Vue({
 
         edit(node) {
             this.selectedNode = node;
-            this.selectedNodeText = node.data.label;
+            this.selectedNodeText = node.data.text;
+            this.selectedNodeCommand = node.data.command;
             this.dialogFormVisible = true;
         },
 
@@ -268,7 +274,8 @@ var app = new Vue({
             var self = this;
             var scenarioAddDto = {
                 guid: this.selectedNode.data.guid,
-                text: this.selectedNodeText
+                text: this.selectedNodeText,
+                command: this.selectedNodeCommand
             }
 
             axios.put('/scenario', scenarioAddDto).then(function (response) {

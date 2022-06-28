@@ -102,7 +102,7 @@ namespace Reflexobot.API
                             case UpdateType.CallbackQuery:
                                 CallbackQuery? callbackQuery = update?.CallbackQuery;
                                 if (callbackQuery != null)
-                                    await new HandleUpdateCallBack(courseService, receiverService, studentService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
+                                    await new HandleUpdateCallBack(courseService, receiverService, studentService, scenarioService).HandleUpdateCallBackAsync(botClient, callbackQuery, cancellationToken);
                                 return;
                         }
                     }

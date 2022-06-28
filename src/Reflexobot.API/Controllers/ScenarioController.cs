@@ -37,23 +37,11 @@ namespace Reflexobot.API.Controllers
         {
             Scenario scenario = new Scenario()
             {
-                Guid = scenarioAddDto.Guid
+                Guid = scenarioAddDto.Guid,
+                Command = scenarioAddDto.Command,
+                Text = scenarioAddDto.Text
             };
 
-
-            //TODO: rewrite (сейчас определяем обновляем команду или текст по первому символу /
-            if (!string.IsNullOrWhiteSpace(scenarioAddDto.Text))
-            {
-                if (scenarioAddDto.Text[0] == '/')
-                {
-                    scenario.Command = scenarioAddDto.Text;
-                }
-                else
-                {
-                    scenario.Text = scenarioAddDto.Text;
-
-                }
-            }
             await _scenarioService.UpdateAsync(scenario);
         }
 

@@ -11,6 +11,7 @@ namespace Reflexobot.Models
         public Guid Guid { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Guid? ParrentGuid { get; set; } = null;
+        public string Text { get; set; }
         public string Command { get; set; }
         public string Label { get; set; }
         public ScenarioDto Item { get; set; }

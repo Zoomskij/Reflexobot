@@ -34,7 +34,7 @@ namespace Reflexobot.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //TODO: move to appsettings.json
-            optionsBuilder.UseSqlServer("Data Source=SQL8002.site4now.net;Initial Catalog=db_a87f4e_reflexobot;User Id=db_a87f4e_reflexobot_admin;Password=reflexobot123");
+            optionsBuilder.UseSqlServer("Data Source=SQL8002.site4now.net;Initial Catalog=db_a87f4e_reflexobot;User Id=db_a87f4e_reflexobot_admin;Password=reflexobot123;MultipleActiveResultSets=true");
         }
 
         public ReflexobotContext(IConfiguration configuration)
