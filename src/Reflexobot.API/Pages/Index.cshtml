@@ -158,9 +158,12 @@
               placeholder="Сценарий"
               v-model="selectedNodeText">
            </el-input>
-
+           <br />
            <span>Команда</span>
            <el-input type="text" v-model="selectedNodeCommand"></el-input>
+           <br />
+           <span>Тип. 1 - вопрос. 2 - ответ. 3 - результат.</span>
+           <el-input type="text" v-model="selectedNodeType"></el-input>
           <span slot="footer" class="dialog-footer">
             <el-button @@click="dialogFormVisible = false">Отменить</el-button>
             <el-button type="primary" @@click="save()">Сохранить</el-button>
@@ -193,6 +196,7 @@ var app = new Vue({
         selectedNode:{},
         selectedNodeText: '',
         selectedNodeCommand: '',
+        selectedNodeType: 0,
         command: ''
     },
     mounted() {
@@ -252,6 +256,7 @@ var app = new Vue({
             this.selectedNode = node;
             this.selectedNodeText = node.data.text;
             this.selectedNodeCommand = node.data.command;
+            this.selectedNodeType = node.data.type;
             this.dialogFormVisible = true;
         },
 
@@ -275,7 +280,8 @@ var app = new Vue({
             var scenarioAddDto = {
                 guid: this.selectedNode.data.guid,
                 text: this.selectedNodeText,
-                command: this.selectedNodeCommand
+                command: this.selectedNodeCommand,
+                type: this.selectedNodeType
             }
 
             axios.put('/scenario', scenarioAddDto).then(function (response) {

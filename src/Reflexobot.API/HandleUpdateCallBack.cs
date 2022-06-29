@@ -30,6 +30,7 @@ namespace Reflexobot.API
             //return;
             if (callbackQuery == null)
                 return;
+
             var chatId = callbackQuery.Message.Chat.Id;
             var messageId = callbackQuery.Message.MessageId;
             var student = await _studentService.GetStudentByChatIdAsync(chatId);
@@ -39,19 +40,24 @@ namespace Reflexobot.API
             {
                 var allScenarios = _scenarioService.Get().ToList();
                 var scenarios = allScenarios.Where(x => x.ParrentGuid == callbackGuid);
-
+                var parrentGuid = allScenarios.First(x => x.Guid == callbackGuid).ParrentGuid;
+                //parrentGuid = allScenarios.First(x => x.ParrentGuid == callbackGuid).ParrentGuid;
                 foreach (var scenario in scenarios)
                 {
                     // Send text with buttons
                     if (!string.IsNullOrWhiteSpace(scenario.Command))
                     {
+                        List<InlineKeyboardButton> inLineRow = new();
+                        InlineKeyboardButton inLineKeyboardNext;
+                        InlineKeyboardMarkup inlineKeyboardMarkup;
+                        List<List<InlineKeyboardButton>> inLineList = new();
                         switch (scenario.Command)
                         {
                             case "Next":
-                                List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
-                                InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{scenario.Guid}");
-                                inLineRow.Add(inLineKeyboardNext);
-                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+                                if (parrentGuid.HasValue && parrentGuid != Guid.Empty)
+                                    inLineRow.Add(InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{parrentGuid}"));
+                                inLineRow.Add(inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{scenario.Guid}"));
+                                inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
 
                                 await botClient.EditMessageTextAsync(
                                     messageId: messageId,
@@ -64,17 +70,45 @@ namespace Reflexobot.API
 
                             case "Choose":
                                 var chooses = allScenarios.Where(x => x.ParrentGuid == scenario.Guid);
+                                var answerGuid = chooses.FirstOrDefault(x => x.Type == 3)?.Guid;
 
-                                List<List<InlineKeyboardButton>> inLineDelayList = new List<List<InlineKeyboardButton>>();
+
+                                if (parrentGuid.HasValue && parrentGuid != Guid.Empty)
+                                    inLineList.Add(new List<InlineKeyboardButton>() {
+                                        { InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{parrentGuid}") },
+                                        { InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{callbackGuid}") }
+                                    });
                                 foreach (var choose in chooses)
                                 {
-                                    inLineDelayList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: choose.Text, callbackData: $"{choose.Guid}") });
+                                    inLineList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: choose.Text, callbackData: $"{answerGuid}") });
                                 }
-                                InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineDelayList);
+                                InlineKeyboardMarkup inlineTaskKeyboard = new InlineKeyboardMarkup(inLineList);
 
                                 await botClient.EditMessageTextAsync(chatId, messageId, text: scenario.Text ?? "empty message", replyMarkup: inlineTaskKeyboard, parseMode: ParseMode.Html);
                                 continue;
-                           
+
+                            case "List":
+                                var lists = allScenarios.Where(x => x.ParrentGuid == scenario.Guid).ToList();
+                                Scenario currentScenario = new();
+                                Scenario nextScenario = new();
+                                if (!lists.Any(x => x.Guid == callbackGuid))
+                                {
+                                    currentScenario = lists.First();
+                                    int index = lists.Select((elem, index) => new { elem, index }).First(p => p.elem == currentScenario).index;
+                                    nextScenario = lists.Skip(++index).Take(1).First();
+                                }
+                                if (parrentGuid.HasValue && parrentGuid != Guid.Empty)
+                                    inLineList.Add(new List<InlineKeyboardButton>() {
+                                        { InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: $"{parrentGuid}") },
+                                        { InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{nextScenario.Guid}") }
+                                    });
+                                inLineList.Add(new List<InlineKeyboardButton>() { InlineKeyboardButton.WithCallbackData(text: "Выбрать", callbackData: $"{currentScenario.Guid}") });
+
+                                inlineTaskKeyboard = new InlineKeyboardMarkup(inLineList);
+
+                                await botClient.EditMessageTextAsync(chatId, messageId, text: currentScenario.Text ?? "empty message", replyMarkup: inlineTaskKeyboard, parseMode: ParseMode.Html);
+                                continue;
+
                             default:
                                 continue;
                         }
@@ -87,7 +121,7 @@ namespace Reflexobot.API
                         text: scenario.Text ?? "empty message",
                         parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
-                    await Task.Delay(800);
+                    await Task.Delay(100);
                 }
                 return;
             }

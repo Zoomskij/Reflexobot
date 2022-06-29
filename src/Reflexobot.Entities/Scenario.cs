@@ -12,6 +12,7 @@ namespace Reflexobot.Entities
         public Guid? ParrentGuid { get; set; } = null;
         public string? Command { get; set; }
         public string? Text { get; set; }
+        public byte? Type { get; set; }
         
     }
 }
