@@ -354,3 +354,4 @@ MigrationBackup/
 # Backup files
 *.bak
 /src/appsettings.local.json
+/src/Reflexobot.API/wwwroot/dist
