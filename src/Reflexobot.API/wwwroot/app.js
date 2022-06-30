@@ -11,6 +11,13 @@
 ////Vue.use(ElementUI, { ruLocale });
 ////Vue.prototype.$axios = axios;
 
+
+import Scenario from "~/js/components/scenario.vue";
+
+
+Vue.component("scenario", Scenario);
+
+
 function startOnLoad() {
     var app = new Vue({
         el: '#app',

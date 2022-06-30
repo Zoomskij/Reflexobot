@@ -1,13 +1,14 @@
 ﻿const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     devtool: 'source-map',
     resolve: {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            "~": path.resolve(__dirname, 'wwwroot/dist')
+            "~": path.resolve(__dirname, 'wwwroot')
         }
     },
     entry: {
@@ -40,13 +41,18 @@ module.exports = {
                         }
                     }
                 ]
-            }
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
         ]
     },
     plugins: [
         new MiniCssExtractPlugin({
             filename: "bundle.css"
         }),
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new VueLoaderPlugin()
     ]
 };
