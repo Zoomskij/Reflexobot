@@ -30,7 +30,7 @@
     <None Include="wwwroot\dist\bundle.js.map" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="npm run dev" />
   </Target>
 

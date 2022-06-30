@@ -95,82 +95,11 @@
                     </el-timeline>
 
                     <div style="padding-left:50px">
-                        <div class="block">
-                            <div style="display:flex; justify-content:space-between">
-                                <span><b>Сценарии</b></span>
-                                <el-button type="primary" size="small" @@click="newScenarioVisible = true">Создать новый сценарий</el-button>
-                            </div>
-
-                            <el-tree
-                                :data="scenarios"
-                                :prpps="treeProps"
-                                empty-text="Сценарии загружаются..."
-                                show-checkbox
-                                node-key="id"
-                                default-expand-all
-                                :expand-on-click-node="false"
-                                style="padding-top:10px">
-                                <span class="custom-tree-node" slot-scope="{ node, scenarios }">
-                                <span class="sticky">{{ convertLongLabel(node.label) }}</span>
-                                <span class="tree-buttons">
-                                    
-                                    <el-button
-                                        type="text"
-                                        size="mini"
-                                        @@click="() => append(node)">
-                                        Добавить
-                                    </el-button>
-                                    <el-button
-                                        type="text"
-                                        size="mini"
-                                        @@click="() => edit(node)">
-                                        Редактировать
-                                    </el-button>
-                                    <el-button
-                                        type="text"
-                                        size="mini"
-                                        @@click="() => remove(node, scenarios)">
-                                        Удалить
-                                    </el-button>
-                                </span>
-                                </span>
-                            </el-tree>
-                        </div>
+                        <scenario></scenario>
                     </div>
                 </div>
             </div>
         </div>
-
-        @*Создать новый сценарий (Диалог)*@
-        <el-dialog title="Создать новый сценарий" :visible.sync="newScenarioVisible">
-          <el-input placeholder="/command" v-model="command"></el-input>
-
-          <span slot="footer" class="dialog-footer">
-            <el-button @@click="newScenarioVisible = false">Отменить</el-button>
-            <el-button type="primary" @@click="createScenario()">Создать</el-button>
-          </span>
-        </el-dialog>
-
-        @*Редактировать сценарий (Диалог)*@
-        <el-dialog title="Редактирование сценария" :visible.sync="dialogFormVisible">
-          <span>Текст</span>
-          <el-input
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              placeholder="Сценарий"
-              v-model="selectedNodeText">
-           </el-input>
-           <br />
-           <span>Команда</span>
-           <el-input type="text" v-model="selectedNodeCommand"></el-input>
-           <br />
-           <span>Тип. 1 - вопрос. 2 - ответ. 3 - результат.</span>
-           <el-input type="text" v-model="selectedNodeType"></el-input>
-          <span slot="footer" class="dialog-footer">
-            <el-button @@click="dialogFormVisible = false">Отменить</el-button>
-            <el-button type="primary" @@click="save()">Сохранить</el-button>
-          </span>
-        </el-dialog>
     </div>
 </div>
 
