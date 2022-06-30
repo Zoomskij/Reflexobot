@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.API", "Reflexobo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Services", "Reflexobot.Services\Reflexobot.Services.csproj", "{C02659FF-9E07-4149-BE5B-BCC4D00E6372}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflexobot.Common", "Reflexobot.Common\Reflexobot.Common.csproj", "{C75E6227-DB18-4379-85E5-40AE2A29164B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflexobot.Common", "Reflexobot.Common\Reflexobot.Common.csproj", "{C75E6227-DB18-4379-85E5-40AE2A29164B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

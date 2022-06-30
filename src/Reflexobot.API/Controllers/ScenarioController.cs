@@ -6,7 +6,7 @@ using Reflexobot.Services.Interfaces;
 namespace Reflexobot.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ScenarioController : Controller
     {
         private readonly IScenarioService _scenarioService;
