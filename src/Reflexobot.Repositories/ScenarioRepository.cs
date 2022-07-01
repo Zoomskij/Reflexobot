@@ -38,6 +38,7 @@ namespace Reflexobot.Repositories
             {
                 currentScenario.Text = scenario.Text;
                 currentScenario.Command = scenario.Command;
+                currentScenario.Type = scenario.Type;
                 _context.Entry(currentScenario).CurrentValues.SetValues(currentScenario);
             }
 

@@ -6,7 +6,7 @@ using Reflexobot.Services.Interfaces;
 namespace Reflexobot.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ScenarioController : Controller
     {
         private readonly IScenarioService _scenarioService;
@@ -28,7 +28,7 @@ namespace Reflexobot.API.Controllers
         [Route("")]
         public async Task AddScenario(ScenarioAddDto scenarioAddDto)
         {
-            await _scenarioService.AddAsync(scenarioAddDto.Text, scenarioAddDto.Command, scenarioAddDto.ParrentGuid);
+            await _scenarioService.AddAsync(scenarioAddDto.Text, scenarioAddDto.Command, scenarioAddDto.Type, scenarioAddDto.ParrentGuid);
         }
 
         [HttpPut]
@@ -39,7 +39,8 @@ namespace Reflexobot.API.Controllers
             {
                 Guid = scenarioAddDto.Guid,
                 Command = scenarioAddDto.Command,
-                Text = scenarioAddDto.Text
+                Text = scenarioAddDto.Text,
+                Type = scenarioAddDto.Type
             };
 
             await _scenarioService.UpdateAsync(scenario);
@@ -60,4 +61,5 @@ public class ScenarioAddDto
     public Guid Guid { get; set; }
     public Guid ParrentGuid { get; set; }
     public string? Command { get; set; }
+    public byte? Type { get; set; }
 }

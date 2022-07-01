@@ -55,6 +55,7 @@ namespace Reflexobot.Services.Helpers
                     CreatedDate = c.CreatedDate,
                     Label = c.Label,
                     Text = c.Text,
+                    Type = c.Type,
                     Item = c,
                     Children = collection.GenerateScenarioTree(id_selector, parent_id_selector, id_selector(c)),
                 };
