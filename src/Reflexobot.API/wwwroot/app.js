@@ -13,10 +13,10 @@
 
 
 import Scenario from "~/js/components/scenario.vue";
-
+import RHeader from "~/js/components/rheader.vue";
 
 Vue.component("scenario", Scenario);
-
+Vue.component("rheader", RHeader);
 
 function startOnLoad() {
     var app = new Vue({
