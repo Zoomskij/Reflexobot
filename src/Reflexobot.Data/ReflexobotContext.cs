@@ -9,6 +9,7 @@ namespace Reflexobot.Data
     {
         private readonly IConfiguration _configuration;
 
+        public DbSet<User> Users { get; set; }
         public DbSet<ChatEntity> Chats { get; set; }
         public DbSet<MessageEntity> Messages { get; set; }
         public DbSet<UpdateEntity> Updates { get; set; }
