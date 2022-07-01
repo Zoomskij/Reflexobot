@@ -46,6 +46,16 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader'
             },
+            {
+                test: /\.css$/,
+                exclude: [
+                    /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/
+                ],
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
+            },
         ]
     },
     plugins: [
