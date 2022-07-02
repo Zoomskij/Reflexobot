@@ -17,8 +17,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Reflexobot.Models\Reflexobot.Models.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -5,45 +5,64 @@ using Reflexobot.Repositories;
 using Reflexobot.Data;
 using Reflexobot.API;
 using Reflexobot.Services.Interfaces;
+using Reflexobot.API.Authorization;
+using Reflexobot.API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var services = builder.Services;
+var env = builder.Environment;
+
+// configure strongly typed settings object
+services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+// configure DI for application services
+services.AddScoped<IJwtUtils, JwtUtils>();
+services.AddScoped<IUserService, UserService>();
+
+
 // Add services to the container.
-builder.Services.AddRazorPages();
+services.AddRazorPages();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddControllers();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddTransient<IUpdateRepository, UpdateRepository>();
-builder.Services.AddTransient<IReceiverService, ReceiverService>();
+services.AddTransient<IUpdateRepository, UpdateRepository>();
+services.AddTransient<IReceiverService, ReceiverService>();
 
-builder.Services.AddTransient<ICourseRepository, CourseRepository>();
-builder.Services.AddTransient<ICourseService, CourseService>();
+services.AddTransient<ICourseRepository, CourseRepository>();
+services.AddTransient<ICourseService, CourseService>();
 
-builder.Services.AddTransient<IStudentRepository, StudentRepository>();
-builder.Services.AddTransient<IStudentService, StudentService>();
+services.AddTransient<IStudentRepository, StudentRepository>();
+services.AddTransient<IStudentService, StudentService>();
 
-builder.Services.AddTransient<IAchievmentRepository, AchievmentRepository>();
-builder.Services.AddTransient<IAchievmentService, AchievmentService>();
+services.AddTransient<IAchievmentRepository, AchievmentRepository>();
+services.AddTransient<IAchievmentService, AchievmentService>();
 
-builder.Services.AddTransient<INoteRepository, NoteRepository>();
-builder.Services.AddTransient<INoteService, NoteService>();
+services.AddTransient<INoteRepository, NoteRepository>();
+services.AddTransient<INoteService, NoteService>();
 
-builder.Services.AddTransient<IGoalRepository, GoalRepository>();
-builder.Services.AddTransient<IGoalService, GoalService>();
+services.AddTransient<IGoalRepository, GoalRepository>();
+services.AddTransient<IGoalService, GoalService>();
 
-builder.Services.AddTransient<IScenarioRepository, ScenarioRepository>();
-builder.Services.AddTransient<IScenarioService, ScenarioService>();
+services.AddTransient<IScenarioRepository, ScenarioRepository>();
+services.AddTransient<IScenarioService, ScenarioService>();
 
-builder.Services.AddDbContext<ReflexobotContext>();
-builder.Services.AddHostedService<PingBackgroundService>();
-builder.Services.AddHostedService<NotifyBackgroundService>();
-builder.Services.AddHostedService<TelegramBackgroundService>();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.BuildServiceProvider();
+services.AddDbContext<ReflexobotContext>();
+services.AddHostedService<PingBackgroundService>();
+services.AddHostedService<NotifyBackgroundService>();
+services.AddHostedService<TelegramBackgroundService>();
+services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+services.BuildServiceProvider();
 
 var app = builder.Build();
+
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

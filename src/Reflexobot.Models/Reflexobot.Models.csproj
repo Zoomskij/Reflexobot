@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Reflexobot.Entities\Reflexobot.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
