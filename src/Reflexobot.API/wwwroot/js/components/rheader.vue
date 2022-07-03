@@ -3,6 +3,10 @@
         <el-row>
             <el-col :span="24">
                 <div class="grid-content bg-purple-light" style="display:flex; justify-content: flex-end; align-items:center">
+
+                    <span style="padding-right:10px">
+                        <el-link href="http://zoomskij-001-site1.ctempurl.com/swagger/index.html" type="primary">Ознакомиться с API</el-link>
+                    </span>
                     <el-button type="primary">Войти</el-button>
                 </div>
             </el-col>

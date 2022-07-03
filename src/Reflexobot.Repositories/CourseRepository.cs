@@ -44,5 +44,33 @@ namespace Reflexobot.Repositories
             var data = dbSet.Where(x => x.LessonGuid == guid).AsNoTracking();
             return data;
         }
+
+        public async Task AddAsync(CourseEntity course)
+        {
+            await _dbSet.AddAsync(course);
+            await _context.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(CourseEntity course)
+        {
+            var currentCourse = await _dbSet.FirstOrDefaultAsync(x => x.Guid == course.Guid);
+            if (currentCourse != null)
+            {
+                currentCourse.Description = course.Name;
+                currentCourse.Img = course.Img;
+                currentCourse.Goal = course.Goal;
+                _context.Entry(currentCourse).CurrentValues.SetValues(currentCourse);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(Guid guid)
+        {
+            var currentCourse = await _dbSet.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (currentCourse != null)
+            {
+                _dbSet.Remove(currentCourse);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

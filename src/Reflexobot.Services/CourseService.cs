@@ -35,5 +35,18 @@ namespace Reflexobot.Services
         {
             return _courseRepository.GetTasksByLessonGuid(guid);
         }
+
+        public async Task AddAsync(CourseEntity course)
+        {
+            await _courseRepository.AddAsync(course);
+        }
+        public async Task UpdateAsync(CourseEntity course)
+        {
+            await _courseRepository.UpdateAsync(course);
+        }
+        public async Task DeleteAsync(Guid guid)
+        {
+            await _courseRepository.DeleteAsync(guid);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reflexobot.Entities;
 using Reflexobot.Entities.Telegram;
 using Reflexobot.Services.Inerfaces;
 using Reflexobot.Services.Interfaces;
@@ -56,6 +57,30 @@ namespace Reflexobot.API.Controllers
                 });
             }
             return Ok(groupedChats);
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> AddCourse([FromBody] CourseEntity course)
+        {
+            await _courseService.AddAsync(course);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("")]
+        public async Task<IActionResult> UpdateAchievment([FromBody] CourseEntity course)
+        {
+            await _courseService.UpdateAsync(course);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("")]
+        public async Task<IActionResult> DeleteAchievment(Guid guid)
+        {
+            await _courseService.DeleteAsync(guid);
+            return Ok();
         }
     }
 

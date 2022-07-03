@@ -13,5 +13,8 @@ namespace Reflexobot.Repositories.Interfaces
         Task<CourseEntity> GetCourse(Guid guid);
         IEnumerable<LessonEntity> GetLessonEntitiesByCourseGuid(Guid guid);
         IEnumerable<TaskEntity> GetTasksByLessonGuid(Guid guid);
+        Task AddAsync(CourseEntity course);
+        Task UpdateAsync(CourseEntity course);
+        Task DeleteAsync(Guid guid);
     }
 }
