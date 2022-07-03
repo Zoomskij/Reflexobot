@@ -12,6 +12,7 @@ namespace Reflexobot.Services.Interfaces
         IEnumerable<NotifyEntity> GetNotifies();
         Task AddOrUpdateUserNotifyId(StudentNotifyIds userPersonIds);
         Task<StudentEntity> GetStudentByChatIdAsync(long chatId);
+        Task<StudentEntity> GetStudentByUserIdAsync(int userId);
         Task AddStudentAsync(StudentEntity student);
     }
 }

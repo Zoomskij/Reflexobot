@@ -48,9 +48,14 @@ namespace Reflexobot.Repositories
         public async Task<StudentEntity> GetStudentByChatIdAsync(long chatId)
         {
             DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();
-            var student = await dbSet.FirstOrDefaultAsync(x => x.ChatId == chatId);
-            return student;
+            return await dbSet.FirstOrDefaultAsync(x => x.ChatId == chatId);
         }
+        public async Task<StudentEntity> GetStudentByUserIdAsync(int userId)
+        {
+            DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();
+            return await dbSet.FirstOrDefaultAsync(x => x.UserId == userId);
+        }
+        
         public async Task AddStudentAsync(StudentEntity student)
         {
             DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();

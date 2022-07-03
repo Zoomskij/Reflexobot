@@ -23,6 +23,12 @@ namespace Reflexobot.Services
             return student;
         }
 
+        public async Task<StudentEntity> GetStudentByUserIdAsync(int userId)
+        {
+            var student = await _userRepository.GetStudentByUserIdAsync(userId);
+            return student;
+        }
+
         public async Task AddStudentAsync(StudentEntity student)
         {
             await _userRepository.AddStudentAsync(student);
