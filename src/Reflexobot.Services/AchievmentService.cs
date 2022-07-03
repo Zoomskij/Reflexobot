@@ -21,5 +21,18 @@ namespace Reflexobot.Services
         {
             return _achievmentRepository.GetAchievments();
         }
+
+        public async Task AddAsync(Achievment achievment)
+        {
+            await _achievmentRepository.AddAsync(achievment);
+        }
+        public async Task UpdateAsync(Achievment achievment)
+        {
+            await _achievmentRepository.UpdateAsync(achievment);
+        }
+        public async Task DeleteAsync(Guid guid)
+        {
+            await _achievmentRepository.DeleteAsync(guid);
+        }
     }
 }
