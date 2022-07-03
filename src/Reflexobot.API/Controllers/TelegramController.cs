@@ -12,10 +12,6 @@ namespace Reflexobot.API.Controllers
         {
             _configuration = configuration;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpGet]
         [Route("status")]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reflexobot.Entities;
 using Reflexobot.Services.Interfaces;
 
 namespace Reflexobot.API.Controllers
@@ -19,6 +20,30 @@ namespace Reflexobot.API.Controllers
         {
             var achievments = _achievmentService.GetAchievments();
             return Ok(achievments);
+        }
+
+        [HttpPost]
+        [Route("")]
+        public IActionResult AddAchievment([FromBody] Achievment achievment)
+        {
+            var achievments = _achievmentService.AddAsync(achievment);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("")]
+        public IActionResult UpdateAchievment([FromBody] Achievment achievment)
+        {
+            var achievments = _achievmentService.UpdateAsync(achievment);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("")]
+        public IActionResult DeleteAchievment(Guid guid)
+        {
+            var achievments = _achievmentService.DeleteAsync(guid);
+            return Ok();
         }
     }
 }
