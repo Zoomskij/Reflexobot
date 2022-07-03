@@ -12,6 +12,7 @@ namespace Reflexobot.Entities
         public string LastName { get; set; }
         public string Username { get; set; }
         public long ChatId { get; set; }
+        public int UserId { get; set; }
         public int? Age { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
