@@ -10,104 +10,109 @@
 
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
-
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
-<div class="text-center">
-    <div id="app">
-        <rheader></rheader>
-        <div class="common">
-            <div id="top" class="top">
-                <div >
-                    <el-card class="box-card avatar">
-                      <div>
-                          <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="150px" weight="150px" />
-                          <h2>&nbsp;&nbsp;{{botInfo.firstName}}</h2>
-                      </div>
-                    </el-card>
+
+<div id="app">
+    <rheader></rheader>
+    <left-aside></left-aside>
+    <div class="common">
+        
+        <div class="text-center">
+            <div>
+                <div id="top" class="top">
+                    <div >
+                        <el-card class="box-card avatar">
+                            <div>
+                                <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="150px" weight="150px" />
+                                <h2>&nbsp;&nbsp;{{botInfo.firstName}}</h2>
+                            </div>
+                        </el-card>
+                    </div>
+
+                    <div v-for="course in courses" style="padding-left:10px; display: flex;">
+                        <el-card class="box-card" >
+                            <div slot="header" class="clearfix">
+                            <span><b>{{course.name}}</b></span>
+
+                            </div>
+                            <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
+                                {{lesson.name}}
+                            </div>
+                        </el-card>
+                    </div>
+
+                    <div style="padding-left:10px; display: flex;">
+                        <el-card class="box-card achievments">
+                                <h3>Мои достижения</h3>
+                                <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                                    <img 
+                                    :src='achievment.img' 
+                                    height="60px" 
+                                    weight="60px" />
+                                </el-tooltip>
+
+                        </el-card>
+                    </div>
+
+                    <div style="padding-left:10px" v-if=false>
+                        <el-card class="box-card teacher">
+                            <div>
+                                <img :src="myTeacher.img" height="150px" weight="150px" />
+                                <h2>{{myTeacher.name}}</h2>
+                            </div>
+                        </el-card>
+                    </div>
                 </div>
+                <div id="center" class="center">
 
-                <div v-for="course in courses" style="padding-left:10px; display: flex;">
-                    <el-card class="box-card" >
-                        <div slot="header" class="clearfix">
-                        <span><b>{{course.name}}</b></span>
-
-                        </div>
-                        <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
-                            {{lesson.name}}
-                        </div>
-                    </el-card>
-                </div>
-
-                <div style="padding-left:10px; display: flex;">
-                    <el-card class="box-card achievments">
-                          <h3>Мои достижения</h3>
-                          <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
-                              <img 
-                                :src='achievment.img' 
-                                height="60px" 
-                                weight="60px" />
-                            </el-tooltip>
-
-                    </el-card>
-                </div>
-
-                <div style="padding-left:10px" v-if=false>
-                    <el-card class="box-card teacher">
-                      <div>
-                          <img :src="myTeacher.img" height="150px" weight="150px" />
-                          <h2>{{myTeacher.name}}</h2>
-                      </div>
-                    </el-card>
-                </div>
-            </div>
-            <div id="center" class="center">
-
-                <div style="padding-left:10px">
-                    <el-card v-for="chat in chats" class="box-card achievments">
-                        <div style="display:flex; justify-content: left; align-items:center">
-                            <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
-                            <el-tooltip v-for="achievment in achievmentsRand" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
-                              <img 
-                                :src='achievment.img' 
-                                height="30px" 
-                                weight="30px" />
-                            </el-tooltip>
+                    <div style="padding-left:10px">
+                        <el-card v-for="chat in chats" class="box-card achievments">
+                            <div style="display:flex; justify-content: left; align-items:center">
+                                <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
+                                <el-tooltip v-for="achievment in achievmentsRand" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
+                                    <img 
+                                    :src='achievment.img' 
+                                    height="30px" 
+                                    weight="30px" />
+                                </el-tooltip>
                             
+                            </div>
+
+                            <div style="padding-top:5px">
+                                <el-progress :text-inside="true" :stroke-width="16" :percentage="percentageRand" status="success"></el-progress>
+                            </div>
+
+                        </el-card>
+                    </div>
+
+                    <div>
+                        <el-timeline>
+                            <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
+                                <el-card>
+                                <h4>{{lesson.name}}</h4>
+                                <p>{{lesson.description}}</p>
+                                </el-card>
+                            </el-timeline-item>
+                        </el-timeline>
+
+                        <div style="padding-left:50px">
+                            <scenario></scenario>
                         </div>
-
-                        <div style="padding-top:5px">
-                            <el-progress :text-inside="true" :stroke-width="16" :percentage="percentageRand" status="success"></el-progress>
-                        </div>
-
-                    </el-card>
-                </div>
-
-                <div>
-                    <el-timeline>
-                        <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
-                            <el-card>
-                            <h4>{{lesson.name}}</h4>
-                            <p>{{lesson.description}}</p>
-                            </el-card>
-                        </el-timeline-item>
-                    </el-timeline>
-
-                    <div style="padding-left:50px">
-                        <scenario></scenario>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
+    
 </div>
 
 
 <style>
   .common {
-  
+    padding-top: 100px;
+    padding-left: 256px;
   }
   .top {
     display:flex;

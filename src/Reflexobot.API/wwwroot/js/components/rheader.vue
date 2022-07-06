@@ -14,7 +14,7 @@
 
         <el-dialog title="Авторизация" :visible.sync="isAuthWindow">
             <el-input placeholder="username" v-model="authenticateRequest.username"></el-input>
-            <el-input placeholder="password" v-model="authenticateRequest.password" style="padding-top:10px"></el-input>
+            <el-input placeholder="password" v-model="authenticateRequest.password" show-password style="padding-top:10px"></el-input>
 
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="auth()">Войти</el-button>
@@ -113,5 +113,13 @@
     .row-bg {
         padding: 10px 0;
         background-color: #f9fafc;
+    }
+
+    .header {
+        position: fixed;
+        width: 100%;
+        height: 100px;
+        z-index:1000;
+        background-color:white;
     }
 </style>

@@ -1,0 +1,56 @@
+﻿<template>
+    <div class="left-aside">
+        <div v-for="menuItem in menuItems" class="menu-item">
+            <span>{{menuItem}}</span>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'leftaside',
+        data() {
+            return {
+                menuItems: [
+                    'Курсы',
+                    'Сценарии',
+                    'Персонажи',
+                    'Достижения',
+                ],
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+    
+        },
+        created() {
+
+        },
+        mounted() {
+            
+        }
+    }
+</script>
+
+<style>
+    .left-aside {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 256px;
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        background-color: #fff;
+        z-index: 1000;
+    }
+
+    .menu-item {
+        font-size: 24px;
+        padding-top: 18px;
+    }
+</style>

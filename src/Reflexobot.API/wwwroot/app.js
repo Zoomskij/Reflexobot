@@ -1,8 +1,8 @@
-﻿////import Vue from 'vue'
-////import VueRouter from 'vue-router'
-////import ElementUI from 'element-ui'
-////import locale from 'element-ui/lib/locale'
-////import ruLocale from 'element-ui/lib/locale/lang/ru-RU'
+﻿import Vue from 'vue'
+import VueRouter from 'vue-router'
+import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale'
+import ruLocale from 'element-ui/lib/locale/lang/ru-RU'
 
 ////import axios from 'axios';
 
@@ -14,9 +14,15 @@
 
 import Scenario from "~/js/components/scenario.vue";
 import RHeader from "~/js/components/rheader.vue";
+import LeftAside from "~/js/components/leftaside.vue";
+
+Vue.use(VueRouter);
+locale.use(ruLocale);
+Vue.use(ElementUI, { ruLocale });
 
 Vue.component("scenario", Scenario);
 Vue.component("rheader", RHeader);
+Vue.component("left-aside", LeftAside);
 
 function startOnLoad() {
     var app = new Vue({
