@@ -2,12 +2,20 @@
     <div class="header">
         <el-row>
             <el-col :span="24">
-                <div class="grid-content bg-purple-light" style="display:flex; justify-content: flex-end; align-items:center">
-                    <span style="padding-right:10px">
-                        <el-link href="http://zoomskij-001-site1.ctempurl.com/swagger/index.html" type="primary">Ознакомиться с API</el-link>
-                    </span>
-                    <el-button type="primary" @click="logout" v-if="user.token">Выйти</el-button>
-                    <el-button type="primary" @click="isAuthWindow = true" v-else>Войти</el-button>
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="display:flex; justify-content: flex-start; align-items:center">
+                        <a href="/">
+                            <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="100px" weight="100px" />
+                        </a>
+                    </div>
+                    <div style="display:flex; justify-content: flex-end; align-items:center; padding: 4px; height:40px">
+                        <span style="padding-right:10px">
+                            <el-link href="http://zoomskij-001-site1.ctempurl.com/swagger/index.html" type="primary">Ознакомиться с API</el-link>
+                        </span>
+                        <span style="padding-right:10px">{{user.username}}</span>
+                        <el-button type="primary" @click="logout" v-if="user.token">Выйти</el-button>
+                        <el-button type="primary" @click="isAuthWindow = true" v-else>Войти</el-button>
+                    </div>
                 </div>
             </el-col>
         </el-row>
@@ -43,7 +51,7 @@
         methods: {
             auth: function () {
                 var self = this;
-                axios.post('users/authenticate', this.authenticateRequest).then(function (response) {
+                this.$axios.post('users/authenticate', this.authenticateRequest).then(function (response) {
                     console.log(response.data);
                     if (response.data.token) {
                         localStorage.setItem('user', JSON.stringify(response.data));

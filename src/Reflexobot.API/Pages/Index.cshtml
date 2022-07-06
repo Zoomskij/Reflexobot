@@ -10,102 +10,12 @@
 
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-
-
 <div id="app">
     <rheader></rheader>
     <left-aside></left-aside>
     <div class="common">
-        
-        <div class="text-center">
-            <div>
-                <div id="top" class="top">
-                    <div >
-                        <el-card class="box-card avatar">
-                            <div>
-                                <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="150px" weight="150px" />
-                                <h2>&nbsp;&nbsp;{{botInfo.firstName}}</h2>
-                            </div>
-                        </el-card>
-                    </div>
-
-                    <div v-for="course in courses" style="padding-left:10px; display: flex;">
-                        <el-card class="box-card" >
-                            <div slot="header" class="clearfix">
-                            <span><b>{{course.name}}</b></span>
-
-                            </div>
-                            <div v-for="lesson in lessons" :key="lessons.guid" class="text item">
-                                {{lesson.name}}
-                            </div>
-                        </el-card>
-                    </div>
-
-                    <div style="padding-left:10px; display: flex;">
-                        <el-card class="box-card achievments">
-                                <h3>Мои достижения</h3>
-                                <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
-                                    <img 
-                                    :src='achievment.img' 
-                                    height="60px" 
-                                    weight="60px" />
-                                </el-tooltip>
-
-                        </el-card>
-                    </div>
-
-                    <div style="padding-left:10px" v-if=false>
-                        <el-card class="box-card teacher">
-                            <div>
-                                <img :src="myTeacher.img" height="150px" weight="150px" />
-                                <h2>{{myTeacher.name}}</h2>
-                            </div>
-                        </el-card>
-                    </div>
-                </div>
-                <div id="center" class="center">
-
-                    <div style="padding-left:10px">
-                        <el-card v-for="chat in chats" class="box-card achievments">
-                            <div style="display:flex; justify-content: left; align-items:center">
-                                <span><b>{{chat.firstName}} {{chat.lastName}}</b></span>
-                                <el-tooltip v-for="achievment in achievmentsRand" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
-                                    <img 
-                                    :src='achievment.img' 
-                                    height="30px" 
-                                    weight="30px" />
-                                </el-tooltip>
-                            
-                            </div>
-
-                            <div style="padding-top:5px">
-                                <el-progress :text-inside="true" :stroke-width="16" :percentage="percentageRand" status="success"></el-progress>
-                            </div>
-
-                        </el-card>
-                    </div>
-
-                    <div>
-                        <el-timeline>
-                            <el-timeline-item v-for="lesson in lessons" timestamp="2022/06/13" placement="top">
-                                <el-card>
-                                <h4>{{lesson.name}}</h4>
-                                <p>{{lesson.description}}</p>
-                                </el-card>
-                            </el-timeline-item>
-                        </el-timeline>
-
-                        <div style="padding-left:50px">
-                            <scenario></scenario>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <router-view></router-view>
     </div>
-    
 </div>
 
 
@@ -133,39 +43,6 @@
     margin-bottom: 18px;
   }
 
-  .item-tooltip {
-      margin: 4px;
-    }
-
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-  .clearfix:after {
-    clear: both
-  }
-
-.custom-tree-node {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-    width:500px;
-  }
-
-span.tree-buttons {
-    display: block;
-}
-
-span:not(.sticky) { /* can use another selector, just wanted it to be exceptionally clear what i was referring to here */
-
-}
-span.sticky {
-
-}
 @@media screen and (max-width: 900px) {
   .common {
       display: block;

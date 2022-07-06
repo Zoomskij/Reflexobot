@@ -93,7 +93,7 @@
         methods: {
             getScenarios: function () {
                 var self = this;
-                axios.get('api/scenario')
+                this.$axios.get('api/scenario')
                     .then(function (response) {
                         self.scenarios = response.data;
                     })
@@ -125,7 +125,7 @@
                     parrentGuid: parrentId,
                     text: 'Текст для редактирования'
                 }
-                axios.post('api/scenario', scenarioAddDto).then(function (response) {
+                this.$axios.post('api/scenario', scenarioAddDto).then(function (response) {
                     console.log(response);
                     self.getScenarios();
                 }).catch(function (error) {
@@ -147,7 +147,7 @@
                     text: '',
                     command: this.command,
                 }
-                axios.post('api/scenario', scenarioAddDto).then(function (response) {
+                this.$axios.post('api/scenario', scenarioAddDto).then(function (response) {
                     console.log(response);
                     self.newScenarioVisible = false;
                     self.getScenarios();
@@ -165,7 +165,7 @@
                     type: this.selectedNodeType
                 }
 
-                axios.put('api/scenario', scenarioAddDto).then(function (response) {
+                this.$axios.put('api/scenario', scenarioAddDto).then(function (response) {
                     console.log(response);
                     self.getScenarios();
                     self.dialogFormVisible = false;
@@ -177,7 +177,7 @@
             remove(node, data) {
                 var self = this;
                 let guid = node.data.guid;
-                axios.delete('api/scenario/' + guid).then(function (response) {
+                this.$axios.delete('api/scenario/' + guid).then(function (response) {
                     console.log(response);
                     self.getScenarios();
                 }).catch(function (error) {
@@ -190,3 +190,26 @@
         }
     }
 </script>
+
+<style>
+
+    span.tree-buttons {
+        display: block;
+    }
+
+    span:not(.sticky) { 
+    }
+
+    span.sticky {
+    }
+
+    .custom-tree-node {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        padding-right: 8px;
+        width: 500px;
+    }
+</style>

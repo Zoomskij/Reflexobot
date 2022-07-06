@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="left-aside">
         <div v-for="menuItem in menuItems" class="menu-item">
-            <span>{{menuItem}}</span>
+            <el-link :href="menuItem.url" type="primary" style="font-size:18px; padding-left:10px">{{menuItem.name}}</el-link>
         </div>
     </div>
 </template>
@@ -12,10 +12,11 @@
         data() {
             return {
                 menuItems: [
-                    'Курсы',
-                    'Сценарии',
-                    'Персонажи',
-                    'Достижения',
+                    { name: 'Цели', url: '#' },
+                    { name: 'Курсы', url: '#/courses' },
+                    { name: 'Сценарии', url: '#/scenario' },
+                    { name: 'Персонажи', url: '#' },
+                    { name: 'Достижения', url: '#/achievments' },
                 ],
             }
         },

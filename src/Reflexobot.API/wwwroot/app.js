@@ -4,17 +4,17 @@ import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale'
 import ruLocale from 'element-ui/lib/locale/lang/ru-RU'
 
-////import axios from 'axios';
+import axios from 'axios';
 
-////Vue.use(VueRouter);
-////locale.use(ruLocale);
-////Vue.use(ElementUI, { ruLocale });
-////Vue.prototype.$axios = axios;
+Vue.prototype.$axios = axios;
 
-
+import Index from "~/js/components/index.vue";
 import Scenario from "~/js/components/scenario.vue";
+import Courses from "~/js/components/courses.vue";
+import Achievments from "~/js/components/achievments.vue";
 import RHeader from "~/js/components/rheader.vue";
 import LeftAside from "~/js/components/leftaside.vue";
+
 
 Vue.use(VueRouter);
 locale.use(ruLocale);
@@ -23,13 +23,43 @@ Vue.use(ElementUI, { ruLocale });
 Vue.component("scenario", Scenario);
 Vue.component("rheader", RHeader);
 Vue.component("left-aside", LeftAside);
+Vue.component("achievments", Achievments);
+Vue.component("index", Index);
 
 function startOnLoad() {
+    var router = new VueRouter({
+        routes: [
+            /* { path: '/', caseSensitive: false, component: Scenario },*/
+            { path: '/', caseSensitive: false, component: Index },
+            { path: '/courses', caseSensitive: false, component: Courses },
+            { path: '/scenario', caseSensitive: false, component: Scenario },
+            { path: '/achievments', caseSensitive: false, component: Achievments },
+        ]
+    });
+    Vue.config.devtools = true;
+
+    var vv = new Vue({
+        el: "#vue-router",
+        router,
+        data: {
+
+        },
+        methods: {
+            back() {
+                this.$router.go(-1);
+            },
+
+            isCurrentRoute(name) {
+                return this.$route.name === name;
+            },
+        },
+    });
+
+
     var app = new Vue({
         el: '#app',
+        router,
         data: {
-            courses: [],
-            lessons: [],
             achievments: [],
             chats: [],
             botInfo: {},
@@ -41,57 +71,12 @@ function startOnLoad() {
             this.telegramUserId = window.location.search.substring(5);
             this.getBotInfo();
             this.getMyTeacher();
-            this.getCourses();
-            this.getAchievments();
             this.getChats();
         },
         computed: {
-            // геттер вычисляемого значения
-            achievmentsRand: function () {
-                // `this` указывает на экземпляр vm
-                return this.achievments.slice(0, Math.floor(Math.random() * 9))
-            },
-            percentageRand: function () {
-                return Math.floor(Math.random() * 100);
-            },
+
         },
         methods: {
-            //Get courses
-            getCourses: function () {
-                var self = this;
-                axios.get('/courses')
-                    .then(function (response) {
-                        self.courses = response.data;
-                        if (self.courses !== null && self.courses) {
-                            self.getLessons('8B7AFF9B-E2D0-494F-85BD-D29F96C6AB65');
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
-            //Get Lessons by course Guid
-            getLessons: function (courseGuid) {
-                var self = this;
-                axios.get('/lessons/' + courseGuid)
-                    .then(function (response) {
-                        self.lessons = response.data;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
-            //Get Achievments
-            getAchievments: function () {
-                var self = this;
-                axios.get('/achievment')
-                    .then(function (response) {
-                        self.achievments = response.data;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
             //Get bot info
             getBotInfo: function () {
                 var self = this;
