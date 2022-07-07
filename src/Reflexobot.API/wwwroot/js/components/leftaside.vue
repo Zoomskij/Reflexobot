@@ -15,7 +15,7 @@
                     { name: 'Цели', url: '#' },
                     { name: 'Курсы', url: '#/courses' },
                     { name: 'Сценарии', url: '#/scenario' },
-                    { name: 'Персонажи', url: '#' },
+                    { name: 'Персонажи', url: '#/teachers' },
                     { name: 'Достижения', url: '#/achievments' },
                 ],
             }

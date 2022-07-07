@@ -76,7 +76,7 @@ namespace Reflexobot.API.Controllers
         }
 
         [HttpDelete]
-        [Route("")]
+        [Route("{guid}")]
         public async Task<IActionResult> DeleteAchievment(Guid guid)
         {
             await _courseService.DeleteAsync(guid);
