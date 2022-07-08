@@ -15,22 +15,21 @@ namespace Reflexobot.API
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly string token = string.Empty;
 
         public TelegramBackgroundService(IServiceScopeFactory scopeFactory, IConfiguration configuration)
         {
             _scopeFactory = scopeFactory;
             _configuration = configuration;
+            token = configuration.GetSection("Token").Value;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             return Task.Factory.StartNew(() => DoWork(stoppingToken));
         }
-
         private async Task DoWork(CancellationToken ct)
         {
-            var token = _configuration.GetSection("Token");
-
             using (var scope = _scopeFactory.CreateScope())
             {
                 var receiverService = scope.ServiceProvider.GetRequiredService<IReceiverService>();
@@ -39,7 +38,7 @@ namespace Reflexobot.API
                 var noteService = scope.ServiceProvider.GetRequiredService<INoteService>();
                 var scenarioService = scope.ServiceProvider.GetRequiredService<IScenarioService>();
 
-                var botClient = new TelegramBotClient(token.Value);
+                var botClient = new TelegramBotClient(token);
                 using var cts = new CancellationTokenSource();
 
                 var receiverOptions = new ReceiverOptions
@@ -71,25 +70,24 @@ namespace Reflexobot.API
                                 Message? message = update?.Message;
                                 if (message != null)
                                 {
-
                                     UpdateEntity updateEntity = new UpdateEntity
                                     {
-                                        Id = update.Id,
-                                        Type = update.Type.ToString(),
+                                        Id = update == null ? 0 : update.Id,
+                                        Type = update == null ? string.Empty : update.Type.ToString(),
                                         MessageId = message.MessageId,
                                         Message = new Entities.Telegram.MessageEntity()
                                         {
-                                            ChatId = message.From.Id,
+                                            ChatId = message.From == null ? 0 : message.From.Id,
                                             MessageId = message.MessageId,
-                                            Text = message.Text,
+                                            Text = message.Text ?? string.Empty,
                                             Date = message.Date,
-                                            From = String.Empty,
+                                            From = string.Empty,
                                             Chat = new ChatEntity()
                                             {
                                                 Id = message.Chat.Id,
-                                                FirstName = message.Chat.FirstName,
-                                                LastName = message.Chat.LastName,
-                                                Username = message.Chat.Username,
+                                                FirstName = message.Chat.FirstName ?? string.Empty,
+                                                LastName = message.Chat.LastName ?? string.Empty,
+                                                Username = message.Chat.Username ?? string.Empty,
                                             }
                                         }
                                     };
