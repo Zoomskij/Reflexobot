@@ -55,7 +55,8 @@ namespace Reflexobot.Repositories
             var currentCourse = await _dbSet.FirstOrDefaultAsync(x => x.Guid == course.Guid);
             if (currentCourse != null)
             {
-                currentCourse.Description = course.Name;
+                currentCourse.Name = course.Name;
+                currentCourse.Description = course.Description;
                 currentCourse.Img = course.Img;
                 currentCourse.Goal = course.Goal;
                 _context.Entry(currentCourse).CurrentValues.SetValues(currentCourse);

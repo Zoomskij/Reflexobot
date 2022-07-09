@@ -14,5 +14,8 @@ namespace Reflexobot.Repositories.Interfaces
         Task<StudentEntity> GetStudentByChatIdAsync(long chatId);
         Task<StudentEntity> GetStudentByUserIdAsync(int userId);
         Task AddStudentAsync(StudentEntity student);
+        Task UpdateActiveScenarioAsync(Guid studentGuid, Guid scenarioGuid);
+
+
     }
 }

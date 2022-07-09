@@ -22,6 +22,20 @@ namespace Reflexobot.API
         {
             if (message == null)
                 return;
+            //Если этой новый чат, созданим под него студента
+            var student = await studentService.GetStudentByChatIdAsync(message.Chat.Id);
+            if (student == null)
+            {
+                student = new StudentEntity
+                {
+                    FirstName = message.From.FirstName,
+                    LastName = message.From.LastName,
+                    Username = message.From.Username,
+                    ChatId = message.Chat.Id,
+                };
+                await studentService.AddStudentAsync(student);
+            }
+
             var commands = scenarioService.Get();
             if (commands.Any(x => !string.IsNullOrWhiteSpace(x.Command) && x.Command.Equals(message.Text)))
             {
@@ -48,6 +62,13 @@ namespace Reflexobot.API
                                     parseMode: ParseMode.Html,
                                     cancellationToken: cancellationToken);
                                 continue;
+                            case "Input":
+                                await botClient.SendTextMessageAsync(
+                                    chatId: message.Chat.Id,
+                                    text: scenario.Text ?? "empty message",
+                                    parseMode: ParseMode.Html,
+                                    cancellationToken: cancellationToken);
+                                return;
                             default:
                                 continue;
                         }
@@ -62,8 +83,72 @@ namespace Reflexobot.API
                     await Task.Delay(800);
                 }
 
+                await studentService.UpdateActiveScenarioAsync(student.Guid, scenarios.Last().Guid);
                 return;
             }
+
+            var activeScenario = commands.FirstOrDefault(x => student.ActiveScenarioGuid.Equals(x.Guid));
+            if (activeScenario != null)
+            {
+                if (!string.IsNullOrWhiteSpace(activeScenario.Command))
+                {
+                    var scenarios = commands.Where(x => x.ParrentGuid == activeScenario.Guid).OrderBy(x => x.CreatedDate);
+
+                    switch (activeScenario.Command)
+                    {
+                        case "Input":
+                            foreach (var scenario in scenarios)
+                            {
+                                // Send text with buttons
+                                if (!string.IsNullOrWhiteSpace(scenario.Command))
+                                {
+                                    switch (scenario.Command)
+                                    {
+                                        case "Next":
+                                            List<InlineKeyboardButton> inLineRow = new List<InlineKeyboardButton>();
+                                            InlineKeyboardButton inLineKeyboardNext = InlineKeyboardButton.WithCallbackData(text: "Дальше", callbackData: $"{scenario.Guid}");
+                                            inLineRow.Add(inLineKeyboardNext);
+                                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(inLineRow);
+
+                                            await botClient.SendTextMessageAsync(
+                                                chatId: message.Chat.Id,
+                                                text: scenario.Text ?? "empty message",
+                                                replyMarkup: inlineKeyboardMarkup,
+                                                parseMode: ParseMode.Html,
+                                                cancellationToken: cancellationToken);
+                                            continue;
+                                        case "Input":
+                                            await botClient.SendTextMessageAsync(
+                                                chatId: message.Chat.Id,
+                                                text: scenario.Text ?? "empty message",
+                                                parseMode: ParseMode.Html,
+                                                cancellationToken: cancellationToken);
+                                            return;
+                                        default:
+                                            continue;
+                                    }
+                                }
+
+                                // Send just text
+                                await botClient.SendTextMessageAsync(
+                                    chatId: message.Chat.Id,
+                                    text: scenario.Text ?? "empty message",
+                                    parseMode: ParseMode.Html,
+                                    cancellationToken: cancellationToken);
+                                await Task.Delay(800);
+                            }
+
+                            await studentService.UpdateActiveScenarioAsync(student.Guid, scenarios.Last().Guid);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            
+
+                return;
+            }
+            
             switch (message.Type)
             {
                 case MessageType.Text:
@@ -72,20 +157,6 @@ namespace Reflexobot.API
 
                     if (message.Text.Equals("/start"))
                     {
-                        //Если этой новый чат, созданим под него студента
-                        var student = await studentService.GetStudentByChatIdAsync(message.From.Id);
-                        if (student == null)
-                        {
-                            student = new StudentEntity
-                            {
-                                FirstName = message.From.FirstName,
-                                LastName = message.From.LastName,
-                                Username = message.From.Username,
-                                ChatId = message.From.Id,
-                            };
-                            await studentService.AddStudentAsync(student);
-                        }
-
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: $@"Привет, {message.Chat.FirstName}! Я твой личный помощник и ментор на курсе в Нетологии 🙌",

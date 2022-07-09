@@ -33,6 +33,11 @@ namespace Reflexobot.Services
         {
             await _userRepository.AddStudentAsync(student);
         }
+        public async Task UpdateActiveScenarioAsync(Guid studentGuid, Guid scenarioGuid)
+        {
+            await _userRepository.UpdateActiveScenarioAsync(studentGuid, scenarioGuid);
+        }
+        
         public IEnumerable<NotifyEntity> GetNotifies()
         {
             return _userRepository.GetNotifies().ToList();
