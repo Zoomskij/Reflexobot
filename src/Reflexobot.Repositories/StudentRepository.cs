@@ -63,5 +63,17 @@ namespace Reflexobot.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateActiveScenarioAsync(Guid studentGuid, Guid scenarioGuid)
+        {
+            DbSet<StudentEntity> dbSet = _context.Set<StudentEntity>();
+            var currentStudent = await dbSet.FirstOrDefaultAsync(x => x.Guid == studentGuid);
+            if (currentStudent != null)
+            {
+                currentStudent.ActiveScenarioGuid = scenarioGuid;
+                _context.Entry(currentStudent).CurrentValues.SetValues(currentStudent);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
