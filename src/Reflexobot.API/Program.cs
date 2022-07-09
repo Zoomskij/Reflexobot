@@ -49,6 +49,8 @@ services.AddTransient<IGoalService, GoalService>();
 services.AddTransient<IScenarioRepository, ScenarioRepository>();
 services.AddTransient<IScenarioService, ScenarioService>();
 
+services.AddTransient<IImageService, ImageService>();
+
 services.AddDbContext<ReflexobotContext>();
 services.AddHostedService<PingBackgroundService>();
 services.AddHostedService<NotifyBackgroundService>();

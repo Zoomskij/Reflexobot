@@ -18,6 +18,7 @@ namespace Reflexobot.API
             IStudentService studentService,
             INoteService noteService,
             IScenarioService scenarioService,
+            IImageService imageService,
             CancellationToken cancellationToken)
         {
             if (message == null)
@@ -88,7 +89,7 @@ namespace Reflexobot.API
             }
 
             var activeScenario = commands.FirstOrDefault(x => student.ActiveScenarioGuid.Equals(x.Guid));
-            if (activeScenario != null)
+            if (false)
             {
                 if (!string.IsNullOrWhiteSpace(activeScenario.Command))
                 {
@@ -296,9 +297,18 @@ namespace Reflexobot.API
                         return;
                     }
 
-                    //TODO: add command for reciever
-                    //var currentStudent = await studentService.GetStudentByChatIdAsync(message.From.Id);
-                    //await noteService.AddNoteAsync(message.Text, currentStudent.Guid);
+                    if (message.Text.Equals("/image"))
+                    {
+                        var imageBytes = imageService.GenerateImage(200, 200, null);
+                        var imageurl = "https://localhost:7125/image/generate";
+                        await botClient.SendPhotoAsync(message.Chat.Id, imageurl);
+                        //var media = new IAlbumInputMedia[]
+                        //{
+
+                        //    new InputMediaPhoto("https://localhost:7125/image/generate")
+                        //};
+                        //await botClient.SendMediaGroupAsync(message.Chat.Id, media);
+                    }
 
 
                     return;
