@@ -4,9 +4,9 @@
             <el-col :span="24">
                 <div style="display: flex; justify-content: space-between;">
                     <div style="display:flex; justify-content: flex-start; align-items:center">
-                        <a href="/">
-                            <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="100px" weight="100px" />
-                        </a>
+                        <router-link to="/" tag="div">
+                            <img src="https://raw.githubusercontent.com/Zoomskij/ImagesForBot/main/flexy.jpg" height="80px" weight="80px" />
+                        </router-link>
                     </div>
                     <div style="display:flex; justify-content: flex-end; align-items:center; padding: 4px; height:40px">
                         <span style="padding-right:10px">
