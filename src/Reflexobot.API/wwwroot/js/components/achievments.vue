@@ -5,7 +5,7 @@
             <el-tooltip v-for="achievment in achievments" class="item-tooltip" effect="light" :content='achievment.description' placement="top-start">
                 <img :src='achievment.img'
                         height="60px"
-                        weight="60px" />
+                        weight="60px" />    
             </el-tooltip>
         </el-card>
     </div>

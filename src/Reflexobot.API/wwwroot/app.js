@@ -13,6 +13,7 @@ import Scenario from "~/js/components/scenario.vue";
 import Courses from "~/js/components/courses.vue";
 import Achievments from "~/js/components/achievments.vue";
 import Teachers from "~/js/components/teachers.vue";
+import Goals from "~/js/components/goals.vue";
 import RHeader from "~/js/components/rheader.vue";
 import LeftAside from "~/js/components/leftaside.vue";
 
@@ -37,6 +38,7 @@ function startOnLoad() {
             { path: '/courses', caseSensitive: false, component: Courses },
             { path: '/scenario', caseSensitive: false, component: Scenario },
             { path: '/achievments', caseSensitive: false, component: Achievments },
+            { path: '/goals', caseSensitive: false, component: Goals },
         ]
     });
     Vue.config.devtools = true;

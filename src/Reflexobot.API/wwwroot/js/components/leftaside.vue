@@ -1,8 +1,13 @@
 ﻿<template>
     <div class="left-aside">
-        <div v-for="menuItem in menuItems" class="menu-item">
-            <el-link :href="menuItem.url" type="primary" style="font-size:18px; padding-left:10px">{{menuItem.name}}</el-link>
-        </div>
+        <el-menu class="el-menu-vertical-demo">
+            <router-link :to="menuItem.url" tag="div" v-for="menuItem in menuItems">
+                <el-menu-item>
+                    <i :class="menuItem.icon"></i>
+                    <span style="font-size:18px; padding-left:10px">{{menuItem.name}}</span>
+                </el-menu-item>
+            </router-link>
+        </el-menu>
     </div>
 </template>
 
@@ -12,11 +17,11 @@
         data() {
             return {
                 menuItems: [
-                    { name: 'Цели', url: '#' },
-                    { name: 'Курсы', url: '#/courses' },
-                    { name: 'Сценарии', url: '#/scenario' },
-                    { name: 'Персонажи', url: '#/teachers' },
-                    { name: 'Достижения', url: '#/achievments' },
+                    { name: 'Цели', icon: 'el-icon-finished', url: '/goals' },
+                    { name: 'Курсы', icon: 'el-icon-headset', url: '/courses' },
+                    { name: 'Сценарии', icon: 'el-icon-connection', url: '/scenario' },
+                    { name: 'Персонажи', icon: 'el-icon-user', url: '/teachers' },
+                    { name: 'Достижения', icon: 'el-icon-medal-1', url: '/achievments' },
                 ],
             }
         },

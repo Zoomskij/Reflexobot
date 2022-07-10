@@ -6,10 +6,10 @@ namespace Reflexobot.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class GoalController : Controller
+    public class GoalsController : Controller
     {
         private readonly IGoalService _goalService;
-        public GoalController(IGoalService goalService)
+        public GoalsController(IGoalService goalService)
         {
             _goalService = goalService; 
         }
